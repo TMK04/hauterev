@@ -1,10 +1,10 @@
 {
-  "name": "floer-soloer",
+  "name": "hauterev",
   "version": "1.0.0",
-  "description": "Template for FloerSoloer, by FloerSoloer",
+  "description": "Haute Restaurant Review Website",
   "license": "ISC",
-  "author": "FloerSoloer",
-  "repository": "https://github.com/FloerSoloer/FloerSoloer",
+  "author": "TMK04",
+  "repository": "https://github.com/TMK04/hauterev",
   "private": true,
   "main": "dist/bundle.js",
   "scripts": {
