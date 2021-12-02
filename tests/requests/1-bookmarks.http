@@ -1,0 +1,20 @@
+@route = {{address}}/users/Bob123/bookmarks
+
+### Bookmark restaurant by restaurant ID
+
+POST {{route}}
+Content-Type: application/json
+
+{
+  "password": "Bob123Builder",
+  "restaurant_id": 1
+}
+
+### Get bookmarks by username
+
+GET {{route}}
+Content-Type: application/json
+
+{
+  "password": "Bob123Builder"
+}

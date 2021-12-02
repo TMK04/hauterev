@@ -1,0 +1,25 @@
+@route={{address}}/restaurants
+
+### Get all restaurants
+
+GET {{route}}
+
+### Get restaurants by search
+
+GET {{route}}?search=Corner
+
+### Get restaurants by minimum rating
+
+GET {{route}}?rating=2
+
+### Get restaurants in South region
+
+GET {{route}}?region=South
+
+### Get restaurants open after 11pm 
+
+GET {{route}}?opening_hours=000000000000000000000001
+
+### Get restaurant by ID
+
+GET {{route}}/1

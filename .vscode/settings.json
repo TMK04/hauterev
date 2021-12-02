@@ -1,0 +1,7 @@
+{
+  "rest-client.environmentVariables": {
+    "local": {
+      "address": "http://LAPTOP-LGDG0D0M:4000"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+@route = {{address}}/users
+
+### Create new user
+
+POST {{route}}
+Content-Type: application/json
+
+{
+  "username": "Bob123",
+  "password": "Bob123Builder",
+  "email": "bob_staub_123@mail.com",
+  "last_name": "Staub",
+  "first_name": "Bob",
+  "mobile_number": "12345678",
+  "address": "Staub Street 123",
+  "gender": "M"
+}
+
+### Login
+
+POST {{route}}/login
+Content-Type: application/json
+
+{
+  "username": "Bob123",
+  "password": "Bob123Builder"
+}
+
+### Get user profile by username
+
+GET {{route}}/Bob123
+
+### Get user profile as user
+
+GET {{route}}/Bob123
+Content-Type: application/json
+
+{
+  "password": "Bob123Builder"
+}
+
+### Edit user profile as user
+
+PATCH {{route}}/Bob123
+Content-Type: application/json
+
+{
+  "password": "Bob123Builder",
+  "new_password": "Bob123Builder"
+}
