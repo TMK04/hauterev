@@ -1,6 +1,9 @@
 {
   "extends": "..",
   "compilerOptions": {
-    "types": ["jest", "node"]
-  }
+    "baseUrl": ".",
+    "types": ["jest", "node"],
+    "paths": { "@/*": ["../src/*"] }
+  },
+  "include": [".", "../src"]
 }

@@ -1,9 +1,0 @@
-{
-  "extends": "..",
-  "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable"],
-    "baseUrl": ".",
-    "paths": { "@/*": ["../../public-ts/*"] }
-  },
-  "include": [".", "../../public-ts"]
-}
