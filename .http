@@ -1,12 +1,21 @@
-@address=http://127.0.0.1:4000
+@address=http://LAPTOP-LGDG0D0M:4000
 
-###
+### Get all restaurants
 
 GET {{address}}/restaurants
 
-###
+### Create new user
 
-POST {{address}}/reviews
+POST {{address}}/users
+Content-Type: application/json
+
 {
-  "name": ""
+  "username": "Bob123",
+  "password": "Bob123Builder",
+  "mobile_number": "12345678",
+  "address": "Staub Street 123",
+  "email": "bob_staub_123@mail.com",
+  "first_name": "Bob",
+  "last_name": "Staub",
+  "gender": "M"
 }

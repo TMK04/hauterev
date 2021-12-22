@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import type { ID, ImageURL, Name } from ".";
-=======
-import type { ID, ImageURL, Name } from "./types";
->>>>>>> 3049c2f (feat(knex): add knex.js to build queries & make transactions)
 
 import db from "database";
 

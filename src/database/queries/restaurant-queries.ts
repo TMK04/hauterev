@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { ID, restaurantSchema } from "database/schemas";
-=======
-import type { HelpfulMark, Restaurant, Review } from "database/schemas/types";
->>>>>>> 3049c2f (feat(knex): add knex.js to build queries & make transactions)
 
 import { selectAvgRating, selectReviewsByRestaurantID } from ".";
 
