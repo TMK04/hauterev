@@ -50,7 +50,7 @@ users_router.post("/", ({ body }, res, next) =>
         created_timestamp: new Date()
       });
     } catch (_) {
-      return res.status(403).send("Forbidden; Username taken.");
+      return res.status(403).send("Forbidden: Username taken.");
     }
 
     res.sendStatus(201);

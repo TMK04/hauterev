@@ -19,3 +19,16 @@ Content-Type: application/json
   "last_name": "Staub",
   "gender": "M"
 }
+
+### Get user profile by username
+
+GET {{address}}/users/Bob123
+
+### Get user profile as user
+
+GET {{address}}/users/Bob123
+Content-Type: application/json
+
+{
+  "password": "Bob123Builder"
+}
