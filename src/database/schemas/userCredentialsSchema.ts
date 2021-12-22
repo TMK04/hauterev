@@ -5,7 +5,10 @@ import db from "database";
  */
 export type UserUsername = string;
 /**
+<<<<<<< HEAD
  * Hashed password
+=======
+>>>>>>> 3049c2f (feat(knex): add knex.js to build queries & make transactions)
  * @type {CHAR(60)}
  */
 export type UserPasswordHash = string;
