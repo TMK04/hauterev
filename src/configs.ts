@@ -1,4 +1,4 @@
-import type { ConnectionOptions } from "mysql2";
+import type { Knex } from "knex";
 
 const getEnvVar = (var_key: string) => <string>process.env[var_key];
 
@@ -12,7 +12,7 @@ export const express_config: ExpressConfig = {
   hostname: getEnvVar("HOSTNAME")
 };
 
-export const mysql_config: ConnectionOptions = {
+export const mysql_config: Knex.MySql2ConnectionConfig = {
   host: getEnvVar("SQL_HOST"),
   port: +getEnvVar("SQL_PORT"),
   user: getEnvVar("SQL_USER"),

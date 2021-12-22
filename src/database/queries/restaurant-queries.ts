@@ -1,4 +1,4 @@
-import type { HelpfulMark, Restaurant, Review } from "database/models";
+import type { HelpfulMark, Restaurant, Review } from "database/schemas/types";
 
 import db from "database";
 
