@@ -19,3 +19,11 @@ export const mysql_config: Knex.MySql2ConnectionConfig = {
   password: getEnvVar("SQL_PASSWORD"),
   database: getEnvVar("SQL_DATABASE")
 };
+
+interface BcryptConfig {
+  salt_rounds: number;
+}
+
+export const bcrypt_config: BcryptConfig = {
+  salt_rounds: +getEnvVar("BCRYPT_SALT_ROUNDS")
+};

@@ -1,4 +1,4 @@
-import restaurant_router from "./restaurant-router";
-import review_router from "./review-router";
+import restaurants_router from "./restaurants-router";
+import users_router from "./users-router/router";
 
-export { restaurant_router, review_router };
+export { restaurants_router, users_router };

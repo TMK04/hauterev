@@ -1,1 +1,2 @@
-export * as restaurant_queries from "./restaurant-queries";
+export * from "./restaurant-queries";
+export * from "./user-queries";

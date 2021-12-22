@@ -5,6 +5,7 @@ import db from "database";
  */
 export type UserUsername = string;
 /**
+ * Hashed password
  * @type {CHAR(60)}
  */
 export type UserPasswordHash = string;
