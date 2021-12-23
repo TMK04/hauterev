@@ -1,6 +1,7 @@
 import { compare } from "bcryptjs";
-import { RequestHandler } from "express";
+import { RequestHandler, Router } from "express";
 
+import type { PasswordBody, PostUserBody } from ".";
 import type { Optional, RKRecord } from "types";
 
 import {
@@ -14,9 +15,7 @@ import { userGender, UserUsername } from "database/schemas";
 import { salted_hash } from "helpers";
 import { catchNext, checkBodyProperties } from "routers/helpers";
 
-import users_router, { PasswordBody, PostUserBody } from "./router";
-
-const user_path = "/:username";
+const user_router = Router({ mergeParams: true });
 
 interface UsernameParams {
   username: UserUsername;
@@ -39,7 +38,7 @@ const authenticate: RequestHandler<
 > = ({ body, params }, res, next) =>
   catchNext(async () => {
     const password_hash_result = await selectPasswordHashByUsername(params.username);
-    if (!password_hash_result.length) return res.status(404).send("User not found");
+    if (!password_hash_result[0]) return res.status(404).send("User not found");
 
     if (!body.password) return next();
     const { password } = body;
@@ -50,17 +49,18 @@ const authenticate: RequestHandler<
     next();
   }, next);
 
-users_router.use(user_path, authenticate);
+user_router.use(authenticate);
 
-const user_route = users_router.route(user_path);
+const route = user_router.route("/");
 
-user_route.get<UsernameParams, any, any, any, AuthenticatedLocals>(({ params }, res, next) =>
+route.get<UsernameParams, any, any, any, AuthenticatedLocals>(({ params }, res, next) =>
   catchNext(async () => {
     const { username } = params;
     const user_profile_result = await (res.locals.authenticated
       ? selectUserProfileAsUser(username)
       : selectUserProfileByUsername(username));
     const user_profile = user_profile_result[0];
+    if (!user_profile) throw Error("Missing user");
     res.json(user_profile);
   }, next)
 );
@@ -91,7 +91,7 @@ type PatchUserBody = {
     : IPatchUserBody[K] | null;
 };
 
-user_route.patch<UsernameParams, any, PatchUserBody>(
+route.patch<UsernameParams, any, PatchUserBody>(
   rejectUnauthenticated,
   checkBodyProperties(rk_patch_user_body, [null], (key) => `${key} must not be null`),
   ({ body, params }, res, next) =>
@@ -123,9 +123,11 @@ user_route.patch<UsernameParams, any, PatchUserBody>(
     }, next)
 );
 
-user_route.delete<UsernameParams>(rejectUnauthenticated, ({ params }, res, next) =>
+route.delete<UsernameParams>(rejectUnauthenticated, ({ params }, res, next) =>
   catchNext(async () => {
     await deleteUser(params.username);
     res.sendStatus(204);
   }, next)
 );
+
+export default user_router;

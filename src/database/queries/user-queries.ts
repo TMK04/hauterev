@@ -4,7 +4,6 @@ import db from "database";
 import {
   UserCredentials,
   UserInfo,
-  UserPasswordHash,
   UserUsername,
   userCredentialsSchema,
   userInfoSchema
@@ -54,34 +53,32 @@ export const insertUser = async ({
       .insert(filter({ username, email, first_name, last_name, gender, created_timestamp }));
   });
 
-const byUsername = (qb: Knex.QueryBuilder, username: UserUsername, alias = "username") =>
-  qb.where(alias, username);
-
 export const selectPasswordHashByUsername = (
   username: UserUsername
-): Promise<[{ password_hash: UserPasswordHash }]> =>
-  byUsername(userCredentialsSchema().select("password_hash"), username);
+): Promise<Pick<UserCredentials, "password_hash">[]> =>
+  userCredentialsSchema().select("password_hash").where({ username });
 
-const selectUserInfo = () => userInfoSchema().select();
-
-export const selectUserProfileByUsername = (username: UserUsername): Promise<[UserInfo]> =>
-  byUsername(selectUserInfo(), username);
+export const selectUserProfileByUsername = (username: UserUsername): Promise<UserInfo[]> =>
+  userInfoSchema().select().where({ username });
 
 export const selectUserProfileAsUser = (
   username: UserUsername
-): Promise<[Pick<UserCredentials, "mobile_number" | "address"> & UserInfo]> =>
-  byUsername(
-    userCredentialsSchema()
-      .select(
-        "user_credentials.username",
-        "user_credentials.mobile_number",
-        "user_credentials.address",
-        "user_info.*"
-      )
-      .join(selectUserInfo().as("user_info"), "user_credentials.username", "user_info.username"),
-    username,
-    "user_credentials.username"
-  );
+): Promise<(Pick<UserCredentials, "mobile_number" | "address"> & UserInfo)[]> =>
+  userCredentialsSchema()
+    .select(
+      "user_credentials.username",
+      "user_credentials.mobile_number",
+      "user_credentials.address",
+      "user_info.*"
+    )
+    .join(
+      userInfoSchema().select().where({ username }).as("user_info"),
+      "user_credentials.username",
+      "user_info.username"
+    )
+    .where({
+      "user_credentials.username": username
+    });
 
 type UpdateUserCredentials = Deoptionalized<UserCredentials>;
 type UpdateUserInfo = Deoptionalized<Omit<UserInfo, "username" | "created_timestamp">>;
@@ -100,17 +97,17 @@ export const updateUserProfileAsUser = (
 ) =>
   db.transaction(async (trx) => {
     if (notEmpty(edit_user_credentials))
-      await byUsername(
-        userCredentialsSchema().transacting(trx).update(filter(edit_user_credentials)),
-        username
-      );
+      await userCredentialsSchema()
+        .transacting(trx)
+        .update(filter(edit_user_credentials))
+        .where({ username });
 
     if (notEmpty(edit_user_info))
-      await byUsername(
-        userInfoSchema().transacting(trx).update(filter(edit_user_info)),
-        edit_user_credentials.username ?? username
-      );
+      await userInfoSchema()
+        .transacting(trx)
+        .update(filter(edit_user_info))
+        .where({ username: edit_user_credentials.username ?? username });
   });
 
 export const deleteUser = (username: UserUsername) =>
-  byUsername(userCredentialsSchema().del(), username);
+  userCredentialsSchema().del().where({ username });
