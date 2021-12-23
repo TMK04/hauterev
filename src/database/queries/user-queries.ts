@@ -10,7 +10,28 @@ import {
   userInfoSchema
 } from "database/schemas";
 
-export type RegisterUser = UserCredentials & UserInfo;
+type Data = { [key: string]: unknown };
+
+type Filtered<T> = {
+  [K in keyof T]: Knex.Raw<Exclude<T[K], null | undefined>>;
+};
+
+const filter = <T extends Data>(data: T): Filtered<T> => {
+  const filtered = <Filtered<T>>data;
+  for (const key in filtered) {
+    if (data[key] === undefined) delete filtered[key];
+    if (data[key] === null) filtered[key] = db.raw("DEFAULT");
+  }
+  return filtered;
+};
+
+type Deoptionalized<T> = {
+  [K in keyof Required<T>]: T[K] extends Required<T>[K]
+    ? T[K] | undefined
+    : T[K] | null | undefined;
+};
+
+export type RegisterUser = Deoptionalized<UserCredentials & UserInfo>;
 
 export const registerUser = async ({
   username,
@@ -26,27 +47,29 @@ export const registerUser = async ({
   db.transaction(async (trx) => {
     await userCredentialsSchema()
       .transacting(trx)
-      .insert({ username, password_hash, mobile_number, address });
+      .insert(filter({ username, password_hash, mobile_number, address }));
 
     return userInfoSchema()
       .transacting(trx)
-      .insert({ username, email, first_name, last_name, gender, created_timestamp });
+      .insert(filter({ username, email, first_name, last_name, gender, created_timestamp }));
   });
 
 const byUsername = (qb: Knex.QueryBuilder, username: UserUsername, alias = "username") =>
   qb.where(alias, username);
 
-type PasswordHashResult = [{ password_hash: UserPasswordHash }];
-
-export const getPasswordHashByUsername = (username: UserUsername): Promise<PasswordHashResult> =>
+export const getPasswordHashByUsername = (
+  username: UserUsername
+): Promise<[{ password_hash: UserPasswordHash }]> =>
   byUsername(userCredentialsSchema().select("password_hash"), username);
 
 const selectUserInfo = () => userInfoSchema().select();
 
-export const getUserProfileByUsername = (username: UserUsername) =>
+export const getUserProfileByUsername = (username: UserUsername): Promise<[UserInfo]> =>
   byUsername(selectUserInfo(), username);
 
-export const getUserProfileAsUser = (username: UserUsername) =>
+export const getUserProfileAsUser = (
+  username: UserUsername
+): Promise<[Pick<UserCredentials, "mobile_number" | "address"> & UserInfo]> =>
   byUsername(
     userCredentialsSchema()
       .select(
@@ -59,3 +82,32 @@ export const getUserProfileAsUser = (username: UserUsername) =>
     username,
     "user_credentials.username"
   );
+
+type EditUserCredentials = Deoptionalized<UserCredentials>;
+type EditUserInfo = Deoptionalized<Omit<UserInfo, "username" | "created_timestamp">>;
+
+const notEmpty = (data: Data) => {
+  for (const key in data) {
+    if (data[key] !== undefined) return true;
+  }
+  return false;
+};
+
+export const editUserProfileAsUser = (
+  username: UserUsername,
+  edit_user_credentials: EditUserCredentials,
+  edit_user_info: EditUserInfo
+) =>
+  db.transaction(async (trx) => {
+    if (notEmpty(edit_user_credentials))
+      await byUsername(
+        userCredentialsSchema().transacting(trx).update(filter(edit_user_credentials)),
+        username
+      );
+
+    if (notEmpty(edit_user_info))
+      await byUsername(
+        userInfoSchema().transacting(trx).update(filter(edit_user_info)),
+        edit_user_credentials.username ?? username
+      );
+  });

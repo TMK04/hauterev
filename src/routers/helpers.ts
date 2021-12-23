@@ -3,10 +3,15 @@ import type { NextFunction, RequestHandler } from "express";
 export const catchNext = <T>(fn: () => Promise<T>, next: NextFunction) => fn().catch(next);
 
 export const checkBodyProperties =
-  (keys: readonly string[]): RequestHandler =>
+  (
+    keys: readonly string[],
+    bad_values: any[],
+    messageFn: (key: string) => string
+  ): RequestHandler<any> =>
   ({ body }, res, next) => {
+    if (!Object.keys(body).length) return res.status(400).send("Invalid body");
     for (const key of keys) {
-      if (!body[key]) return res.status(400).send(`No ${key} provided.`);
+      if (bad_values.includes(body[key])) return res.status(400).send(messageFn(key));
     }
     next();
   };

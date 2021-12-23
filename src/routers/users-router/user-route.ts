@@ -1,16 +1,19 @@
 import { compare } from "bcryptjs";
 import { RequestHandler } from "express";
 
-import type { UserUsername } from "database/schemas";
+import type { Optional, RKRecord } from "types";
 
 import {
+  editUserProfileAsUser,
   getPasswordHashByUsername,
   getUserProfileAsUser,
   getUserProfileByUsername
 } from "database/queries";
-import { catchNext } from "routers/helpers";
+import { userGender, UserUsername } from "database/schemas";
+import { salted_hash } from "helpers";
+import { catchNext, checkBodyProperties } from "routers/helpers";
 
-import users_router, { PasswordBody } from "./router";
+import users_router, { PasswordBody, PostUserBody } from "./router";
 
 const user_path = "/:username";
 
@@ -25,21 +28,24 @@ interface AuthenticatedLocals {
 /**
  * Check if provided password matches user password,
  * or end the request if no such user exists
- *
- * @param {PasswordBody} req.body
- * @param res - locals stores authenticated boolean; send ends the request
- * @param next
  */
-const authenticate: RequestHandler<UsernameParams> = ({ body, params }, res, next) =>
+const authenticate: RequestHandler<
+  UsernameParams,
+  any,
+  Optional<PasswordBody>,
+  any,
+  AuthenticatedLocals
+> = ({ body, params }, res, next) =>
   catchNext(async () => {
-    const password = (<PasswordBody>body).password;
-    if (!password) return next();
+    if (!body.password) return next();
+    const { password } = body;
+    delete body.password;
 
     const password_hash_result = await getPasswordHashByUsername(params.username);
-    if (!password_hash_result.length) return res.status(404).send("User not found.");
+    if (!password_hash_result.length) return res.status(404).send("User not found");
 
     const password_hash = password_hash_result[0].password_hash;
-    (<AuthenticatedLocals>res.locals).authenticated = await compare(password, password_hash);
+    res.locals.authenticated = await compare(password, password_hash);
     next();
   }, next);
 
@@ -47,13 +53,71 @@ users_router.use(user_path, authenticate);
 
 const user_route = users_router.route(user_path);
 
-user_route.get(({ params }, res, next) =>
+user_route.get<UsernameParams, any, any, any, AuthenticatedLocals>(({ params }, res, next) =>
   catchNext(async () => {
     const { username } = params;
-    const user_profile_result = await ((<AuthenticatedLocals>res.locals).authenticated
+    const user_profile_result = await (res.locals.authenticated
       ? getUserProfileAsUser(username)
       : getUserProfileByUsername(username));
     const user_profile = user_profile_result[0];
     res.json(user_profile);
   }, next)
+);
+
+/**
+ * End the request if res.locals.authentcated is falsy;
+ * Is synchronous - no extra error handling is needed
+ *
+ * @param res - sendStatus(403) called if unauthenticated
+ * @param next - called if authenticated
+ * @see authenticate
+ */
+const rejectUnauthenticated: RequestHandler<any, any, any, any, AuthenticatedLocals> = (
+  _,
+  res,
+  next
+) => (res.locals.authenticated ? next() : res.status(403).send("Invalid password"));
+
+const rk_patch_user_body = <const>["username", "new_password", "email", "last_name"];
+
+interface IPatchUserBody extends PostUserBody, RKRecord<typeof rk_patch_user_body> {
+  new_password: string;
+}
+
+type PatchUserBody = {
+  [K in keyof Required<IPatchUserBody>]?: IPatchUserBody[K] extends Required<IPatchUserBody>[K]
+    ? IPatchUserBody[K]
+    : IPatchUserBody[K] | null;
+};
+
+user_route.patch<UsernameParams, any, PatchUserBody>(
+  rejectUnauthenticated,
+  checkBodyProperties(rk_patch_user_body, [null], (key) => `${key} must not be null`),
+  ({ body, params }, res, next) =>
+    catchNext(async () => {
+      const {
+        username,
+        new_password,
+        mobile_number,
+        address,
+        email,
+        first_name,
+        last_name,
+        gender
+      } = body;
+      const password_hash = new_password && (await salted_hash(new_password));
+
+      await editUserProfileAsUser(
+        params.username,
+        {
+          username,
+          password_hash,
+          mobile_number,
+          address
+        },
+        { email, first_name, last_name, gender: <undefined>gender && userGender(gender) }
+      );
+
+      res.sendStatus(205);
+    }, next)
 );
