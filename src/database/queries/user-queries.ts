@@ -111,3 +111,6 @@ export const updateUserProfileAsUser = (
         edit_user_credentials.username ?? username
       );
   });
+
+export const deleteUser = (username: UserUsername) =>
+  byUsername(userCredentialsSchema().del(), username);
