@@ -1,18 +1,16 @@
 import { compare } from "bcryptjs";
 import { RequestHandler } from "express";
 
-import type { PasswordBody } from "./types";
-import type { UserUsername } from "database/schemas/types";
-import type { Optional } from "types";
+import type { UserUsername } from "database/schemas";
 
 import {
   getPasswordHashByUsername,
   getUserProfileAsUser,
   getUserProfileByUsername
 } from "database/queries";
-import { catchNext } from "routers/middleware-wrappers";
+import { catchNext } from "routers/helpers";
 
-import users_router from "./router";
+import users_router, { PasswordBody } from "./router";
 
 const user_path = "/:username";
 
@@ -34,7 +32,7 @@ interface AuthenticatedLocals {
  */
 const authenticate: RequestHandler<UsernameParams> = ({ body, params }, res, next) =>
   catchNext(async () => {
-    const password = (<Optional<PasswordBody>>body).password;
+    const password = (<PasswordBody>body).password;
     if (!password) return next();
 
     const password_hash_result = await getPasswordHashByUsername(params.username);

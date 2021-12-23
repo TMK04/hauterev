@@ -1,4 +1,4 @@
-import type { Name, Timestamp, UserUsername } from "./types";
+import type { Name, Timestamp, UserUsername } from ".";
 
 import db from "database";
 
@@ -6,10 +6,16 @@ import db from "database";
  * @type {VARCHAR(255)}
  */
 export type UserEmail = string;
+
+export const user_genders = <const>["F", "M", "O"];
+
 /**
  * @type {CHAR(1)}
  */
-export type UserGender = "F" | "M" | "O";
+export type UserGender = typeof user_genders[number];
+
+export const userGender = (gender: string | undefined) =>
+  user_genders.includes(<UserGender>gender) ? <UserGender>gender : "O";
 
 export interface UserInfo {
   username: UserUsername;

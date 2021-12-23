@@ -1,4 +1,4 @@
-import type { ID, Timestamp, UserUsername } from "./types";
+import type { ID, Timestamp, UserUsername } from ".";
 
 import db from "database";
 

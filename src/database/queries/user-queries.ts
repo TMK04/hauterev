@@ -1,14 +1,14 @@
 import { Knex } from "knex";
 
-import type {
+import db from "database";
+import {
   UserCredentials,
   UserInfo,
   UserPasswordHash,
-  UserUsername
-} from "database/schemas/types";
-
-import db from "database";
-import { userCredentialsSchema, userInfoSchema } from "database/schemas";
+  UserUsername,
+  userCredentialsSchema,
+  userInfoSchema
+} from "database/schemas";
 
 export type RegisterUser = UserCredentials & UserInfo;
 

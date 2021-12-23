@@ -1,40 +1,41 @@
 import { hash } from "bcryptjs";
 import { Router } from "express";
 
-import type { PasswordBody } from "./types";
-import type {
-  Name,
-  UserAddress,
-  UserEmail,
-  UserGender,
-  UserMobileNumber,
-  UserUsername
-} from "database/schemas/types";
+import type { RKRecord } from "types";
 
 import { bcrypt_config } from "configs";
 import { registerUser } from "database/queries";
-import { catchNext } from "routers/middleware-wrappers";
+import { userGender } from "database/schemas";
+import { catchNext, checkBodyProperties } from "routers/helpers";
 
 const users_router = Router();
 
-interface LoginBody extends PasswordBody {
-  username: UserUsername;
+const rk_password_body = <const>["password"];
+
+/**
+ * Plain text password
+ */
+export type PasswordBody = RKRecord<typeof rk_password_body>;
+
+const rk_login_body = <const>["username", ...rk_password_body];
+
+// type LoginBody = RKRecord<typeof rk_login_body>;
+
+const rk_post_user_body = <const>["email", "last_name", ...rk_login_body];
+
+export interface PostUserBody extends RKRecord<typeof rk_post_user_body> {
+  mobile_number?: string;
+  address?: string;
+  first_name?: string;
+  gender?: string;
 }
 
-export interface PostUserBody extends LoginBody {
-  mobile_number?: UserMobileNumber;
-  address?: UserAddress;
-  email: UserEmail;
-  first_name?: Name;
-  last_name: Name;
-  gender: UserGender;
-}
-
-users_router.post("/", ({ body }, res, next) =>
+users_router.post("/", checkBodyProperties(rk_post_user_body), ({ body }, res, next) =>
   catchNext(async () => {
     const { username, password, mobile_number, address, email, first_name, last_name, gender } = <
       PostUserBody
     >body;
+
     const password_hash = await hash(password, bcrypt_config.salt_rounds);
 
     try {
@@ -46,11 +47,11 @@ users_router.post("/", ({ body }, res, next) =>
         email,
         first_name,
         last_name,
-        gender,
+        gender: userGender(gender),
         created_timestamp: new Date()
       });
     } catch (_) {
-      return res.status(403).send("Forbidden: Username taken.");
+      return res.status(403).send("Username taken.");
     }
 
     res.sendStatus(201);

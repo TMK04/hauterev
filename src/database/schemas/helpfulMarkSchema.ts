@@ -1,4 +1,4 @@
-import type { ID, UserUsername } from "./types";
+import type { ID, UserUsername } from ".";
 
 import db from "database";
 
