@@ -1,9 +1,9 @@
 import { Router } from "express";
 
-import { getRestaurants } from "database/queries";
+import { selectRestaurants } from "database/queries";
 
 const restaurants_router = Router();
 
-restaurants_router.get("/", async (_, res) => res.json(await getRestaurants()));
+restaurants_router.get("/", async (_, res) => res.json(await selectRestaurants()));
 
 export default restaurants_router;

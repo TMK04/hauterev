@@ -2,11 +2,11 @@ import type { HelpfulMark, Restaurant, Review } from "database/schemas";
 
 import db from "database";
 
-interface GetRestaurantsOptions {
+interface SelectRestaurantsOptions {
   id?: number;
 }
 
-export const getRestaurants = ({ id }: GetRestaurantsOptions = {}) => {
+export const selectRestaurants = ({ id }: SelectRestaurantsOptions = {}) => {
   let query = db<Restaurant>("restaurant")
     .select("restaurant.*", "reviews.avg_rating", "reviews.reviews")
     .leftJoin(
