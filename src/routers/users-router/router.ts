@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import type { RKRecord } from "types";
 
-import { registerUser } from "database/queries";
+import { insertUser } from "database/queries";
 import { userGender } from "database/schemas";
 import { salted_hash } from "helpers";
 import { catchNext, checkBodyProperties } from "routers/helpers";
@@ -39,7 +39,7 @@ users_router.post<any, any, any, PostUserBody>(
       const password_hash = await salted_hash(password);
 
       try {
-        await registerUser({
+        await insertUser({
           username,
           password_hash,
           mobile_number,

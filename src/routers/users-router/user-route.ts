@@ -4,10 +4,10 @@ import { RequestHandler } from "express";
 import type { Optional, RKRecord } from "types";
 
 import {
-  editUserProfileAsUser,
-  getPasswordHashByUsername,
-  getUserProfileAsUser,
-  getUserProfileByUsername
+  updateUserProfileAsUser,
+  selectPasswordHashByUsername,
+  selectUserProfileAsUser,
+  selectUserProfileByUsername
 } from "database/queries";
 import { userGender, UserUsername } from "database/schemas";
 import { salted_hash } from "helpers";
@@ -41,7 +41,7 @@ const authenticate: RequestHandler<
     const { password } = body;
     delete body.password;
 
-    const password_hash_result = await getPasswordHashByUsername(params.username);
+    const password_hash_result = await selectPasswordHashByUsername(params.username);
     if (!password_hash_result.length) return res.status(404).send("User not found");
 
     const password_hash = password_hash_result[0].password_hash;
@@ -57,8 +57,8 @@ user_route.get<UsernameParams, any, any, any, AuthenticatedLocals>(({ params }, 
   catchNext(async () => {
     const { username } = params;
     const user_profile_result = await (res.locals.authenticated
-      ? getUserProfileAsUser(username)
-      : getUserProfileByUsername(username));
+      ? selectUserProfileAsUser(username)
+      : selectUserProfileByUsername(username));
     const user_profile = user_profile_result[0];
     res.json(user_profile);
   }, next)
@@ -107,7 +107,7 @@ user_route.patch<UsernameParams, any, PatchUserBody>(
       } = body;
       const password_hash = new_password && (await salted_hash(new_password));
 
-      await editUserProfileAsUser(
+      await updateUserProfileAsUser(
         params.username,
         {
           username,

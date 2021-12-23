@@ -31,9 +31,9 @@ type Deoptionalized<T> = {
     : T[K] | null | undefined;
 };
 
-export type RegisterUser = Deoptionalized<UserCredentials & UserInfo>;
+export type InsertUser = Deoptionalized<UserCredentials & UserInfo>;
 
-export const registerUser = async ({
+export const insertUser = async ({
   username,
   password_hash,
   mobile_number,
@@ -43,7 +43,7 @@ export const registerUser = async ({
   last_name,
   gender,
   created_timestamp
-}: RegisterUser) =>
+}: InsertUser) =>
   db.transaction(async (trx) => {
     await userCredentialsSchema()
       .transacting(trx)
@@ -57,17 +57,17 @@ export const registerUser = async ({
 const byUsername = (qb: Knex.QueryBuilder, username: UserUsername, alias = "username") =>
   qb.where(alias, username);
 
-export const getPasswordHashByUsername = (
+export const selectPasswordHashByUsername = (
   username: UserUsername
 ): Promise<[{ password_hash: UserPasswordHash }]> =>
   byUsername(userCredentialsSchema().select("password_hash"), username);
 
 const selectUserInfo = () => userInfoSchema().select();
 
-export const getUserProfileByUsername = (username: UserUsername): Promise<[UserInfo]> =>
+export const selectUserProfileByUsername = (username: UserUsername): Promise<[UserInfo]> =>
   byUsername(selectUserInfo(), username);
 
-export const getUserProfileAsUser = (
+export const selectUserProfileAsUser = (
   username: UserUsername
 ): Promise<[Pick<UserCredentials, "mobile_number" | "address"> & UserInfo]> =>
   byUsername(
@@ -83,8 +83,8 @@ export const getUserProfileAsUser = (
     "user_credentials.username"
   );
 
-type EditUserCredentials = Deoptionalized<UserCredentials>;
-type EditUserInfo = Deoptionalized<Omit<UserInfo, "username" | "created_timestamp">>;
+type UpdateUserCredentials = Deoptionalized<UserCredentials>;
+type UpdateUserInfo = Deoptionalized<Omit<UserInfo, "username" | "created_timestamp">>;
 
 const notEmpty = (data: Data) => {
   for (const key in data) {
@@ -93,10 +93,10 @@ const notEmpty = (data: Data) => {
   return false;
 };
 
-export const editUserProfileAsUser = (
+export const updateUserProfileAsUser = (
   username: UserUsername,
-  edit_user_credentials: EditUserCredentials,
-  edit_user_info: EditUserInfo
+  edit_user_credentials: UpdateUserCredentials,
+  edit_user_info: UpdateUserInfo
 ) =>
   db.transaction(async (trx) => {
     if (notEmpty(edit_user_credentials))
