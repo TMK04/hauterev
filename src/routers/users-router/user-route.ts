@@ -7,7 +7,8 @@ import {
   updateUserProfileAsUser,
   selectPasswordHashByUsername,
   selectUserProfileAsUser,
-  selectUserProfileByUsername
+  selectUserProfileByUsername,
+  deleteUser
 } from "database/queries";
 import { userGender, UserUsername } from "database/schemas";
 import { salted_hash } from "helpers";
@@ -37,12 +38,12 @@ const authenticate: RequestHandler<
   AuthenticatedLocals
 > = ({ body, params }, res, next) =>
   catchNext(async () => {
+    const password_hash_result = await selectPasswordHashByUsername(params.username);
+    if (!password_hash_result.length) return res.status(404).send("User not found");
+
     if (!body.password) return next();
     const { password } = body;
     delete body.password;
-
-    const password_hash_result = await selectPasswordHashByUsername(params.username);
-    if (!password_hash_result.length) return res.status(404).send("User not found");
 
     const password_hash = password_hash_result[0].password_hash;
     res.locals.authenticated = await compare(password, password_hash);
@@ -120,4 +121,11 @@ user_route.patch<UsernameParams, any, PatchUserBody>(
 
       res.sendStatus(205);
     }, next)
+);
+
+user_route.delete<UsernameParams>(rejectUnauthenticated, ({ params }, res, next) =>
+  catchNext(async () => {
+    await deleteUser(params.username);
+    res.sendStatus(204);
+  }, next)
 );
