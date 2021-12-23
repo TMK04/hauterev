@@ -1,11 +1,10 @@
-import { hash } from "bcryptjs";
 import { Router } from "express";
 
 import type { RKRecord } from "types";
 
-import { bcrypt_config } from "configs";
 import { registerUser } from "database/queries";
 import { userGender } from "database/schemas";
+import { salted_hash } from "helpers";
 import { catchNext, checkBodyProperties } from "routers/helpers";
 
 const users_router = Router();
@@ -27,35 +26,36 @@ export interface PostUserBody extends RKRecord<typeof rk_post_user_body> {
   mobile_number?: string;
   address?: string;
   first_name?: string;
-  gender?: string;
+  gender: string;
 }
 
-users_router.post("/", checkBodyProperties(rk_post_user_body), ({ body }, res, next) =>
-  catchNext(async () => {
-    const { username, password, mobile_number, address, email, first_name, last_name, gender } = <
-      PostUserBody
-    >body;
+users_router.post<any, any, any, PostUserBody>(
+  "/",
+  checkBodyProperties(rk_post_user_body, [undefined, null, ""], (key) => `${key} required`),
+  ({ body }, res, next) =>
+    catchNext(async () => {
+      const { username, password, mobile_number, address, email, first_name, last_name, gender } =
+        body;
+      const password_hash = await salted_hash(password);
 
-    const password_hash = await hash(password, bcrypt_config.salt_rounds);
+      try {
+        await registerUser({
+          username,
+          password_hash,
+          mobile_number,
+          address,
+          email,
+          first_name,
+          last_name,
+          gender: userGender(gender),
+          created_timestamp: new Date()
+        });
+      } catch (_) {
+        return res.status(403).send("Username taken");
+      }
 
-    try {
-      await registerUser({
-        username,
-        password_hash,
-        mobile_number,
-        address,
-        email,
-        first_name,
-        last_name,
-        gender: userGender(gender),
-        created_timestamp: new Date()
-      });
-    } catch (_) {
-      return res.status(403).send("Username taken.");
-    }
-
-    res.sendStatus(201);
-  }, next)
+      res.sendStatus(201);
+    }, next)
 );
 
 export default users_router;

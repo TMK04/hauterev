@@ -32,3 +32,13 @@ Content-Type: application/json
 {
   "password": "Bob123Builder"
 }
+
+### Edit user profile as user
+
+PATCH {{address}}/users/Bob123
+Content-Type: application/json
+
+{
+  "password": "Bob123Builder",
+  "mobile_number": "12345678"
+}
