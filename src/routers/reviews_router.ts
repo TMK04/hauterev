@@ -4,7 +4,9 @@ import { RequestHandler, Router } from "express";
 import type { ID, UserUsername } from "database/schemas";
 
 import {
+  deleteHelpfulMark,
   deleteReviewByID,
+  insertHelpfulMark,
   InsertReview,
   insertReview,
   selectPasswordHashByUsername,
@@ -138,6 +140,30 @@ reviews_router.delete<IDParams, any, LoginBody>(
       await deleteReviewByID(+params.id);
       res.sendStatus(204);
     }, next)
+);
+
+// ------------------- //
+// * /reviews/:id/hm * //
+// ------------------- //
+
+reviews_router.use<IDParams, any, Partial<LoginBody>>("/:id/hm", rejectUnauthenticated);
+
+reviews_router.post<IDParams, any, LoginBody>("/:id/hm", ({ body, params }, res, next) =>
+  catchNext(async () => {
+    try {
+      await insertHelpfulMark({ review_id: +params.id, username: body.username });
+    } catch (_) {
+      return res.status(403).send("Review already marked as helpful");
+    }
+    res.sendStatus(201);
+  }, next)
+);
+
+reviews_router.delete<IDParams, any, LoginBody>("/:id/hm", ({ body, params }, res, next) =>
+  catchNext(async () => {
+    await deleteHelpfulMark({ review_id: +params.id, username: body.username });
+    res.sendStatus(204);
+  }, next)
 );
 
 export default reviews_router;

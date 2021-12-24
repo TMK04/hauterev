@@ -1,7 +1,7 @@
 import db from "database";
 import { ID, Review, Timestamp, UserUsername, reviewSchema } from "database/schemas";
 
-import { selectHelpfulMarksCount } from ".";
+import { selectHelpfulMarksHelpfulCount } from ".";
 import { filter, notEmpty } from "./helpers";
 import { Unpartial } from "./types";
 
@@ -52,7 +52,7 @@ export const selectReviewsByRestaurantID = (restaurant_id: ID) =>
       )
     )
     .avg({ avg_rating: "rating" })
-    .leftJoin(selectHelpfulMarksCount(), "review.id", "helpful_marks.review_id")
+    .leftJoin(selectHelpfulMarksHelpfulCount(), "review.id", "helpful_marks.review_id")
     .where({ restaurant_id })
     .groupBy("restaurant_id")
     .as("reviews");
@@ -69,7 +69,7 @@ export const selectReviewsByUsername = (username: UserUsername) =>
         )
       )
     )
-    .leftJoin(selectHelpfulMarksCount(), "review.id", "helpful_marks.review_id")
+    .leftJoin(selectHelpfulMarksHelpfulCount(), "review.id", "helpful_marks.review_id")
     .where({ username })
     .groupBy("username")
     .as("reviews");
@@ -77,7 +77,7 @@ export const selectReviewsByUsername = (username: UserUsername) =>
 export const selectReviewByID = (id: ID) =>
   reviewSchema()
     .select("review.*", "helpful_marks.helpful_count")
-    .leftJoin(selectHelpfulMarksCount(), "review.id", "helpful_marks.review_id")
+    .leftJoin(selectHelpfulMarksHelpfulCount(), "review.id", "helpful_marks.review_id")
     .where({ "review.id": id });
 
 /**
