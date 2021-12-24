@@ -1,7 +1,12 @@
 import { compare } from "bcryptjs";
-import { Router } from "express";
+import { RequestHandler, Router } from "express";
 
-import { InsertReview, insertReview, selectPasswordHashByUsername } from "database/queries";
+import {
+  InsertReview,
+  insertReview,
+  selectPasswordHashByUsername,
+  selectReviewByID
+} from "database/queries";
 import { catchNext, checkBodyProperties } from "routers/helpers";
 
 import { LoginBody, resInvalidPassword, resInvalidUsername } from "./users-router";
@@ -12,7 +17,7 @@ const reviews_router = Router();
 // * /reviews * //
 // ------------ //
 
-reviews_router.use<any, any, Partial<LoginBody>>(({ body }, res, next) =>
+const authenticate: RequestHandler<any, any, Partial<LoginBody>> = ({ body }, res, next) =>
   catchNext(async () => {
     if (!body.username) return resInvalidUsername(res);
     if (!body.password) return resInvalidPassword(res, 403);
@@ -25,8 +30,7 @@ reviews_router.use<any, any, Partial<LoginBody>>(({ body }, res, next) =>
     const password_hash = password_hash_result[0].password_hash;
     if (await compare(password, password_hash)) next();
     else resInvalidPassword(res, 403);
-  }, next)
-);
+  }, next);
 
 /**
  * Keys belonging to @type {Required} Properties of @see PostReviewBody
@@ -47,6 +51,7 @@ type PostReviewBody = {
 reviews_router.post<any, any, any, PostReviewBody>(
   "/",
   checkBodyProperties(rk_post_review_body),
+  authenticate,
   ({ body }, res, next) =>
     catchNext(async () => {
       const { restaurant_id, username, rating, title, description, image_url } = body;
@@ -63,6 +68,16 @@ reviews_router.post<any, any, any, PostReviewBody>(
 
       res.sendStatus(201);
     }, next)
+);
+
+reviews_router.get("/:id", ({ params }, res, next) =>
+  catchNext(async () => {
+    const { id } = params;
+    const review_result = await selectReviewByID(+id);
+    const review = review_result[0];
+    if (!review) return res.status(404).send("Missing review");
+    res.json(review);
+  }, next)
 );
 
 export default reviews_router;
