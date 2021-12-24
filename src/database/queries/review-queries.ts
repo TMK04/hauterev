@@ -1,7 +1,15 @@
+import type { Unpartial } from "./types";
+
 import db from "database";
-import { ID, reviewSchema, UserUsername } from "database/schemas";
+import { ID, Review, reviewSchema, UserUsername } from "database/schemas";
 
 import { selectHelpfulMarksCount } from ".";
+import { filter } from "./helpers";
+
+export type InsertReview = Unpartial<Omit<Review, "id" | "edited_timestamp">>;
+
+export const insertReview = async (insert_review: InsertReview) =>
+  reviewSchema().insert(filter(insert_review));
 
 export const selectAvgRating = () =>
   reviewSchema()
@@ -66,3 +74,9 @@ export const selectReviewsByUsername = (username: UserUsername) =>
     .where({ username })
     .groupBy("username")
     .as("reviews");
+
+export const selectReviewByID = (id: ID) =>
+  reviewSchema()
+    .select("review.*", "helpful_marks.count")
+    .leftJoin(selectHelpfulMarksCount(), "review.id", "helpful_marks.review_id")
+    .where({ "review.id": id });

@@ -6,8 +6,8 @@ export const checkBodyProperties =
   (
     keys: readonly string[],
     bad_values: any[],
-    messageFn: (key: string) => string
-  ): RequestHandler<any> =>
+    messageFn = (key: string) => `${key} required`
+  ): RequestHandler<any, any, any, any> =>
   ({ body }, res, next) => {
     if (!Object.keys(body).length) return res.status(400).send("Invalid body");
     for (const key of keys) {

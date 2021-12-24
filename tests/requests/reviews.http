@@ -1,0 +1,15 @@
+@route={{address}}/users/Bob123/reviews
+
+### Create new review
+
+POST {{route}}
+Content-Type: application/json
+
+{
+  "password": "Bob123Builder",
+  "restaurant_id": 1,
+  "rating": 2.5,
+  "title": "Night at Prive",
+  "description": "Prive go there. Food is great.",
+  "image_url": "https://marinakeppelbay.com/wp-content/uploads/2020/09/BK-banner-image.jpg"
+}

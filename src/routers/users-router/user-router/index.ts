@@ -3,6 +3,7 @@ import { RequestHandler, Router } from "express";
 
 import type { RKRecord } from "routers/types";
 
+import { PasswordBody, PostUserBody, resInvalidPassword, resInvalidUsername } from "..";
 import {
   updateUserProfileAsUser,
   selectPasswordHashByUsername,
@@ -14,11 +15,11 @@ import { userGender, UserUsername } from "database/schemas";
 import { salted_hash } from "helpers";
 import { catchNext, checkBodyProperties } from "routers/helpers";
 
-import { PasswordBody, PostUserBody, resInvalidPassword, resInvalidUsername } from ".";
+import reviews_router from "./reviews_router";
 
 const user_router = Router({ mergeParams: true });
 
-interface UsernameParams {
+export interface UsernameParams {
   username: UserUsername;
 }
 
@@ -52,9 +53,7 @@ const authenticate: RequestHandler<
 
 user_router.use(authenticate);
 
-const route = user_router.route("/");
-
-route.get<UsernameParams, any, any, any, AuthenticatedLocals>(({ params }, res, next) =>
+user_router.get<UsernameParams, any, any, any, AuthenticatedLocals>("/", ({ params }, res, next) =>
   catchNext(async () => {
     const { username } = params;
     const user_profile_result = await (res.locals.authenticated
@@ -70,7 +69,7 @@ route.get<UsernameParams, any, any, any, AuthenticatedLocals>(({ params }, res, 
  * End the request if res.locals.authentcated is falsy;
  * Is synchronous - no extra error handling is needed
  *
- * @param res - sendStatus(403) called if unauthenticated
+ * @param res - @see resInvalidPassword called if unauthenticated
  * @param next - called if authenticated
  * @see authenticate
  */
@@ -89,7 +88,8 @@ type PatchUserBody<T = PostUserBody & RKRecord<typeof nn_patch_user_body>> = {
   [K in keyof Required<T>]?: T[K] extends Required<T>[K] ? T[K] : T[K] | null;
 };
 
-route.patch<UsernameParams, any, PatchUserBody>(
+user_router.patch<UsernameParams, any, PatchUserBody>(
+  "/",
   rejectUnauthenticated,
   checkBodyProperties(nn_patch_user_body, [null], (key) => `${key} must not be null`),
   ({ body, params }, res, next) =>
@@ -121,11 +121,13 @@ route.patch<UsernameParams, any, PatchUserBody>(
     }, next)
 );
 
-route.delete<UsernameParams>(rejectUnauthenticated, ({ params }, res, next) =>
+user_router.delete<UsernameParams>("/", rejectUnauthenticated, ({ params }, res, next) =>
   catchNext(async () => {
     await deleteUser(params.username);
     res.sendStatus(204);
   }, next)
 );
+
+user_router.use("/reviews", rejectUnauthenticated, reviews_router);
 
 export default user_router;

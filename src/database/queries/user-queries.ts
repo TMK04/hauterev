@@ -1,4 +1,4 @@
-import { Knex } from "knex";
+import type { Unpartial } from "./types";
 
 import db from "database";
 import {
@@ -9,26 +9,7 @@ import {
   userInfoSchema
 } from "database/schemas";
 
-type Data = { [key: string]: unknown };
-
-type Raw<T> = {
-  [K in keyof T]: Knex.Raw<Exclude<T[K], null | undefined>>;
-};
-
-const filter = <T extends Data>(data: T): Raw<T> => {
-  const filtered = <Raw<T>>data;
-  for (const key in filtered) {
-    if (data[key] === undefined) delete filtered[key];
-    if (data[key] === null) filtered[key] = db.raw("DEFAULT");
-  }
-  return filtered;
-};
-
-type Unpartial<T> = {
-  [K in keyof Required<T>]: T[K] extends Required<T>[K]
-    ? T[K] | undefined
-    : T[K] | null | undefined;
-};
+import { filter, notEmpty } from "./helpers";
 
 export type InsertUser = Unpartial<UserCredentials & UserInfo>;
 
@@ -83,30 +64,23 @@ export const selectUserProfileAsUser = (
 type UpdateUserCredentials = Unpartial<UserCredentials>;
 type UpdateUserInfo = Unpartial<Omit<UserInfo, "username" | "created_timestamp">>;
 
-const notEmpty = (data: Data) => {
-  for (const key in data) {
-    if (data[key] !== undefined) return true;
-  }
-  return false;
-};
-
 export const updateUserProfileAsUser = (
   username: UserUsername,
-  edit_user_credentials: UpdateUserCredentials,
-  edit_user_info: UpdateUserInfo
+  update_user_credentials: UpdateUserCredentials,
+  update_user_info: UpdateUserInfo
 ) =>
   db.transaction(async (trx) => {
-    if (notEmpty(edit_user_credentials))
+    if (notEmpty(update_user_credentials))
       await userCredentialsSchema()
         .transacting(trx)
-        .update(filter(edit_user_credentials))
+        .update(filter(update_user_credentials))
         .where({ username });
 
-    if (notEmpty(edit_user_info))
+    if (notEmpty(update_user_info))
       await userInfoSchema()
         .transacting(trx)
-        .update(filter(edit_user_info))
-        .where({ username: edit_user_credentials.username ?? username });
+        .update(filter(update_user_info))
+        .where({ username: update_user_credentials.username ?? username });
   });
 
 export const deleteUser = (username: UserUsername) =>
