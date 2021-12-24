@@ -1,8 +1,7 @@
 import { compare } from "bcryptjs";
 import { RequestHandler, Router } from "express";
 
-import type { PasswordBody, PostUserBody } from ".";
-import type { Optional, RKRecord } from "types";
+import type { RKRecord } from "routers/types";
 
 import {
   updateUserProfileAsUser,
@@ -14,6 +13,8 @@ import {
 import { userGender, UserUsername } from "database/schemas";
 import { salted_hash } from "helpers";
 import { catchNext, checkBodyProperties } from "routers/helpers";
+
+import { PasswordBody, PostUserBody, resInvalidPassword, resInvalidUsername } from ".";
 
 const user_router = Router({ mergeParams: true });
 
@@ -32,13 +33,13 @@ interface AuthenticatedLocals {
 const authenticate: RequestHandler<
   UsernameParams,
   any,
-  Optional<PasswordBody>,
+  Partial<PasswordBody>,
   any,
   AuthenticatedLocals
 > = ({ body, params }, res, next) =>
   catchNext(async () => {
     const password_hash_result = await selectPasswordHashByUsername(params.username);
-    if (!password_hash_result[0]) return res.status(404).send("User not found");
+    if (!password_hash_result[0]) return resInvalidUsername(res);
 
     if (!body.password) return next();
     const { password } = body;
@@ -77,7 +78,7 @@ const rejectUnauthenticated: RequestHandler<any, any, any, any, AuthenticatedLoc
   _,
   res,
   next
-) => (res.locals.authenticated ? next() : res.status(403).send("Invalid password"));
+) => (res.locals.authenticated ? next() : resInvalidPassword(res, 403));
 
 const rk_patch_user_body = <const>["username", "new_password", "email", "last_name"];
 
