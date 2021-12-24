@@ -5,7 +5,7 @@ export const catchNext = <T>(fn: () => Promise<T>, next: NextFunction) => fn().c
 export const checkBodyProperties =
   (
     keys: readonly string[],
-    bad_values: any[],
+    bad_values: any[] = [undefined, null, ""],
     messageFn = (key: string) => `${key} required`
   ): RequestHandler<any, any, any, any> =>
   ({ body }, res, next) => {

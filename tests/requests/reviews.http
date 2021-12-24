@@ -1,4 +1,4 @@
-@route={{address}}/users/Bob123/reviews
+@route={{address}}/reviews
 
 ### Create new review
 
@@ -7,6 +7,7 @@ Content-Type: application/json
 
 {
   "password": "Bob123Builder",
+  "username": "Bob123",
   "restaurant_id": 1,
   "rating": 2.5,
   "title": "Night at Prive",

@@ -1,15 +1,12 @@
-import type { Unpartial } from "./types";
-
 import db from "database";
 import { ID, Review, reviewSchema, UserUsername } from "database/schemas";
 
 import { selectHelpfulMarksCount } from ".";
-import { filter } from "./helpers";
 
-export type InsertReview = Unpartial<Omit<Review, "id" | "edited_timestamp">>;
+export type InsertReview = Omit<Review, "id" | "edited_timestamp">;
 
 export const insertReview = async (insert_review: InsertReview) =>
-  reviewSchema().insert(filter(insert_review));
+  reviewSchema().insert(insert_review);
 
 export const selectAvgRating = () =>
   reviewSchema()
