@@ -11,12 +11,12 @@ import {
 
 type Data = { [key: string]: unknown };
 
-type Filtered<T> = {
+type Raw<T> = {
   [K in keyof T]: Knex.Raw<Exclude<T[K], null | undefined>>;
 };
 
-const filter = <T extends Data>(data: T): Filtered<T> => {
-  const filtered = <Filtered<T>>data;
+const filter = <T extends Data>(data: T): Raw<T> => {
+  const filtered = <Raw<T>>data;
   for (const key in filtered) {
     if (data[key] === undefined) delete filtered[key];
     if (data[key] === null) filtered[key] = db.raw("DEFAULT");
@@ -24,13 +24,13 @@ const filter = <T extends Data>(data: T): Filtered<T> => {
   return filtered;
 };
 
-type Deoptionalized<T> = {
+type Unpartial<T> = {
   [K in keyof Required<T>]: T[K] extends Required<T>[K]
     ? T[K] | undefined
     : T[K] | null | undefined;
 };
 
-export type InsertUser = Deoptionalized<UserCredentials & UserInfo>;
+export type InsertUser = Unpartial<UserCredentials & UserInfo>;
 
 export const insertUser = async ({
   username,
@@ -80,8 +80,8 @@ export const selectUserProfileAsUser = (
       "user_credentials.username": username
     });
 
-type UpdateUserCredentials = Deoptionalized<UserCredentials>;
-type UpdateUserInfo = Deoptionalized<Omit<UserInfo, "username" | "created_timestamp">>;
+type UpdateUserCredentials = Unpartial<UserCredentials>;
+type UpdateUserInfo = Unpartial<Omit<UserInfo, "username" | "created_timestamp">>;
 
 const notEmpty = (data: Data) => {
   for (const key in data) {

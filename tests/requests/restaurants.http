@@ -1,0 +1,9 @@
+@route={{address}}/restaurants
+
+### Get all restaurants
+
+GET {{route}}
+
+### Get restaurant by ID
+
+GET {{route}}/1

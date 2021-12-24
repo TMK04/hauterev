@@ -1,6 +1,7 @@
 import db from "database";
-import { selectHelpfulMarksCount } from "database/queries";
 import { ID, reviewSchema, UserUsername } from "database/schemas";
+
+import { selectHelpfulMarksCount } from ".";
 
 export const selectAvgRating = () =>
   reviewSchema()
