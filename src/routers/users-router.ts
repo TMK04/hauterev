@@ -1,5 +1,5 @@
 import { compare } from "bcryptjs";
-import { RequestHandler, Response, Router } from "express";
+import { RequestHandler, Router } from "express";
 
 import type { RKRecord } from "routers/types";
 
@@ -13,7 +13,12 @@ import {
 } from "database/queries";
 import { userGender, UserUsername } from "database/schemas";
 import { salted_hash } from "helpers";
-import { catchNext, checkBodyProperties } from "routers/helpers";
+import {
+  catchNext,
+  checkBodyProperties,
+  resInvalidPassword,
+  resInvalidUsername
+} from "routers/helpers";
 
 const users_router = Router();
 
@@ -34,18 +39,13 @@ type PasswordBody = RKRecord<typeof rk_password_body>;
 /**
  * Keys belonging to @type {Required} Properties of @see LoginBody
  */
-export const rk_login_body = <const>["username", ...rk_password_body];
+export const rk_authenticate_body = <const>["username", ...rk_password_body];
 
-export type LoginBody = RKRecord<typeof rk_login_body>;
+export type AuthenticateBody = RKRecord<typeof rk_authenticate_body>;
 
-export const resInvalidUsername = (res: Response) => res.status(404).send("Invalid username");
-
-export const resInvalidPassword = (res: Response, code: 401 | 403) =>
-  res.status(code).send("Invalid password");
-
-users_router.post<any, any, any, LoginBody>(
+users_router.post<any, any, any, AuthenticateBody>(
   "/login",
-  checkBodyProperties(rk_login_body),
+  checkBodyProperties(rk_authenticate_body),
   ({ body }, res, next) =>
     catchNext(async () => {
       const { username, password } = body;
@@ -54,15 +54,15 @@ users_router.post<any, any, any, LoginBody>(
       if (!password_hash_result[0]) return resInvalidUsername(res);
 
       const password_hash = password_hash_result[0].password_hash;
-      if (await compare(password, password_hash)) res.sendStatus(200);
-      else resInvalidPassword(res, 401);
+      if (await compare(password, password_hash)) return res.sendStatus(200);
+      resInvalidPassword(res, 401);
     }, next)
 );
 
 /**
  * Keys belonging to @type {Required} Properties of @see PostUserBody
  */
-const rk_post_user_body = <const>["email", "last_name", ...rk_login_body];
+const rk_post_user_body = <const>["email", "last_name", ...rk_authenticate_body];
 
 export interface PostUserBody extends RKRecord<typeof rk_post_user_body> {
   mobile_number?: string;
