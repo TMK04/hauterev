@@ -5,7 +5,9 @@ import type { RKMappedRecord } from "./types";
 import type { ID, UserUsername } from "database/schemas";
 
 import {
+  deleteHelpfulMark,
   deleteReviewByID,
+  insertHelpfulMark,
   InsertReview,
   insertReview,
   selectPasswordHashByUsername,
@@ -139,6 +141,30 @@ reviews_router.delete<IDParams, any, AuthenticateBody>(
       await deleteReviewByID(+params.id);
       res.sendStatus(204);
     }, next)
+);
+
+// ------------------- //
+// * /reviews/:id/hm * //
+// ------------------- //
+
+reviews_router.use<IDParams, any, Partial<AuthenticateBody>>("/:id/hm", rejectUnauthenticated);
+
+reviews_router.post<IDParams, any, AuthenticateBody>("/:id/hm", ({ body, params }, res, next) =>
+  catchNext(async () => {
+    try {
+      await insertHelpfulMark({ review_id: +params.id, username: body.username });
+    } catch (_) {
+      return res.status(403).send("Review already marked as helpful");
+    }
+    res.sendStatus(201);
+  }, next)
+);
+
+reviews_router.delete<IDParams, any, AuthenticateBody>("/:id/hm", ({ body, params }, res, next) =>
+  catchNext(async () => {
+    await deleteHelpfulMark({ review_id: +params.id, username: body.username });
+    res.sendStatus(204);
+  }, next)
 );
 
 export default reviews_router;
