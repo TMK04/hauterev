@@ -4,6 +4,10 @@
 
 GET {{address}}/restaurants
 
+### Get restaurant by ID
+
+GET {{address}}/restaurants/1
+
 ### Create new user
 
 POST {{address}}/users
