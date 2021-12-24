@@ -1,7 +1,9 @@
 import db from "database";
-import { ID, Review, reviewSchema, UserUsername } from "database/schemas";
+import { ID, Review, Timestamp, UserUsername, reviewSchema } from "database/schemas";
 
 import { selectHelpfulMarksCount } from ".";
+import { filter, notEmpty } from "./helpers";
+import { Unpartial } from "./types";
 
 export type InsertReview = Omit<Review, "id" | "edited_timestamp">;
 
@@ -38,7 +40,7 @@ const reviews_columns: SchemaColumn[] = [
   "review.image_url",
   "review.posted_timestamp",
   "review.edited_timestamp",
-  "helpful_marks.count"
+  "helpful_marks.helpful_count"
 ];
 
 export const selectReviewsByRestaurantID = (restaurant_id: ID) =>
@@ -74,6 +76,29 @@ export const selectReviewsByUsername = (username: UserUsername) =>
 
 export const selectReviewByID = (id: ID) =>
   reviewSchema()
-    .select("review.*", "helpful_marks.count")
+    .select("review.*", "helpful_marks.helpful_count")
     .leftJoin(selectHelpfulMarksCount(), "review.id", "helpful_marks.review_id")
     .where({ "review.id": id });
+
+/**
+ * Use to check if review belongs to user
+ *
+ * @param id - ID of review
+ * @returns - A promised array with
+ *  a. 1 review ID if review belongs to user
+ *  b. no elements otherwise
+ */
+export const selectReviewIDByIDnUsername = (id: ID, username: UserUsername) =>
+  reviewSchema().select("id").where({ id, username });
+
+type UpdateReview = Unpartial<Omit<Review, `${string}id` | "username" | `${string}timestamp`>>;
+
+export const updateReviewByID = (
+  id: ID,
+  update_review: UpdateReview,
+  edited_timestamp: Timestamp
+) =>
+  notEmpty(update_review) &&
+  reviewSchema()
+    .update({ ...filter(update_review), edited_timestamp })
+    .where({ id });

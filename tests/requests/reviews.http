@@ -14,3 +14,19 @@ Content-Type: application/json
   "description": "Prive go there. Food is great.",
   "image_url": "https://marinakeppelbay.com/wp-content/uploads/2020/09/BK-banner-image.jpg"
 }
+
+### Get review
+
+GET {{route}}/1
+Content-Type: application/json
+
+### Edit review
+
+PATCH {{route}}/1
+Content-Type: application/json
+
+{
+  "password": "Bob123Builder",
+  "username": "Bob123",
+  "rating": 4.5
+}

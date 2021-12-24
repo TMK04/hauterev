@@ -1,11 +1,15 @@
 import { compare } from "bcryptjs";
 import { RequestHandler, Router } from "express";
 
+import type { ID, UserUsername } from "database/schemas";
+
 import {
   InsertReview,
   insertReview,
   selectPasswordHashByUsername,
-  selectReviewByID
+  selectReviewByID,
+  selectReviewIDByIDnUsername,
+  updateReviewByID
 } from "database/queries";
 import { catchNext, checkBodyProperties } from "routers/helpers";
 
@@ -28,8 +32,8 @@ const authenticate: RequestHandler<any, any, Partial<LoginBody>> = ({ body }, re
     if (!password_hash_result[0]) return resInvalidUsername(res);
 
     const password_hash = password_hash_result[0].password_hash;
-    if (await compare(password, password_hash)) next();
-    else resInvalidPassword(res, 403);
+    if (await compare(password, password_hash)) return next();
+    resInvalidPassword(res, 403);
   }, next);
 
 /**
@@ -50,8 +54,8 @@ type PostReviewBody = {
 
 reviews_router.post<any, any, any, PostReviewBody>(
   "/",
-  checkBodyProperties(rk_post_review_body),
   authenticate,
+  checkBodyProperties(rk_post_review_body),
   ({ body }, res, next) =>
     catchNext(async () => {
       const { restaurant_id, username, rating, title, description, image_url } = body;
@@ -70,6 +74,10 @@ reviews_router.post<any, any, any, PostReviewBody>(
     }, next)
 );
 
+// ---------------- //
+// * /reviews/:id * //
+// ---------------- //
+
 reviews_router.get("/:id", ({ params }, res, next) =>
   catchNext(async () => {
     const { id } = params;
@@ -78,6 +86,42 @@ reviews_router.get("/:id", ({ params }, res, next) =>
     if (!review) return res.status(404).send("Missing review");
     res.json(review);
   }, next)
+);
+
+interface IDParams {
+  id: ID;
+}
+
+interface UsernameBody {
+  username: UserUsername;
+}
+
+const authorize: RequestHandler<IDParams, any, UsernameBody> = ({ body, params }, res, next) =>
+  catchNext(
+    async () =>
+      (await selectReviewIDByIDnUsername(params.id, body.username))[0]
+        ? next()
+        : res.sendStatus(403),
+    next
+  );
+
+const nn_patch_review_body = <const>["rating", "title", "description", "image_url"];
+
+type PatchReviewBody = {
+  [K in typeof nn_patch_review_body[number]]?: InsertReview[K];
+};
+
+reviews_router.patch<IDParams, any, LoginBody & PatchReviewBody>(
+  "/:id",
+  authenticate,
+  authorize,
+  checkBodyProperties(nn_patch_review_body, [null, ""], (key) => `Invalid ${key}`),
+  ({ body, params }, res, next) =>
+    catchNext(async () => {
+      const { rating, title, description, image_url } = body;
+      await updateReviewByID(+params.id, { rating, title, description, image_url }, new Date());
+      res.sendStatus(205);
+    }, next)
 );
 
 export default reviews_router;
