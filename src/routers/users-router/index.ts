@@ -12,6 +12,9 @@ import user_router from "./user-router";
 
 const users_router = Router();
 
+/**
+ * Keys belonging to @type {Required} Properties of @see PasswordBody
+ */
 const rk_password_body = <const>["password"];
 
 /**
@@ -19,6 +22,9 @@ const rk_password_body = <const>["password"];
  */
 export type PasswordBody = RKRecord<typeof rk_password_body>;
 
+/**
+ * Keys belonging to @type {Required} Properties of @see LoginBody
+ */
 const rk_login_body = <const>["username", ...rk_password_body];
 
 type LoginBody = RKRecord<typeof rk_login_body>;
@@ -44,6 +50,9 @@ users_router.post<any, any, any, LoginBody>(
     }, next)
 );
 
+/**
+ * Keys belonging to @type {Required} Properties of @see PostUserBody
+ */
 const rk_post_user_body = <const>["email", "last_name", ...rk_login_body];
 
 export interface PostUserBody extends RKRecord<typeof rk_post_user_body> {

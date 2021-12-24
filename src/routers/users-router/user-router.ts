@@ -80,21 +80,18 @@ const rejectUnauthenticated: RequestHandler<any, any, any, any, AuthenticatedLoc
   next
 ) => (res.locals.authenticated ? next() : resInvalidPassword(res, 403));
 
-const rk_patch_user_body = <const>["username", "new_password", "email", "last_name"];
+/**
+ * Keys belonging to @type {NonNullable} Properties of @see PatchUserBody
+ */
+const nn_patch_user_body = <const>["username", "new_password", "email", "last_name"];
 
-interface IPatchUserBody extends PostUserBody, RKRecord<typeof rk_patch_user_body> {
-  new_password: string;
-}
-
-type PatchUserBody = {
-  [K in keyof Required<IPatchUserBody>]?: IPatchUserBody[K] extends Required<IPatchUserBody>[K]
-    ? IPatchUserBody[K]
-    : IPatchUserBody[K] | null;
+type PatchUserBody<T = PostUserBody & RKRecord<typeof nn_patch_user_body>> = {
+  [K in keyof Required<T>]?: T[K] extends Required<T>[K] ? T[K] : T[K] | null;
 };
 
 route.patch<UsernameParams, any, PatchUserBody>(
   rejectUnauthenticated,
-  checkBodyProperties(rk_patch_user_body, [null], (key) => `${key} must not be null`),
+  checkBodyProperties(nn_patch_user_body, [null], (key) => `${key} must not be null`),
   ({ body, params }, res, next) =>
     catchNext(async () => {
       const {
