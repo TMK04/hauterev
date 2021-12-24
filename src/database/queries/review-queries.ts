@@ -1,9 +1,10 @@
+import type { Unpartial } from "./types";
+
 import db from "database";
 import { ID, Review, Timestamp, UserUsername, reviewSchema } from "database/schemas";
 
 import { selectHelpfulMarksHelpfulCount } from ".";
 import { filter, notEmpty } from "./helpers";
-import { Unpartial } from "./types";
 
 export type InsertReview = Omit<Review, "id" | "edited_timestamp">;
 

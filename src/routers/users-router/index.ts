@@ -36,7 +36,7 @@ export const resInvalidPassword = (res: Response, code: 401 | 403) =>
 
 users_router.post<any, any, any, LoginBody>(
   "/login",
-  checkBodyProperties(rk_login_body, [undefined, null, ""], (key) => `${key} required`),
+  checkBodyProperties(rk_login_body, [undefined, null, ""]),
   ({ body }, res, next) =>
     catchNext(async () => {
       const { username, password } = body;
@@ -64,7 +64,7 @@ export interface PostUserBody extends RKRecord<typeof rk_post_user_body> {
 
 users_router.post<any, any, any, PostUserBody>(
   "/",
-  checkBodyProperties(rk_post_user_body, [undefined, null, ""], (key) => `${key} required`),
+  checkBodyProperties(rk_post_user_body, [undefined, null, ""]),
   ({ body }, res, next) =>
     catchNext(async () => {
       const { username, password, mobile_number, address, email, first_name, last_name, gender } =
