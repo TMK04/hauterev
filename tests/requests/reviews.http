@@ -15,12 +15,12 @@ Content-Type: application/json
   "image_url": "https://marinakeppelbay.com/wp-content/uploads/2020/09/BK-banner-image.jpg"
 }
 
-### Get review
+### Get review by ID
 
 GET {{route}}/1
 Content-Type: application/json
 
-### Edit review
+### Edit review by ID
 
 PATCH {{route}}/1
 Content-Type: application/json
@@ -29,4 +29,14 @@ Content-Type: application/json
   "password": "Bob123Builder",
   "username": "Bob123",
   "rating": 4.5
+}
+
+### Delete review by ID
+
+DELETE {{route}}/1
+Content-Type: application/json
+
+{
+  "password": "Bob123Builder",
+  "username": "Bob123"
 }

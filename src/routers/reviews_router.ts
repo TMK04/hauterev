@@ -4,6 +4,7 @@ import { RequestHandler, Router } from "express";
 import type { ID, UserUsername } from "database/schemas";
 
 import {
+  deleteReviewByID,
   InsertReview,
   insertReview,
   selectPasswordHashByUsername,
@@ -21,7 +22,7 @@ const reviews_router = Router();
 // * /reviews * //
 // ------------ //
 
-const authenticate: RequestHandler<any, any, Partial<LoginBody>> = ({ body }, res, next) =>
+const rejectUnauthenticated: RequestHandler<any, any, Partial<LoginBody>> = ({ body }, res, next) =>
   catchNext(async () => {
     if (!body.username) return resInvalidUsername(res);
     if (!body.password) return resInvalidPassword(res, 403);
@@ -54,7 +55,7 @@ type PostReviewBody = {
 
 reviews_router.post<any, any, any, PostReviewBody>(
   "/",
-  authenticate,
+  rejectUnauthenticated,
   checkBodyProperties(rk_post_review_body),
   ({ body }, res, next) =>
     catchNext(async () => {
@@ -96,7 +97,11 @@ interface UsernameBody {
   username: UserUsername;
 }
 
-const authorize: RequestHandler<IDParams, any, UsernameBody> = ({ body, params }, res, next) =>
+const rejectUnauthorized: RequestHandler<IDParams, any, UsernameBody> = (
+  { body, params },
+  res,
+  next
+) =>
   catchNext(
     async () =>
       (await selectReviewIDByIDnUsername(params.id, body.username))[0]
@@ -113,14 +118,25 @@ type PatchReviewBody = {
 
 reviews_router.patch<IDParams, any, LoginBody & PatchReviewBody>(
   "/:id",
-  authenticate,
-  authorize,
+  rejectUnauthenticated,
+  rejectUnauthorized,
   checkBodyProperties(nn_patch_review_body, [null, ""], (key) => `Invalid ${key}`),
   ({ body, params }, res, next) =>
     catchNext(async () => {
       const { rating, title, description, image_url } = body;
       await updateReviewByID(+params.id, { rating, title, description, image_url }, new Date());
       res.sendStatus(205);
+    }, next)
+);
+
+reviews_router.delete<IDParams, any, LoginBody>(
+  "/:id",
+  rejectUnauthenticated,
+  rejectUnauthorized,
+  ({ params }, res, next) =>
+    catchNext(async () => {
+      await deleteReviewByID(+params.id);
+      res.sendStatus(204);
     }, next)
 );
 

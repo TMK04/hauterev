@@ -102,3 +102,5 @@ export const updateReviewByID = (
   reviewSchema()
     .update({ ...filter(update_review), edited_timestamp })
     .where({ id });
+
+export const deleteReviewByID = (id: ID) => reviewSchema().del().where({ id });
