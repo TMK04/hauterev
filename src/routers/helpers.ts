@@ -1,35 +1,6 @@
-import { compare } from "bcryptjs";
-
-import type { AuthenticateBody } from "./users-router";
-import type { NextFunction, RequestHandler, Response } from "express";
-
-import { selectPasswordHashByUsername } from "database/queries";
+import type { NextFunction, RequestHandler } from "express";
 
 export const catchNext = <T>(fn: () => Promise<T>, next: NextFunction) => fn().catch(next);
-
-export const resInvalidUsername = (res: Response) => res.status(404).send("Invalid username");
-
-export const resInvalidPassword = (res: Response, code: 401 | 403) =>
-  res.status(code).send("Invalid password");
-
-export const rejectUnauthenticated: RequestHandler<any, any, Partial<AuthenticateBody>> = (
-  { body },
-  res,
-  next
-) =>
-  catchNext(async () => {
-    if (!body.username) return resInvalidUsername(res);
-    if (!body.password) return resInvalidPassword(res, 403);
-    const { username, password } = body;
-    delete body.password;
-
-    const password_hash_result = await selectPasswordHashByUsername(username);
-    if (!password_hash_result[0]) return resInvalidUsername(res);
-
-    const password_hash = password_hash_result[0].password_hash;
-    if (await compare(password, password_hash)) return next();
-    resInvalidPassword(res, 403);
-  }, next);
 
 export const checkBodyProperties =
   (
