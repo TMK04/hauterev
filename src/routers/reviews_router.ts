@@ -1,26 +1,45 @@
+import { compare } from "bcryptjs";
 import { RequestHandler, Router } from "express";
 
-import type { IDParams } from "./types";
-import type { AuthenticateBody } from "./users-router";
-import type { UserUsername } from "database/schemas";
+import type { ID, UserUsername } from "database/schemas";
 
 import {
-  deleteHelpfulMark,
   deleteReviewByID,
-  insertHelpfulMark,
   InsertReview,
   insertReview,
+  selectPasswordHashByUsername,
   selectReviewByID,
   selectReviewIDByIDnUsername,
   updateReviewByID
 } from "database/queries";
-import { catchNext, checkBodyProperties, rejectUnauthenticated } from "routers/helpers";
+
+import { catchNext, checkBodyProperties } from "./helpers";
+import { AuthenticateBody, resInvalidPassword, resInvalidUsername } from "./users-router";
 
 const reviews_router = Router();
 
 // ------------ //
 // * /reviews * //
 // ------------ //
+
+const rejectUnauthenticated: RequestHandler<any, any, Partial<AuthenticateBody>> = (
+  { body },
+  res,
+  next
+) =>
+  catchNext(async () => {
+    if (!body.username) return resInvalidUsername(res);
+    if (!body.password) return resInvalidPassword(res, 403);
+    const { username, password } = body;
+    delete body.password;
+
+    const password_hash_result = await selectPasswordHashByUsername(username);
+    if (!password_hash_result[0]) return resInvalidUsername(res);
+
+    const password_hash = password_hash_result[0].password_hash;
+    if (await compare(password, password_hash)) return next();
+    resInvalidPassword(res, 403);
+  }, next);
 
 /**
  * Keys belonging to @type {Required} Properties of @see PostReviewBody
@@ -63,6 +82,10 @@ reviews_router.post<any, any, any, PostReviewBody>(
 // ---------------- //
 // * /reviews/:id * //
 // ---------------- //
+
+interface IDParams {
+  id: ID;
+}
 
 reviews_router.get("/:id", ({ params }, res, next) =>
   catchNext(async () => {
@@ -119,30 +142,6 @@ reviews_router.delete<IDParams, any, AuthenticateBody>(
       await deleteReviewByID(+params.id);
       res.sendStatus(204);
     }, next)
-);
-
-// ------------------- //
-// * /reviews/:id/hm * //
-// ------------------- //
-
-reviews_router.use<IDParams, any, Partial<AuthenticateBody>>("/:id/hm", rejectUnauthenticated);
-
-reviews_router.post<IDParams, any, AuthenticateBody>("/:id/hm", ({ body, params }, res, next) =>
-  catchNext(async () => {
-    try {
-      await insertHelpfulMark({ review_id: +params.id, username: body.username });
-    } catch (_) {
-      return res.status(403).send("Review already marked as helpful");
-    }
-    res.sendStatus(201);
-  }, next)
-);
-
-reviews_router.delete<IDParams, any, AuthenticateBody>("/:id/hm", ({ body, params }, res, next) =>
-  catchNext(async () => {
-    await deleteHelpfulMark({ review_id: +params.id, username: body.username });
-    res.sendStatus(204);
-  }, next)
 );
 
 export default reviews_router;

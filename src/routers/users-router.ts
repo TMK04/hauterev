@@ -1,30 +1,35 @@
 import { compare } from "bcryptjs";
-import { RequestHandler, Router } from "express";
+import { RequestHandler, Response, Router } from "express";
 
-import type { RKRecord } from "routers/types";
+import type { RKRecord } from "./types";
 
 import {
+  deleteBookmark,
+  deleteHelpfulMark,
   deleteUser,
+  insertBookmark,
+  insertHelpfulMark,
   insertUser,
   selectPasswordHashByUsername,
   selectUserProfileAsUser,
   selectUserProfileByUsername,
   updateUserProfileAsUser
 } from "database/queries";
-import { userGender, UserUsername } from "database/schemas";
+import { Bookmark, HelpfulMark, userGender, UserUsername } from "database/schemas";
 import { salted_hash } from "helpers";
-import {
-  catchNext,
-  checkBodyProperties,
-  resInvalidPassword,
-  resInvalidUsername
-} from "routers/helpers";
+
+import { catchNext, checkBodyProperties } from "./helpers";
 
 const users_router = Router();
 
 // ---------- //
 // * /users * //
 // ---------- //
+
+export const resInvalidUsername = (res: Response) => res.status(404).send("Invalid username");
+
+export const resInvalidPassword = (res: Response, code: 401 | 403) =>
+  res.status(code).send("Invalid password");
 
 /**
  * Keys belonging to @type {Required} Properties of @see PasswordBody
@@ -209,6 +214,80 @@ users_router.delete("/:username", rejectUnauthenticated, ({ params }, res, next)
     await deleteUser(params.username);
     res.sendStatus(204);
   }, next)
+);
+
+users_router.use("/:username/:controller", rejectUnauthenticated);
+
+// ------------------------------ //
+// * /users/:username/bookmarks * //
+// ------------------------------ //
+
+const rk_restaurant_id_body = <const>["restaurant_id"];
+
+type RestaurantIDBody = {
+  [K in typeof rk_restaurant_id_body[number]]: Bookmark[K];
+};
+
+users_router.post<UsernameParams, any, RestaurantIDBody>(
+  "/:username/bookmarks",
+  checkBodyProperties(rk_restaurant_id_body),
+  ({ body, params }, res, next) =>
+    catchNext(async () => {
+      try {
+        await insertBookmark({
+          username: params.username,
+          restaurant_id: body.restaurant_id,
+          timestamp: new Date()
+        });
+      } catch (_) {
+        return res.status(403).send("Restaurant already bookmarked");
+      }
+      res.sendStatus(201);
+    }, next)
+);
+
+users_router.delete<UsernameParams, any, RestaurantIDBody>(
+  "/:username/bookmarks",
+  checkBodyProperties(rk_restaurant_id_body),
+  ({ body, params }, res, next) =>
+    catchNext(async () => {
+      await deleteBookmark(params.username, body.restaurant_id);
+      res.sendStatus(204);
+    }, next)
+);
+
+// ------------------------------ //
+// * /reviews/:id/helpful-marks * //
+// ------------------------------ //
+
+const rk_review_id_body = <const>["review_id"];
+
+type ReviewIDBody = {
+  [K in typeof rk_review_id_body[number]]: HelpfulMark[K];
+};
+
+users_router.post<UsernameParams, any, ReviewIDBody>(
+  "/:username/helpful-marks",
+  checkBodyProperties(rk_review_id_body),
+  ({ body, params }, res, next) =>
+    catchNext(async () => {
+      try {
+        await insertHelpfulMark({ review_id: body.review_id, username: params.username });
+      } catch (_) {
+        return res.status(403).send("Review already marked as helpful");
+      }
+      res.sendStatus(201);
+    }, next)
+);
+
+users_router.delete<UsernameParams, any, ReviewIDBody>(
+  "/:username/helpful-marks",
+  checkBodyProperties(rk_review_id_body),
+  ({ body, params }, res, next) =>
+    catchNext(async () => {
+      await deleteHelpfulMark({ review_id: body.review_id, username: params.username });
+      res.sendStatus(204);
+    }, next)
 );
 
 export default users_router;

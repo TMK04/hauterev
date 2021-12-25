@@ -57,3 +57,43 @@ Content-Type: application/json
 {
   "password": "Bob123Builder"
 }
+
+### Bookmark restaurant by restaurant ID
+
+POST {{route}}/Bob123/bookmarks
+Content-Type: application/json
+
+{
+  "password": "Bob123Builder",
+  "restaurant_id": 1
+}
+
+### Unbookmark restaurant by restaurant ID
+
+DELETE {{route}}/Bob123/bookmarks
+Content-Type: application/json
+
+{
+  "password": "Bob123Builder",
+  "restaurant_id": 1
+}
+
+### Mark review as helpful by review ID
+
+POST {{route}}/Bob123/helpful-marks
+Content-Type: application/json
+
+{
+  "password": "Bob123Builder",
+  "review_id": 1
+}
+
+### Unmark review as helpful by review ID
+
+DELETE {{route}}/Bob123/helpful-marks
+Content-Type: application/json
+
+{
+  "password": "Bob123Builder",
+  "review_id": 1
+}

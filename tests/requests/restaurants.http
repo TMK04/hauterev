@@ -7,23 +7,3 @@ GET {{route}}
 ### Get restaurant by ID
 
 GET {{route}}/1
-
-### Mark review as helpful by review ID
-
-POST {{route}}/1/b
-Content-Type: application/json
-
-{
-  "password": "Bob123Builder",
-  "username": "Bob123"
-}
-
-### Unmark review as helpful by review ID
-
-DELETE {{route}}/1/b
-Content-Type: application/json
-
-{
-  "password": "Bob123Builder",
-  "username": "Bob123"
-}

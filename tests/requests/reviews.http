@@ -40,23 +40,3 @@ Content-Type: application/json
   "password": "Bob123Builder",
   "username": "Bob123"
 }
-
-### Mark review as helpful by review ID
-
-POST {{route}}/1/hm
-Content-Type: application/json
-
-{
-  "password": "Bob123Builder",
-  "username": "Bob123"
-}
-
-### Unmark review as helpful by review ID
-
-DELETE {{route}}/1/hm
-Content-Type: application/json
-
-{
-  "password": "Bob123Builder",
-  "username": "Bob123"
-}
