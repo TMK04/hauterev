@@ -60,49 +60,49 @@ Content-Type: application/json
 
 ### Bookmark restaurant by restaurant ID
 
-POST {{route}}/Bob123/bookmarks
+POST {{route}}/StevenAlex/bookmarks
 Content-Type: application/json
 
 {
-  "password": "Bob123Builder",
+  "password": "S+3v3n@1ex",
   "restaurant_id": 1
 }
 
 ### Get bookmarks by username
 
-GET {{route}}/Bob123/bookmarks
+GET {{route}}/StevenAlex/bookmarks
 Content-Type: application/json
 
 {
-  "password": "Bob123Builder"
+  "password": "S+3v3n@1ex"
 }
 
 ### Unbookmark restaurant by restaurant ID
 
-DELETE {{route}}/Bob123/bookmarks
+DELETE {{route}}/StevenAlex/bookmarks
 Content-Type: application/json
 
 {
-  "password": "Bob123Builder",
+  "password": "S+3v3n@1ex",
   "restaurant_id": 1
 }
 
 ### Mark review as helpful by review ID
 
-POST {{route}}/Bob123/helpful-marks
+POST {{route}}/StevenAlex/helpful-marks
 Content-Type: application/json
 
 {
-  "password": "Bob123Builder",
+  "password": "S+3v3n@1ex",
   "review_id": 1
 }
 
 ### Unmark review as helpful by review ID
 
-DELETE {{route}}/Bob123/helpful-marks
+DELETE {{route}}/StevenAlex/helpful-marks
 Content-Type: application/json
 
 {
-  "password": "Bob123Builder",
+  "password": "S+3v3n@1ex",
   "review_id": 1
 }

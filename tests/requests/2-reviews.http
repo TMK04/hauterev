@@ -6,8 +6,8 @@ POST {{route}}
 Content-Type: application/json
 
 {
-  "password": "Bob123Builder",
-  "username": "Bob123",
+  "password": "S+3v3n@1ex",
+  "username": "StevenAlex",
   "restaurant_id": 1,
   "rating": 2.5,
   "title": "Night at Prive",
@@ -26,8 +26,8 @@ PATCH {{route}}/1
 Content-Type: application/json
 
 {
-  "password": "Bob123Builder",
-  "username": "Bob123",
+  "password": "S+3v3n@1ex",
+  "username": "StevenAlex",
   "rating": 4.5
 }
 
@@ -37,6 +37,6 @@ DELETE {{route}}/1
 Content-Type: application/json
 
 {
-  "password": "Bob123Builder",
-  "username": "Bob123"
+  "password": "S+3v3n@1ex",
+  "username": "StevenAlex"
 }
