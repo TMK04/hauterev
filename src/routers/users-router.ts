@@ -1,7 +1,7 @@
 import { compare } from "bcryptjs";
 import { RequestHandler, Response, Router } from "express";
 
-import type { RKRecord } from "./types";
+import type { RKMappedRecord, RKRecord } from "./types";
 
 import {
   deleteBookmark,
@@ -224,9 +224,7 @@ users_router.use("/:username/:controller", rejectUnauthenticated);
 
 const rk_restaurant_id_body = <const>["restaurant_id"];
 
-type RestaurantIDBody = {
-  [K in typeof rk_restaurant_id_body[number]]: Bookmark[K];
-};
+type RestaurantIDBody = RKMappedRecord<Bookmark, typeof rk_restaurant_id_body>;
 
 users_router.post<UsernameParams, any, RestaurantIDBody>(
   "/:username/bookmarks",
@@ -262,9 +260,7 @@ users_router.delete<UsernameParams, any, RestaurantIDBody>(
 
 const rk_review_id_body = <const>["review_id"];
 
-type ReviewIDBody = {
-  [K in typeof rk_review_id_body[number]]: HelpfulMark[K];
-};
+type ReviewIDBody = RKMappedRecord<HelpfulMark, typeof rk_review_id_body>;
 
 users_router.post<UsernameParams, any, ReviewIDBody>(
   "/:username/helpful-marks",

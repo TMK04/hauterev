@@ -1,1 +1,5 @@
-export type RKRecord<KA extends readonly string[], T = string> = Record<KA[number], T>;
+export type RKRecord<KT extends readonly string[]> = Record<KT[number], string>;
+
+export type RKMappedRecord<T, KT extends readonly (keyof T)[]> = {
+  [K in KT[number]]: T[K];
+};

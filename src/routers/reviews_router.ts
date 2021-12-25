@@ -1,6 +1,7 @@
 import { compare } from "bcryptjs";
 import { RequestHandler, Router } from "express";
 
+import type { RKMappedRecord } from "./types";
 import type { ID, UserUsername } from "database/schemas";
 
 import {
@@ -53,9 +54,7 @@ const rk_post_review_body = <const>[
   "image_url"
 ];
 
-type PostReviewBody = {
-  [K in typeof rk_post_review_body[number]]: InsertReview[K];
-};
+type PostReviewBody = RKMappedRecord<InsertReview, typeof rk_post_review_body>;
 
 reviews_router.post<any, any, any, PostReviewBody>(
   "/",
@@ -116,9 +115,7 @@ const rejectUnauthorized: RequestHandler<IDParams, any, UsernameBody> = (
 
 const nn_patch_review_body = <const>["rating", "title", "description", "image_url"];
 
-type PatchReviewBody = {
-  [K in typeof nn_patch_review_body[number]]?: InsertReview[K];
-};
+type PatchReviewBody = Partial<RKMappedRecord<InsertReview, typeof nn_patch_review_body>>;
 
 reviews_router.patch<IDParams, any, AuthenticateBody & PatchReviewBody>(
   "/:id",
