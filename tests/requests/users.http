@@ -68,6 +68,15 @@ Content-Type: application/json
   "restaurant_id": 1
 }
 
+### Get bookmarks by username
+
+GET {{route}}/Bob123/bookmarks
+Content-Type: application/json
+
+{
+  "password": "Bob123Builder"
+}
+
 ### Unbookmark restaurant by restaurant ID
 
 DELETE {{route}}/Bob123/bookmarks

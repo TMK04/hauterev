@@ -10,6 +10,7 @@ import {
   insertBookmark,
   insertHelpfulMark,
   insertUser,
+  selectBookmarksByUsername,
   selectPasswordHashByUsername,
   selectUserProfileAsUser,
   selectUserProfileByUsername,
@@ -242,6 +243,10 @@ users_router.post<UsernameParams, any, RestaurantIDBody>(
       }
       res.sendStatus(201);
     }, next)
+);
+
+users_router.get("/:username/bookmarks", ({ params }, res, next) =>
+  catchNext(async () => res.json(await selectBookmarksByUsername(params.username)), next)
 );
 
 users_router.delete<UsernameParams, any, RestaurantIDBody>(
