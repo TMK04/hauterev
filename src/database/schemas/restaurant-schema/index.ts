@@ -1,6 +1,19 @@
-import { ID, restaurantSchema } from "database/schemas";
+import type { ID, Restaurant } from "../types";
 
-import { selectAvgRating, selectReviewsByRestaurantID } from ".";
+import { selectAvgRating, selectReviewsByRestaurantID } from "..";
+import db from "database";
+
+// ----------- //
+// * Helpers * //
+// ----------- //
+
+const restaurantSchema = () => db<Restaurant>("restaurant");
+
+// ----------- //
+// * Queries * //
+// ----------- //
+
+// *--- Select ---* //
 
 // interface SelectRestaurantsOptions {}
 

@@ -21,9 +21,9 @@ export const mysql_config: Knex.MySql2ConnectionConfig = {
 };
 
 interface BcryptConfig {
-  salt_rounds: number;
+  salt: number;
 }
 
 export const bcrypt_config: BcryptConfig = {
-  salt_rounds: +getEnvVar("BCRYPT_SALT_ROUNDS")
+  salt: +getEnvVar("BCRYPT_SALT_ROUNDS")
 };

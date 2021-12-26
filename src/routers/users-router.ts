@@ -1,8 +1,10 @@
-import { compare } from "bcryptjs";
+import { compare, hash } from "bcryptjs";
 import { RequestHandler, Response, Router } from "express";
 
-import type { RKMappedRecord, RKRecord } from "./types";
+import type { RKMappedRecord, RKRecord } from "./utils/types";
+import type { Bookmark, HelpfulMark, UserGender, UserUsername } from "database/schemas/types";
 
+import { bcrypt_config } from "configs";
 import {
   deleteBookmark,
   deleteHelpfulMark,
@@ -12,25 +14,20 @@ import {
   insertUser,
   selectBookmarksByUsername,
   selectPasswordHashByUsername,
-  selectUserProfileAsUser,
+  selectUserAsUser,
   selectUserByUsername,
   updateUserProfileAsUser
-} from "database/queries";
-import { Bookmark, HelpfulMark, userGender, UserUsername } from "database/schemas";
-import { salted_hash } from "helpers";
+} from "database/schemas";
 
-import { catchNext, checkBodyProperties } from "./helpers";
+import { catchNext, checkBodyProperties } from "./utils/helpers";
 
 const users_router = Router();
 
-// ---------- //
-// * /users * //
-// ---------- //
+// ---------------- //
+// *--- /users ---* //
+// ---------------- //
 
-export const resInvalidUsername = (res: Response) => res.status(404).send("Invalid username");
-
-export const resInvalidPassword = (res: Response, code: 401 | 403) =>
-  res.status(code).send("Invalid password");
+// *--- Types ---* //
 
 /**
  * Keys belonging to @type {Required} Properties of @see PasswordBody
@@ -48,6 +45,17 @@ type PasswordBody = RKRecord<typeof rk_password_body>;
 export const rk_authenticate_body = <const>["username", ...rk_password_body];
 
 export type AuthenticateBody = RKRecord<typeof rk_authenticate_body>;
+
+// *---- Helpers ---* //
+
+export const resInvalidUsername = (res: Response) => res.status(404).send("Invalid username");
+
+export const resInvalidPassword = (res: Response, code: 401 | 403) =>
+  res.status(code).send("Invalid password");
+
+const salted_hash = (password: string) => hash(password, bcrypt_config.salt);
+
+// *--- Routes ---* //
 
 users_router.post<any, any, any, AuthenticateBody>(
   "/login",
@@ -76,6 +84,11 @@ export interface PostUserBody extends RKRecord<typeof rk_post_user_body> {
   first_name?: string;
   gender: string;
 }
+
+export const user_genders: readonly UserGender[] = <const>["F", "M", "O", "N"];
+
+const userGender = (gender: string | undefined) =>
+  user_genders.includes(<UserGender>gender) ? <UserGender>gender : "N";
 
 users_router.post<any, any, any, PostUserBody>(
   "/",
@@ -106,6 +119,8 @@ users_router.post<any, any, any, PostUserBody>(
 // * /users/:username * //
 // -------------------- //
 
+// *--- Types ---* //
+
 interface UsernameParams {
   username: UserUsername;
 }
@@ -113,6 +128,8 @@ interface UsernameParams {
 interface AuthenticatedLocals {
   authenticated?: boolean;
 }
+
+// *--- Helpers ---* //
 
 /**
  * Check if provided password matches user password,
@@ -138,22 +155,6 @@ const authenticate: RequestHandler<
     next();
   }, next);
 
-users_router.use("/:username", authenticate);
-
-users_router.get<UsernameParams, any, any, any, AuthenticatedLocals>(
-  "/:username",
-  ({ params }, res, next) =>
-    catchNext(async () => {
-      const { username } = params;
-      const user_profile_result = await (res.locals.authenticated
-        ? selectUserProfileAsUser(username)
-        : selectUserByUsername(username));
-      const user_profile = user_profile_result[0];
-      if (!user_profile) throw Error("Missing user");
-      res.json(user_profile);
-    }, next)
-);
-
 /**
  * End the request if res.locals.authentcated is falsy;
  * Is synchronous - no extra error handling is needed
@@ -167,6 +168,24 @@ const rejectUnauthenticated: RequestHandler<any, any, any, any, AuthenticatedLoc
   res,
   next
 ) => (res.locals.authenticated ? next() : resInvalidPassword(res, 403));
+
+// *--- Routes ---* //
+
+users_router.use("/:username", authenticate);
+
+users_router.get<UsernameParams, any, any, any, AuthenticatedLocals>(
+  "/:username",
+  ({ params }, res, next) =>
+    catchNext(async () => {
+      const { username } = params;
+      const user_profile_result = await (res.locals.authenticated
+        ? selectUserAsUser(username)
+        : selectUserByUsername(username));
+      const user_profile = user_profile_result[0];
+      if (!user_profile) throw Error("Missing user");
+      res.json(user_profile);
+    }, next)
+);
 
 /**
  * Keys belonging to @type {NonNullable} Properties of @see PatchUserBody
@@ -203,7 +222,7 @@ users_router.patch<UsernameParams, any, PatchUserBody>(
         email,
         first_name,
         last_name,
-        gender: <undefined>gender && userGender(gender)
+        gender: userGender(gender)
       });
 
       res.sendStatus(205);
@@ -223,9 +242,13 @@ users_router.use("/:username/:controller", rejectUnauthenticated);
 // * /users/:username/bookmarks * //
 // ------------------------------ //
 
+// *--- Types ---* //
+
 const rk_restaurant_id_body = <const>["restaurant_id"];
 
 type RestaurantIDBody = RKMappedRecord<Bookmark, typeof rk_restaurant_id_body>;
+
+// *--- Routes ---* //
 
 users_router.post<UsernameParams, any, RestaurantIDBody>(
   "/:username/bookmarks",
@@ -263,9 +286,13 @@ users_router.delete<UsernameParams, any, RestaurantIDBody>(
 // * /reviews/:id/helpful-marks * //
 // ------------------------------ //
 
+// *--- Types ---* //
+
 const rk_review_id_body = <const>["review_id"];
 
 type ReviewIDBody = RKMappedRecord<HelpfulMark, typeof rk_review_id_body>;
+
+// *--- Routes ---* //
 
 users_router.post<UsernameParams, any, ReviewIDBody>(
   "/:username/helpful-marks",

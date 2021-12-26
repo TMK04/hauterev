@@ -1,8 +1,8 @@
 import { compare } from "bcryptjs";
 import { RequestHandler, Router } from "express";
 
-import type { RKMappedRecord } from "./types";
-import type { ID, UserUsername } from "database/schemas";
+import type { RKMappedRecord } from "./utils/types";
+import type { ID, UserUsername } from "database/schemas/types";
 
 import {
   deleteReviewByID,
@@ -12,16 +12,34 @@ import {
   selectReviewByID,
   selectReviewIDByIDnUsername,
   updateReviewByID
-} from "database/queries";
+} from "database/schemas";
 
-import { catchNext, checkBodyProperties } from "./helpers";
 import { AuthenticateBody, resInvalidPassword, resInvalidUsername } from "./users-router";
+import { catchNext, checkBodyProperties } from "./utils/helpers";
 
 const reviews_router = Router();
 
 // ------------ //
 // * /reviews * //
 // ------------ //
+
+// *--- Types ---* //
+
+/**
+ * Keys belonging to @type {Required} Properties of @see PostReviewBody
+ */
+const rk_post_review_body = <const>[
+  "restaurant_id",
+  "username",
+  "rating",
+  "title",
+  "description",
+  "image_url"
+];
+
+type PostReviewBody = RKMappedRecord<InsertReview, typeof rk_post_review_body>;
+
+// *--- Helpers --- * //
 
 const rejectUnauthenticated: RequestHandler<any, any, Partial<AuthenticateBody>> = (
   { body },
@@ -42,19 +60,7 @@ const rejectUnauthenticated: RequestHandler<any, any, Partial<AuthenticateBody>>
     resInvalidPassword(res, 403);
   }, next);
 
-/**
- * Keys belonging to @type {Required} Properties of @see PostReviewBody
- */
-const rk_post_review_body = <const>[
-  "restaurant_id",
-  "username",
-  "rating",
-  "title",
-  "description",
-  "image_url"
-];
-
-type PostReviewBody = RKMappedRecord<InsertReview, typeof rk_post_review_body>;
+// *--- Routes ---* //
 
 reviews_router.post<any, any, any, PostReviewBody>(
   "/",
@@ -82,23 +88,17 @@ reviews_router.post<any, any, any, PostReviewBody>(
 // * /reviews/:id * //
 // ---------------- //
 
+// *--- Types ---* //
+
 interface IDParams {
   id: ID;
 }
 
-reviews_router.get("/:id", ({ params }, res, next) =>
-  catchNext(async () => {
-    const { id } = params;
-    const review_result = await selectReviewByID(+id);
-    const review = review_result[0];
-    if (!review) return res.status(404).send("Missing review");
-    res.json(review);
-  }, next)
-);
-
 interface UsernameBody {
   username: UserUsername;
 }
+
+// *--- Helpers ---* //
 
 const rejectUnauthorized: RequestHandler<IDParams, any, UsernameBody> = (
   { body, params },
@@ -112,6 +112,18 @@ const rejectUnauthorized: RequestHandler<IDParams, any, UsernameBody> = (
         : res.sendStatus(403),
     next
   );
+
+// *--- Routes ---* //
+
+reviews_router.get("/:id", ({ params }, res, next) =>
+  catchNext(async () => {
+    const { id } = params;
+    const review_result = await selectReviewByID(+id);
+    const review = review_result[0];
+    if (!review) return res.status(404).send("Missing review");
+    res.json(review);
+  }, next)
+);
 
 const nn_patch_review_body = <const>["rating", "title", "description", "image_url"];
 

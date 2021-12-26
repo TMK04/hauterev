@@ -1,22 +1,15 @@
-import type { Unpartial } from "./types";
+import type { ID, Review, Timestamp, UserUsername } from "../types";
+import type { Unpartial } from "../utils/types";
 
+import { selectHelpfulMarksHelpfulCount } from "..";
+import { filter, notEmpty } from "../utils/helpers";
 import db from "database";
-import { ID, Review, Timestamp, UserUsername, reviewSchema } from "database/schemas";
 
-import { selectHelpfulMarksHelpfulCount } from ".";
-import { filter, notEmpty } from "./helpers";
+// ----------- //
+// * Helpers * //
+// ----------- //
 
-export type InsertReview = Omit<Review, "id" | "edited_timestamp">;
-
-export const insertReview = async (insert_review: InsertReview) =>
-  reviewSchema().insert(insert_review);
-
-export const selectAvgRating = () =>
-  reviewSchema()
-    .select("restaurant_id")
-    .avg({ avg_rating: "rating" })
-    .groupBy("restaurant_id")
-    .as("avg_rating");
+const reviewSchema = () => db<Review>("review");
 
 const jsonObjectAgg = (key: string, value: string, alias = "") =>
   `JSON_OBJECTAGG(${key}, ${value})${alias && ` AS ${alias}`}`;
@@ -33,6 +26,26 @@ const jsonObject = (...schema_columns: SchemaColumn[]) => {
   }
   return `JSON_OBJECT(${key_value_arr.join(", ")})`;
 };
+
+// ----------- //
+// * Queries * //
+// ----------- //
+
+// *--- Insert ---* //
+
+export type InsertReview = Omit<Review, "id" | "edited_timestamp">;
+
+export const insertReview = async (insert_review: InsertReview) =>
+  reviewSchema().insert(insert_review);
+
+// *--- Select ---* //
+
+export const selectAvgRating = () =>
+  reviewSchema()
+    .select("restaurant_id")
+    .avg({ avg_rating: "rating" })
+    .groupBy("restaurant_id")
+    .as("avg_rating");
 
 const reviews_columns: SchemaColumn[] = [
   "review.rating",
@@ -92,16 +105,19 @@ export const selectReviewByID = (id: ID) =>
 export const selectReviewIDByIDnUsername = (id: ID, username: UserUsername) =>
   reviewSchema().select("id").where({ id, username });
 
-type UpdateReview = Unpartial<Omit<Review, `${string}id` | "username" | `${string}timestamp`>>;
+// *--- Update ---* //
 
 export const updateReviewByID = (
   id: ID,
-  update_review: UpdateReview,
+  update_review: Unpartial<Omit<Review, `${string}id` | "username" | `${string}timestamp`>>,
   edited_timestamp: Timestamp
 ) =>
-  notEmpty(update_review) &&
-  reviewSchema()
-    .update({ ...filter(update_review), edited_timestamp })
-    .where({ id });
+  notEmpty(update_review)
+    ? reviewSchema()
+        .update({ ...filter(update_review), edited_timestamp })
+        .where({ id })
+    : Promise.reject();
+
+// *--- Delete ---* //
 
 export const deleteReviewByID = (id: ID) => reviewSchema().del().where({ id });

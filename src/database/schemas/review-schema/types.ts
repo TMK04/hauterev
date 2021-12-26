@@ -1,15 +1,15 @@
-import type { ID, ImageURL, Timestamp, UserUsername } from ".";
-
-import db from "database";
+import type { ID, ImageURL, Timestamp, UserUsername } from "../types";
 
 /**
  * @type {VARCHAR(30)}
  */
 export type ReviewTitle = string;
+
 /**
  * @type {DECIMAL(2,1)}
  */
 export type ReviewRating = number;
+
 /**
  * @type {VARCHAR(255)}
  */
@@ -26,7 +26,3 @@ export interface Review {
   posted_timestamp: Timestamp;
   edited_timestamp?: Timestamp;
 }
-
-const reviewSchema = () => db<Review>("review");
-
-export default reviewSchema;

@@ -1,6 +1,4 @@
-import type { Name, Timestamp } from ".";
-
-import db from "database";
+import type { Name, Timestamp } from "../types";
 
 /**
  * @type {VARCHAR(20)}
@@ -28,14 +26,10 @@ export type UserAddress = string;
  */
 export type UserEmail = string;
 
-export const user_genders = <const>["F", "M", "O"];
 /**
  * @type {CHAR(1)}
  */
-export type UserGender = typeof user_genders[number];
-
-export const userGender = (gender: string | undefined) =>
-  user_genders.includes(<UserGender>gender) ? <UserGender>gender : "O";
+export type UserGender = "F" | "M" | "O" | "N";
 
 export interface User {
   username: UserUsername;
@@ -48,7 +42,3 @@ export interface User {
   gender: UserGender;
   created_timestamp: Timestamp;
 }
-
-const userSchema = () => db<User>("user");
-
-export default userSchema;
