@@ -1,5 +1,5 @@
 import { compare, hash } from "bcryptjs";
-import { RequestHandler, Response, Router } from "express";
+import { RequestHandler, Router } from "express";
 
 import type { RKMappedRecord, RKRecord } from "./utils/types";
 import type { Bookmark, HelpfulMark, UserGender, UserUsername } from "database/schemas/types";
@@ -19,6 +19,7 @@ import {
   updateUserProfileAsUser
 } from "database/schemas";
 
+import { NotFoundError, UnauthenticatedError, UnauthorizedError } from "./utils/Errors";
 import { catchNext, checkBodyProperties } from "./utils/helpers";
 
 const users_router = Router();
@@ -48,11 +49,6 @@ export type AuthenticateBody = RKRecord<typeof rk_authenticate_body>;
 
 // *---- Helpers ---* //
 
-export const resInvalidUsername = (res: Response) => res.status(404).send("Invalid username");
-
-export const resInvalidPassword = (res: Response, code: 401 | 403) =>
-  res.status(code).send("Invalid password");
-
 const salted_hash = (password: string) => hash(password, bcrypt_config.salt);
 
 // *--- Routes ---* //
@@ -65,11 +61,11 @@ users_router.post<any, any, any, AuthenticateBody>(
       const { username, password } = body;
 
       const password_hash_result = await selectPasswordHashByUsername(username);
-      if (!password_hash_result[0]) return resInvalidUsername(res);
+      if (!password_hash_result[0]) return next(new NotFoundError("User", username));
 
       const password_hash = password_hash_result[0].password_hash;
       if (await compare(password, password_hash)) return res.sendStatus(200);
-      resInvalidPassword(res, 401);
+      next(new UnauthenticatedError());
     }, next)
 );
 
@@ -143,12 +139,12 @@ const authenticate: RequestHandler<
   AuthenticatedLocals
 > = ({ body, params }, res, next) =>
   catchNext(async () => {
-    const password_hash_result = await selectPasswordHashByUsername(params.username);
-    if (!password_hash_result[0]) return resInvalidUsername(res);
+    const { username } = params;
+    const password_hash_result = await selectPasswordHashByUsername(username);
+    if (!password_hash_result[0]) return next(new NotFoundError("user", username));
 
-    if (!body.password) return next();
     const { password } = body;
-    delete body.password;
+    if (!password) return next();
 
     const password_hash = password_hash_result[0].password_hash;
     res.locals.authenticated = await compare(password, password_hash);
@@ -167,7 +163,7 @@ const rejectUnauthenticated: RequestHandler<any, any, any, any, AuthenticatedLoc
   _,
   res,
   next
-) => (res.locals.authenticated ? next() : resInvalidPassword(res, 403));
+) => (res.locals.authenticated ? next() : next(new UnauthenticatedError()));
 
 // *--- Routes ---* //
 
@@ -262,7 +258,7 @@ users_router.post<UsernameParams, any, RestaurantIDBody>(
           timestamp: new Date()
         });
       } catch (_) {
-        return res.status(403).send("Restaurant already bookmarked");
+        return next(new UnauthorizedError("Restaurant already bookmarked"));
       }
       res.sendStatus(201);
     }, next)
@@ -302,7 +298,7 @@ users_router.post<UsernameParams, any, ReviewIDBody>(
       try {
         await insertHelpfulMark({ review_id: body.review_id, username: params.username });
       } catch (_) {
-        return res.status(403).send("Review already marked as helpful");
+        return next(new UnauthorizedError("Review already marked as helpful"));
       }
       res.sendStatus(201);
     }, next)

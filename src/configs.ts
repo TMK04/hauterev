@@ -25,5 +25,5 @@ interface BcryptConfig {
 }
 
 export const bcrypt_config: BcryptConfig = {
-  salt: +getEnvVar("BCRYPT_SALT_ROUNDS")
+  salt: +getEnvVar("BCRYPT_SALT")
 };

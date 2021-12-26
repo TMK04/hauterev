@@ -14,7 +14,13 @@ import {
   updateReviewByID
 } from "database/schemas";
 
-import { AuthenticateBody, resInvalidPassword, resInvalidUsername } from "./users-router";
+import { AuthenticateBody } from "./users-router";
+import {
+  InvalidError,
+  NotFoundError,
+  UnauthenticatedError,
+  UnauthorizedError
+} from "./utils/Errors";
 import { catchNext, checkBodyProperties } from "./utils/helpers";
 
 const reviews_router = Router();
@@ -43,21 +49,21 @@ type PostReviewBody = RKMappedRecord<InsertReview, typeof rk_post_review_body>;
 
 const rejectUnauthenticated: RequestHandler<any, any, Partial<AuthenticateBody>> = (
   { body },
-  res,
+  _,
   next
 ) =>
   catchNext(async () => {
-    if (!body.username) return resInvalidUsername(res);
-    if (!body.password) return resInvalidPassword(res, 403);
     const { username, password } = body;
-    delete body.password;
+    if (!username) return next(new InvalidError("username"));
+    if (!password) return next(new InvalidError("password"));
 
     const password_hash_result = await selectPasswordHashByUsername(username);
-    if (!password_hash_result[0]) return resInvalidUsername(res);
+    if (!password_hash_result[0]) return next(new NotFoundError("User", username));
 
     const password_hash = password_hash_result[0].password_hash;
     if (await compare(password, password_hash)) return next();
-    resInvalidPassword(res, 403);
+
+    next(new UnauthenticatedError());
   }, next);
 
 // *--- Routes ---* //
@@ -102,14 +108,14 @@ interface UsernameBody {
 
 const rejectUnauthorized: RequestHandler<IDParams, any, UsernameBody> = (
   { body, params },
-  res,
+  _,
   next
 ) =>
   catchNext(
     async () =>
       (await selectReviewIDByIDnUsername(params.id, body.username))[0]
         ? next()
-        : res.sendStatus(403),
+        : next(new UnauthorizedError("Review belongs to another user")),
     next
   );
 
@@ -120,7 +126,7 @@ reviews_router.get("/:id", ({ params }, res, next) =>
     const { id } = params;
     const review_result = await selectReviewByID(+id);
     const review = review_result[0];
-    if (!review) return res.status(404).send("Missing review");
+    if (!review) return next(new NotFoundError("Review", id));
     res.json(review);
   }, next)
 );
