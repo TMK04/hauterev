@@ -2,8 +2,7 @@ import bookmarkSchema from "./bookmarkSchema";
 import helpfulMarkSchema from "./helpfulMarkSchema";
 import restaurantSchema from "./restaurantSchema";
 import reviewSchema from "./reviewSchema";
-import userCredentialsSchema from "./userCredentialsSchema";
-import userInfoSchema from "./userInfoSchema";
+import userSchema from "./userSchema";
 
 /**
  * @type {INT}
@@ -22,18 +21,10 @@ export type ImageURL = string;
  */
 export type Timestamp = Date;
 
-export {
-  bookmarkSchema,
-  helpfulMarkSchema,
-  restaurantSchema,
-  reviewSchema,
-  userCredentialsSchema,
-  userInfoSchema
-};
+export { bookmarkSchema, helpfulMarkSchema, restaurantSchema, reviewSchema, userSchema };
 
 export * from "./bookmarkSchema";
 export * from "./helpfulMarkSchema";
 export * from "./restaurantSchema";
 export * from "./reviewSchema";
-export * from "./userCredentialsSchema";
-export * from "./userInfoSchema";
+export * from "./userSchema";

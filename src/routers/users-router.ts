@@ -13,7 +13,7 @@ import {
   selectBookmarksByUsername,
   selectPasswordHashByUsername,
   selectUserProfileAsUser,
-  selectUserProfileByUsername,
+  selectUserByUsername,
   updateUserProfileAsUser
 } from "database/queries";
 import { Bookmark, HelpfulMark, userGender, UserUsername } from "database/schemas";
@@ -147,7 +147,7 @@ users_router.get<UsernameParams, any, any, any, AuthenticatedLocals>(
       const { username } = params;
       const user_profile_result = await (res.locals.authenticated
         ? selectUserProfileAsUser(username)
-        : selectUserProfileByUsername(username));
+        : selectUserByUsername(username));
       const user_profile = user_profile_result[0];
       if (!user_profile) throw Error("Missing user");
       res.json(user_profile);
@@ -195,16 +195,16 @@ users_router.patch<UsernameParams, any, PatchUserBody>(
       } = body;
       const password_hash = new_password && (await salted_hash(new_password));
 
-      await updateUserProfileAsUser(
-        params.username,
-        {
-          username,
-          password_hash,
-          mobile_number,
-          address
-        },
-        { email, first_name, last_name, gender: <undefined>gender && userGender(gender) }
-      );
+      await updateUserProfileAsUser(params.username, {
+        username,
+        password_hash,
+        mobile_number,
+        address,
+        email,
+        first_name,
+        last_name,
+        gender: <undefined>gender && userGender(gender)
+      });
 
       res.sendStatus(205);
     }, next)
