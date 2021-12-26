@@ -24,7 +24,6 @@ server.use(<ErrorRequestHandler>((err, _, res, next) => {
     const { status_code, message } = err;
     return res.status(status_code).send(message);
   }
-  if (err instanceof Error) return res.status(500).send(err.name);
   next(err);
 }));
 
