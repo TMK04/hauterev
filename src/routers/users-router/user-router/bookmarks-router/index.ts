@@ -1,5 +1,5 @@
 import type { UsernameParams } from "../types";
-import type { UnknownRecord } from "routers/utils/types";
+import type { RestaurantIDBody } from "./types";
 
 import {
   deleteBookmarkByRestaurantIDnUsername,
@@ -10,10 +10,6 @@ import { UnauthorizedError } from "routers/utils/Errors";
 import { catchNext, mergeRouter, simpleNumberValidate } from "routers/utils/helpers";
 
 const bookmarks_router = mergeRouter();
-
-// *--- Types ---* //
-
-type RestaurantIDBody = UnknownRecord<"restaurant_id">;
 
 // ----- //
 // * / * //

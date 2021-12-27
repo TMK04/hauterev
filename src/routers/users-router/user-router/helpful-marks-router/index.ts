@@ -1,15 +1,11 @@
 import type { UsernameParams } from "../types";
-import type { UnknownRecord } from "routers/utils/types";
+import type { ReviewIDBody } from "./types";
 
 import { deleteHelpfulMark, insertHelpfulMark } from "database/schemas";
 import { UnauthorizedError } from "routers/utils/Errors";
 import { catchNext, mergeRouter, simpleNumberValidate } from "routers/utils/helpers";
 
 const helpful_marks_router = mergeRouter();
-
-// *--- Types ---* //
-
-type ReviewIDBody = UnknownRecord<"review_id">;
 
 // ----- //
 // * / * //
