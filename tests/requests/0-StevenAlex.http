@@ -1,0 +1,23 @@
+@route = {{address}}/users
+
+### Create before testing
+
+POST {{route}}
+Content-Type: application/json
+
+{
+  "username": "StevenAlex",
+  "password": "S+3v3n@1ex",
+  "email": "steven_alex@mail.com",
+  "first_name": "Steven",
+  "last_name": "Alex"
+}
+
+### Delete after testing
+
+DELETE {{route}}/StevenAlex
+Content-Type: application/json
+
+{
+  "password": "S+3v3n@1ex"
+}
