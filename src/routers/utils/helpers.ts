@@ -1,9 +1,12 @@
+import { NextFunction, Router } from "express";
+
 import type { NoFalsy } from "./types";
-import type { NextFunction } from "express";
 
 import raw_default from "database/raw-default";
 
 import { InvalidError } from "./Errors";
+
+export const mergeRouter = () => Router({ mergeParams: true });
 
 export const catchNext = <T>(fn: () => Promise<T>, next: NextFunction) => fn().catch(next);
 

@@ -1,8 +1,5 @@
-import { compare } from "bcryptjs";
-import { RequestHandler, Router } from "express";
-
-import type { PasswordBody, PostUserBody } from "../types";
-import type { UserUsername } from "database/schemas/types";
+import type { PostUserBody } from "../types";
+import type { AuthenticatedLocals, UsernameParams } from "./types";
 import type { UnknownRecord } from "routers/utils/types";
 
 import {
@@ -12,95 +9,36 @@ import {
   validateUsername
 } from "../helpers";
 import {
-  deleteBookmarkByRestaurantIDnUsername,
-  deleteHelpfulMark,
   deleteUserByUsername,
-  insertBookmark,
-  insertHelpfulMark,
-  selectBookmarksByUsername,
-  selectPasswordHashByUsername,
   selectUserAsUser,
   selectUserByUsername,
   UpdateUser,
   updateUserByUsername
 } from "database/schemas";
-import {
-  InvalidError,
-  NotFoundError,
-  UnauthenticatedError,
-  UnauthorizedError
-} from "routers/utils/Errors";
+import { InvalidError, NotFoundError } from "routers/utils/Errors";
 import {
   catchNext,
   isDefined,
   isEmpty,
-  simpleNumberValidate,
+  mergeRouter,
   simpleStringNullInvalid,
   simpleStringValidate,
   validate
 } from "routers/utils/helpers";
 
-const user_router = Router({ mergeParams: true });
+import bookmarks_router from "./bookmarks-router";
+import { authenticate, rejectUnauthenticated } from "./helpers";
+import helpful_marks_router from "./helpful-marks-router";
 
-// *--- Types ---* //
+const user_router = mergeRouter();
 
-interface UsernameParams {
-  username: UserUsername;
-}
-
-interface AuthenticatedLocals {
-  authenticated?: boolean;
-}
-
-// *--- Helpers ---* //
-
-/**
- * Check if provided password matches user password,
- * or end the request if no such user exists
- */
-const authenticate: RequestHandler<
-  UsernameParams,
-  any,
-  Partial<PasswordBody>,
-  any,
-  AuthenticatedLocals
-> = ({ body, params }, res, next) =>
-  catchNext(async () => {
-    const { username } = params;
-    const password_hash_result = await selectPasswordHashByUsername(username);
-    if (!password_hash_result[0]) throw new NotFoundError("User", username);
-
-    try {
-      const password = simpleStringValidate(body, "password");
-      const password_hash = password_hash_result[0].password_hash;
-      res.locals.authenticated = await compare(password, password_hash);
-    } catch (_) {
-      _;
-    } finally {
-      next();
-    }
-  }, next);
-
-/**
- * End the request if res.locals.authentcated is falsy;
- * Is synchronous - no extra error handling is needed
- *
- * @param res - @see resInvalidPassword called if unauthenticated
- * @param next - called if authenticated
- * @see authenticate
- */
-const rejectUnauthenticated: RequestHandler<any, any, any, any, AuthenticatedLocals> = (
-  _,
-  res,
-  next
-) => {
-  if (res.locals.authenticated) return next();
-  throw new UnauthenticatedError();
-};
-
-// *--- Routes ---* //
+// ----- //
+// * / * //
+// ----- //
 
 user_router.use(authenticate);
+
+// *--- GET ---* //
 
 user_router.get<UsernameParams, any, any, any, AuthenticatedLocals>("/", ({ params }, res, next) =>
   catchNext(async () => {
@@ -113,6 +51,8 @@ user_router.get<UsernameParams, any, any, any, AuthenticatedLocals>("/", ({ para
     res.json(user_profile);
   }, next)
 );
+
+// *--- PATCH ---* //
 
 type PatchUserBody = Omit<PostUserBody, "password" | "created_timestamp"> &
   UnknownRecord<"new_password">;
@@ -158,6 +98,8 @@ user_router.patch<UsernameParams, any, PatchUserBody>(
     }, next)
 );
 
+// *--- DELETE ---* //
+
 user_router.delete("/", rejectUnauthenticated, ({ params }, res, next) =>
   catchNext(async () => {
     await deleteUserByUsername(params.username);
@@ -165,78 +107,13 @@ user_router.delete("/", rejectUnauthenticated, ({ params }, res, next) =>
   }, next)
 );
 
-user_router.use("/:controller", rejectUnauthenticated);
+// ---------------- //
+// * /:controller * //
+// ---------------- //
 
-// ------------------------------ //
-// * /users/:username/bookmarks * //
-// ------------------------------ //
-
-// *--- Types ---* //
-
-type RestaurantIDBody = UnknownRecord<"restaurant_id">;
-
-// *--- Routes ---* //
-
-user_router.post<UsernameParams, any, RestaurantIDBody>(
-  "/bookmarks",
-  ({ body, params }, res, next) =>
-    catchNext(async () => {
-      const restaurant_id = simpleNumberValidate(body, "restaurant_id");
-      await insertBookmark({
-        username: params.username,
-        restaurant_id,
-        timestamp: new Date()
-      }).catch(() => {
-        throw new UnauthorizedError("Restaurant already bookmarked");
-      });
-      res.sendStatus(201);
-    }, next)
-);
-
-user_router.get<UsernameParams>("/bookmarks", ({ params }, res, next) =>
-  catchNext(async () => res.json(await selectBookmarksByUsername(params.username)), next)
-);
-
-user_router.delete<UsernameParams, any, RestaurantIDBody>(
-  "/bookmarks",
-  ({ body, params }, res, next) =>
-    catchNext(async () => {
-      const restaurant_id = simpleNumberValidate(body, "restaurant_id");
-      await deleteBookmarkByRestaurantIDnUsername(restaurant_id, params.username);
-      res.sendStatus(204);
-    }, next)
-);
-
-// ------------------------------ //
-// * /reviews/:id/helpful-marks * //
-// ------------------------------ //
-
-// *--- Types ---* //
-
-type ReviewIDBody = UnknownRecord<"review_id">;
-
-// *--- Routes ---* //
-
-user_router.post<UsernameParams, any, ReviewIDBody>(
-  "/helpful-marks",
-  ({ body, params }, res, next) =>
-    catchNext(async () => {
-      const review_id = simpleNumberValidate(body, "review_id");
-      await insertHelpfulMark({ review_id, username: params.username }).catch(() => {
-        throw new UnauthorizedError("Review already marked as helpful");
-      });
-      res.sendStatus(201);
-    }, next)
-);
-
-user_router.delete<UsernameParams, any, ReviewIDBody>(
-  "/helpful-marks",
-  ({ body, params }, res, next) =>
-    catchNext(async () => {
-      const review_id = simpleNumberValidate(body, "review_id");
-      await deleteHelpfulMark({ review_id, username: params.username });
-      res.sendStatus(204);
-    }, next)
-);
+user_router
+  .use("/:controller", rejectUnauthenticated)
+  .use("/bookmarks", bookmarks_router)
+  .use("/helpful-marks", helpful_marks_router);
 
 export default user_router;
