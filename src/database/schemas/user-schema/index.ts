@@ -46,9 +46,9 @@ export const selectUserAsUser = (username: UserUsername): Result<User, typeof us
 
 export type UpdateUser = Partial<Omit<User, "created_timestamp">>;
 
-export const updateUserAsUser = (username: UserUsername, update_user: UpdateUser) =>
+export const updateUserByUsername = (username: UserUsername, update_user: UpdateUser) =>
   user(username).update(update_user);
 
 // *--- Delete ---* //
 
-export const deleteUser = (username: UserUsername) => user(username).del();
+export const deleteUserByUsername = (username: UserUsername) => user(username).del();

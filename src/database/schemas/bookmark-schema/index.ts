@@ -23,5 +23,5 @@ export const selectBookmarksByUsername = (username: UserUsername) =>
 
 // *--- Delete ---* //
 
-export const deleteBookmark = (username: UserUsername, restaurant_id: ID) =>
+export const deleteBookmarkByRestaurantIDnUsername = (restaurant_id: ID, username: UserUsername) =>
   bookmarkSchema().del().where({ username, restaurant_id });

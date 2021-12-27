@@ -1,6 +1,7 @@
 import { compare } from "bcryptjs";
 import { RequestHandler, Router } from "express";
 
+import type { AuthenticateBody } from "./users-router/types";
 import type { UnknownRecord } from "./utils/types";
 import type { ID } from "database/schemas/types";
 
@@ -14,7 +15,6 @@ import {
   updateReviewByID
 } from "database/schemas";
 
-import { AuthenticateBody } from "./users-router";
 import {
   InvalidError,
   NotFoundError,
