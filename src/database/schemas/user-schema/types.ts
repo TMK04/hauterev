@@ -14,22 +14,24 @@ export type UserPasswordHash = string;
 /**
  * @type {VARCHAR(15)}
  */
-export type UserMobileNumber = string;
+export type UserMobileNumber = RawDefault | string;
 
 /**
  * @type {VARCHAR(100)}
  */
-export type UserAddress = string;
+export type UserAddress = RawDefault | string;
 
 /**
  * @type {VARCHAR(255)}
  */
 export type UserEmail = string;
 
+export type FirstName = RawDefault | Name;
+
 /**
  * @type {CHAR(1)}
  */
-export type UserGender = "F" | "M" | "O" | "N";
+export type UserGender = RawDefault | "F" | "M" | "O" | "N";
 
 export interface User {
   username: UserUsername;
