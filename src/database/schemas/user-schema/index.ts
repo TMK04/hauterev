@@ -1,7 +1,6 @@
 import type { User, UserUsername } from "../types";
-import type { ColumnsTuple, Result, Unpartial } from "../utils/types";
+import type { ColumnsTuple, Result } from "../utils/types";
 
-import { filter, notEmpty } from "../utils/helpers";
 import db from "database";
 
 // ----------- //
@@ -18,8 +17,7 @@ const user = (username: UserUsername) => userSchema().where({ username });
 
 // *--- Insert ---* //
 
-export const insertUser = async (insert_user: Unpartial<User>) =>
-  userSchema().insert(filter(insert_user));
+export const insertUser = async (insert_user: User) => userSchema().insert(insert_user);
 
 // *--- Select ---* //
 
@@ -46,10 +44,10 @@ export const selectUserAsUser = (username: UserUsername): Result<User, typeof us
 
 // *--- Update ---* //
 
-export const updateUserProfileAsUser = (
-  username: UserUsername,
-  update_user: Unpartial<Omit<User, "created_timestamp">>
-) => (notEmpty(update_user) ? user(username).update(filter(update_user)) : Promise.reject());
+export type UpdateUser = Partial<Omit<User, "created_timestamp">>;
+
+export const updateUserAsUser = (username: UserUsername, update_user: UpdateUser) =>
+  user(username).update(update_user);
 
 // *--- Delete ---* //
 

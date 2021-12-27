@@ -8,11 +8,11 @@ Content-Type: application/json
 {
   "username": "Bob123",
   "password": "Bob123Builder",
+  "email": "bob_staub_123@mail.com",
+  "last_name": "Staub",
+  "first_name": "Bob",
   "mobile_number": "12345678",
   "address": "Staub Street 123",
-  "email": "bob_staub_123@mail.com",
-  "first_name": "Bob",
-  "last_name": "Staub",
   "gender": "M"
 }
 

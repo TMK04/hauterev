@@ -1,16 +1,16 @@
 import { compare } from "bcryptjs";
 import { RequestHandler, Router } from "express";
 
-import type { RKMappedRecord } from "./utils/types";
-import type { ID, UserUsername } from "database/schemas/types";
+import type { UnknownRecord } from "./utils/types";
+import type { ID } from "database/schemas/types";
 
 import {
   deleteReviewByID,
-  InsertReview,
   insertReview,
   selectPasswordHashByUsername,
   selectReviewByID,
   selectReviewIDByIDnUsername,
+  UpdateReview,
   updateReviewByID
 } from "database/schemas";
 
@@ -21,7 +21,14 @@ import {
   UnauthenticatedError,
   UnauthorizedError
 } from "./utils/Errors";
-import { catchNext, checkBodyProperties } from "./utils/helpers";
+import {
+  catchNext,
+  isDefined,
+  isEmpty,
+  simpleNumberValidate,
+  simpleStringValidate,
+  validate
+} from "./utils/helpers";
 
 const reviews_router = Router();
 
@@ -29,52 +36,42 @@ const reviews_router = Router();
 // * /reviews * //
 // ------------ //
 
-// *--- Types ---* //
-
-/**
- * Keys belonging to @type {Required} Properties of @see PostReviewBody
- */
-const rk_post_review_body = <const>[
-  "restaurant_id",
-  "username",
-  "rating",
-  "title",
-  "description",
-  "image_url"
-];
-
-type PostReviewBody = RKMappedRecord<InsertReview, typeof rk_post_review_body>;
-
 // *--- Helpers --- * //
 
-const rejectUnauthenticated: RequestHandler<any, any, Partial<AuthenticateBody>> = (
-  { body },
-  _,
-  next
-) =>
+const rejectUnauthenticated: RequestHandler<any, any, AuthenticateBody> = ({ body }, _, next) =>
   catchNext(async () => {
-    const { username, password } = body;
-    if (!username) return next(new InvalidError("username"));
-    if (!password) return next(new InvalidError("password"));
+    const username = simpleStringValidate(body, "username");
+    const password = simpleStringValidate(body, "password");
 
     const password_hash_result = await selectPasswordHashByUsername(username);
-    if (!password_hash_result[0]) return next(new NotFoundError("User", username));
+    if (!password_hash_result[0]) throw new NotFoundError("User", username);
 
     const password_hash = password_hash_result[0].password_hash;
     if (await compare(password, password_hash)) return next();
 
-    next(new UnauthenticatedError());
+    throw new UnauthenticatedError();
   }, next);
+
+const validateRating = <T extends UnknownRecord<"rating">>(body: T) =>
+  validate(body, "rating", (v) => typeof v === "number" && v >= 1 && v <= 5 && v - (v % 0.5));
 
 // *--- Routes ---* //
 
-reviews_router.post<any, any, any, PostReviewBody>(
+type PostReviewBody = UnknownRecord<
+  "restaurant_id" | "username" | "rating" | "title" | "description" | "image_url"
+>;
+
+reviews_router.post<any, any, any, AuthenticateBody & PostReviewBody>(
   "/",
   rejectUnauthenticated,
-  checkBodyProperties(rk_post_review_body),
   ({ body }, res, next) =>
     catchNext(async () => {
-      const { restaurant_id, username, rating, title, description, image_url } = body;
+      const restaurant_id = simpleNumberValidate(body, "restaurant_id");
+      const username = simpleStringValidate(body, "username");
+      const rating = validateRating(body);
+      const title = simpleStringValidate(body, "title");
+      const description = simpleStringValidate(body, "description");
+      const image_url = simpleStringValidate(body, "image_url");
 
       await insertReview({
         restaurant_id,
@@ -100,24 +97,31 @@ interface IDParams {
   id: ID;
 }
 
-interface UsernameBody {
-  username: UserUsername;
-}
-
 // *--- Helpers ---* //
 
-const rejectUnauthorized: RequestHandler<IDParams, any, UsernameBody> = (
+/**
+ * Reject both unauthenticated & unauthorized requests
+ */
+const rejectUnauthed: RequestHandler<IDParams, any, AuthenticateBody> = (
   { body, params },
   _,
   next
 ) =>
-  catchNext(
-    async () =>
-      (await selectReviewIDByIDnUsername(params.id, body.username))[0]
-        ? next()
-        : next(new UnauthorizedError("Review belongs to another user")),
-    next
-  );
+  catchNext(async () => {
+    const username = simpleStringValidate(body, "username");
+    const password = simpleStringValidate(body, "password");
+
+    const password_hash_result = await selectPasswordHashByUsername(username);
+    if (!password_hash_result[0]) throw new NotFoundError("User", username);
+
+    const password_hash = password_hash_result[0].password_hash;
+    if (!(await compare(password, password_hash))) throw new UnauthenticatedError();
+
+    const review_id_result = await selectReviewIDByIDnUsername(params.id, <string>body.username);
+    if (review_id_result[0]) return next();
+
+    throw new UnauthorizedError("Review belongs to another user");
+  }, next);
 
 // *--- Routes ---* //
 
@@ -126,32 +130,37 @@ reviews_router.get("/:id", ({ params }, res, next) =>
     const { id } = params;
     const review_result = await selectReviewByID(+id);
     const review = review_result[0];
-    if (!review) return next(new NotFoundError("Review", id));
+    if (!review) throw new NotFoundError("Review", id);
     res.json(review);
   }, next)
 );
 
-const nn_patch_review_body = <const>["rating", "title", "description", "image_url"];
-
-type PatchReviewBody = Partial<RKMappedRecord<InsertReview, typeof nn_patch_review_body>>;
+type PatchReviewBody = Omit<PostReviewBody, "restaurant_id" | "username">;
 
 reviews_router.patch<IDParams, any, AuthenticateBody & PatchReviewBody>(
   "/:id",
-  rejectUnauthenticated,
-  rejectUnauthorized,
-  checkBodyProperties(nn_patch_review_body, [null, ""], (key) => `Invalid ${key}`),
+  rejectUnauthed,
   ({ body, params }, res, next) =>
     catchNext(async () => {
       const { rating, title, description, image_url } = body;
-      await updateReviewByID(+params.id, { rating, title, description, image_url }, new Date());
+
+      const update_review: UpdateReview = {};
+      if (isDefined(rating)) update_review.rating = validateRating(body);
+      if (isDefined(title)) update_review.title = simpleStringValidate(body, "title");
+      if (isDefined(description))
+        update_review.description = simpleStringValidate(body, "description");
+      if (isDefined(image_url)) update_review.image_url = simpleStringValidate(body, "image_url");
+
+      if (isEmpty(update_review)) throw new InvalidError("body");
+
+      await updateReviewByID(+params.id, update_review, new Date());
       res.sendStatus(205);
     }, next)
 );
 
 reviews_router.delete<IDParams, any, AuthenticateBody>(
   "/:id",
-  rejectUnauthenticated,
-  rejectUnauthorized,
+  rejectUnauthed,
   ({ params }, res, next) =>
     catchNext(async () => {
       await deleteReviewByID(+params.id);

@@ -1,8 +1,6 @@
 import type { ID, Review, Timestamp, UserUsername } from "../types";
-import type { Unpartial } from "../utils/types";
 
 import { selectHelpfulMarksHelpfulCount } from "..";
-import { filter, notEmpty } from "../utils/helpers";
 import db from "database";
 
 // ----------- //
@@ -107,16 +105,16 @@ export const selectReviewIDByIDnUsername = (id: ID, username: UserUsername) =>
 
 // *--- Update ---* //
 
+export type UpdateReview = Partial<Omit<Review, `${string}id` | "username" | `${string}timestamp`>>;
+
 export const updateReviewByID = (
   id: ID,
-  update_review: Unpartial<Omit<Review, `${string}id` | "username" | `${string}timestamp`>>,
+  update_review: UpdateReview,
   edited_timestamp: Timestamp
 ) =>
-  notEmpty(update_review)
-    ? reviewSchema()
-        .update({ ...filter(update_review), edited_timestamp })
-        .where({ id })
-    : Promise.reject();
+  reviewSchema()
+    .update({ ...update_review, edited_timestamp })
+    .where({ id });
 
 // *--- Delete ---* //
 

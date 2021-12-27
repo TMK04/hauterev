@@ -1,8 +1,8 @@
 import { compare, hash } from "bcryptjs";
 import { RequestHandler, Router } from "express";
 
-import type { RKMappedRecord, RKRecord } from "./utils/types";
-import type { Bookmark, HelpfulMark, UserGender, UserUsername } from "database/schemas/types";
+import type { UnknownRecord } from "./utils/types";
+import type { UserGender, UserUsername } from "database/schemas/types";
 
 import { bcrypt_config } from "configs";
 import {
@@ -16,11 +16,26 @@ import {
   selectPasswordHashByUsername,
   selectUserAsUser,
   selectUserByUsername,
-  updateUserProfileAsUser
+  UpdateUser,
+  updateUserAsUser
 } from "database/schemas";
 
-import { NotFoundError, UnauthenticatedError, UnauthorizedError } from "./utils/Errors";
-import { catchNext, checkBodyProperties } from "./utils/helpers";
+import {
+  InvalidError,
+  NotFoundError,
+  UnauthenticatedError,
+  UnauthorizedError
+} from "./utils/Errors";
+import {
+  catchNext,
+  isDefined,
+  defaultInvalid,
+  simpleNumberValidate,
+  simpleStringNullInvalid,
+  simpleStringValidate,
+  validate,
+  isEmpty
+} from "./utils/helpers";
 
 const users_router = Router();
 
@@ -30,85 +45,87 @@ const users_router = Router();
 
 // *--- Types ---* //
 
-/**
- * Keys belonging to @type {Required} Properties of @see PasswordBody
- */
-const rk_password_body = <const>["password"];
+type UsernameBody = UnknownRecord<"username">;
 
-/**
- * Plain text password
- */
-type PasswordBody = RKRecord<typeof rk_password_body>;
+type PasswordBody = UnknownRecord<"password">;
 
-/**
- * Keys belonging to @type {Required} Properties of @see LoginBody
- */
-export const rk_authenticate_body = <const>["username", ...rk_password_body];
-
-export type AuthenticateBody = RKRecord<typeof rk_authenticate_body>;
+export type AuthenticateBody = UsernameBody & PasswordBody;
 
 // *---- Helpers ---* //
 
 const salted_hash = (password: string) => hash(password, bcrypt_config.salt);
 
+const validateUsername = <T extends UsernameBody>(body: T) =>
+  validate(body, "username", (v) => {
+    if (typeof v !== "string" || v.match(/\W/)) return;
+    if (v.length < 20) return v;
+  });
+
+const validatePassword = <T extends PasswordBody>(body: T) =>
+  validate(body, "password", (v) => {
+    if (typeof v !== "string") return;
+    const { length } = v;
+    if (length > 8 && length < 50) return v;
+  });
+
+const nullInvalidMobileNumber = <T extends UnknownRecord<"mobile_number">>(body: T) =>
+  defaultInvalid(
+    body,
+    "mobile_number",
+    (v) => (typeof v === "number" || typeof v === "string") && v.toString()
+  );
+
+const user_genders: readonly UserGender[] = <const>["F", "M", "O", "N"];
+
+const nullInvalidGender = <T extends UnknownRecord<"gender">>(body: T) =>
+  defaultInvalid(body, "gender", (v) => user_genders.includes(<UserGender>v) && <UserGender>v);
+
 // *--- Routes ---* //
 
-users_router.post<any, any, any, AuthenticateBody>(
-  "/login",
-  checkBodyProperties(rk_authenticate_body),
-  ({ body }, res, next) =>
-    catchNext(async () => {
-      const { username, password } = body;
+users_router.post<any, any, any, AuthenticateBody>("/login", ({ body }, res, next) =>
+  catchNext(async () => {
+    const username = simpleStringValidate(body, "username");
+    const password = simpleStringValidate(body, "password");
 
-      const password_hash_result = await selectPasswordHashByUsername(username);
-      if (!password_hash_result[0]) return next(new NotFoundError("User", username));
+    const password_hash_result = await selectPasswordHashByUsername(username);
+    if (!password_hash_result[0]) throw new NotFoundError("User", username);
 
-      const password_hash = password_hash_result[0].password_hash;
-      if (await compare(password, password_hash)) return res.sendStatus(200);
-      next(new UnauthenticatedError());
-    }, next)
+    const password_hash = password_hash_result[0].password_hash;
+    if (await compare(password, password_hash)) return res.sendStatus(200);
+
+    throw new UnauthenticatedError();
+  }, next)
 );
 
-/**
- * Keys belonging to @type {Required} Properties of @see PostUserBody
- */
-const rk_post_user_body = <const>["email", "last_name", ...rk_authenticate_body];
+export type PostUserBody = AuthenticateBody &
+  UnknownRecord<"email" | "last_name" | "first_name" | "mobile_number" | "address" | "gender">;
 
-export interface PostUserBody extends RKRecord<typeof rk_post_user_body> {
-  mobile_number?: string;
-  address?: string;
-  first_name?: string;
-  gender: string;
-}
+users_router.post<any, any, any, PostUserBody>("/", ({ body }, res, next) =>
+  catchNext(async () => {
+    const username = validateUsername(body);
+    const password = validatePassword(body);
+    const password_hash = await salted_hash(password);
+    const email = simpleStringValidate(body, "email");
+    const last_name = simpleStringValidate(body, "last_name");
+    const first_name = simpleStringNullInvalid(body, "first_name");
+    const mobile_number = nullInvalidMobileNumber(body);
+    const address = simpleStringNullInvalid(body, "address");
+    const gender = nullInvalidGender(body);
 
-export const user_genders: readonly UserGender[] = <const>["F", "M", "O", "N"];
+    await insertUser({
+      username,
+      password_hash,
+      email,
+      last_name,
+      first_name,
+      mobile_number,
+      address,
+      gender,
+      created_timestamp: new Date()
+    });
 
-const userGender = (gender: string | undefined) =>
-  user_genders.includes(<UserGender>gender) ? <UserGender>gender : "N";
-
-users_router.post<any, any, any, PostUserBody>(
-  "/",
-  checkBodyProperties(rk_post_user_body),
-  ({ body }, res, next) =>
-    catchNext(async () => {
-      const { username, password, mobile_number, address, email, first_name, last_name, gender } =
-        body;
-      const password_hash = await salted_hash(password);
-
-      await insertUser({
-        username,
-        password_hash,
-        mobile_number,
-        address,
-        email,
-        first_name,
-        last_name,
-        gender: userGender(gender),
-        created_timestamp: new Date()
-      });
-
-      res.sendStatus(201);
-    }, next)
+    res.sendStatus(201);
+  }, next)
 );
 
 // -------------------- //
@@ -141,14 +158,17 @@ const authenticate: RequestHandler<
   catchNext(async () => {
     const { username } = params;
     const password_hash_result = await selectPasswordHashByUsername(username);
-    if (!password_hash_result[0]) return next(new NotFoundError("user", username));
+    if (!password_hash_result[0]) throw new NotFoundError("User", username);
 
-    const { password } = body;
-    if (!password) return next();
-
-    const password_hash = password_hash_result[0].password_hash;
-    res.locals.authenticated = await compare(password, password_hash);
-    next();
+    try {
+      const password = simpleStringValidate(body, "password");
+      const password_hash = password_hash_result[0].password_hash;
+      res.locals.authenticated = await compare(password, password_hash);
+    } catch (_) {
+      _;
+    } finally {
+      next();
+    }
   }, next);
 
 /**
@@ -163,7 +183,10 @@ const rejectUnauthenticated: RequestHandler<any, any, any, any, AuthenticatedLoc
   _,
   res,
   next
-) => (res.locals.authenticated ? next() : next(new UnauthenticatedError()));
+) => {
+  if (res.locals.authenticated) return next();
+  throw new UnauthenticatedError();
+};
 
 // *--- Routes ---* //
 
@@ -183,44 +206,46 @@ users_router.get<UsernameParams, any, any, any, AuthenticatedLocals>(
     }, next)
 );
 
-/**
- * Keys belonging to @type {NonNullable} Properties of @see PatchUserBody
- */
-const nn_patch_user_body = <const>["username", "new_password", "email", "last_name"];
-
-type PatchUserBody<T = PostUserBody & RKRecord<typeof nn_patch_user_body>> = {
-  [K in keyof Required<T>]?: T[K] extends Required<T>[K] ? T[K] : T[K] | null;
-};
+type PatchUserBody = Omit<PostUserBody, "password" | "created_timestamp"> &
+  UnknownRecord<"new_password">;
 
 users_router.patch<UsernameParams, any, PatchUserBody>(
   "/:username",
   rejectUnauthenticated,
-  checkBodyProperties(nn_patch_user_body, [null, ""], (key) => `Invalid ${key}`),
   ({ body, params }, res, next) =>
     catchNext(async () => {
       const {
         username,
         new_password,
+        email,
+        last_name,
+        first_name,
         mobile_number,
         address,
-        email,
-        first_name,
-        last_name,
         gender
       } = body;
-      const password_hash = new_password && (await salted_hash(new_password));
 
-      await updateUserProfileAsUser(params.username, {
-        username,
-        password_hash,
-        mobile_number,
-        address,
-        email,
-        first_name,
-        last_name,
-        gender: userGender(gender)
-      });
+      const update_user: UpdateUser = {};
+      if (isDefined(username)) update_user.username = validateUsername(body);
+      if (isDefined(new_password))
+        update_user.password_hash = await salted_hash(
+          validate(body, "new_password", (v) => {
+            if (typeof v !== "string") return;
+            const { length } = v;
+            if (length > 8 && length < 50) return v;
+          })
+        );
+      if (isDefined(email)) update_user.email = simpleStringValidate(body, "email");
+      if (isDefined(last_name)) update_user.last_name = simpleStringValidate(body, "last_name");
+      if (isDefined(first_name))
+        update_user.first_name = simpleStringNullInvalid(body, "first_name");
+      if (isDefined(mobile_number)) update_user.mobile_number = nullInvalidMobileNumber(body);
+      if (isDefined(address)) update_user.address = simpleStringNullInvalid(body, "address");
+      if (isDefined(gender)) update_user.gender = nullInvalidGender(body);
 
+      if (isEmpty(update_user)) throw new InvalidError("body");
+
+      await updateUserAsUser(params.username, update_user);
       res.sendStatus(205);
     }, next)
 );
@@ -240,26 +265,22 @@ users_router.use("/:username/:controller", rejectUnauthenticated);
 
 // *--- Types ---* //
 
-const rk_restaurant_id_body = <const>["restaurant_id"];
-
-type RestaurantIDBody = RKMappedRecord<Bookmark, typeof rk_restaurant_id_body>;
+type RestaurantIDBody = UnknownRecord<"restaurant_id">;
 
 // *--- Routes ---* //
 
 users_router.post<UsernameParams, any, RestaurantIDBody>(
   "/:username/bookmarks",
-  checkBodyProperties(rk_restaurant_id_body),
   ({ body, params }, res, next) =>
     catchNext(async () => {
-      try {
-        await insertBookmark({
-          username: params.username,
-          restaurant_id: body.restaurant_id,
-          timestamp: new Date()
-        });
-      } catch (_) {
-        return next(new UnauthorizedError("Restaurant already bookmarked"));
-      }
+      const restaurant_id = simpleNumberValidate(body, "restaurant_id");
+      await insertBookmark({
+        username: params.username,
+        restaurant_id,
+        timestamp: new Date()
+      }).catch(() => {
+        throw new UnauthorizedError("Restaurant already bookmarked");
+      });
       res.sendStatus(201);
     }, next)
 );
@@ -270,10 +291,10 @@ users_router.get("/:username/bookmarks", ({ params }, res, next) =>
 
 users_router.delete<UsernameParams, any, RestaurantIDBody>(
   "/:username/bookmarks",
-  checkBodyProperties(rk_restaurant_id_body),
   ({ body, params }, res, next) =>
     catchNext(async () => {
-      await deleteBookmark(params.username, body.restaurant_id);
+      const restaurant_id = simpleNumberValidate(body, "restaurant_id");
+      await deleteBookmark(params.username, restaurant_id);
       res.sendStatus(204);
     }, next)
 );
@@ -284,32 +305,28 @@ users_router.delete<UsernameParams, any, RestaurantIDBody>(
 
 // *--- Types ---* //
 
-const rk_review_id_body = <const>["review_id"];
-
-type ReviewIDBody = RKMappedRecord<HelpfulMark, typeof rk_review_id_body>;
+type ReviewIDBody = UnknownRecord<"review_id">;
 
 // *--- Routes ---* //
 
 users_router.post<UsernameParams, any, ReviewIDBody>(
   "/:username/helpful-marks",
-  checkBodyProperties(rk_review_id_body),
   ({ body, params }, res, next) =>
     catchNext(async () => {
-      try {
-        await insertHelpfulMark({ review_id: body.review_id, username: params.username });
-      } catch (_) {
-        return next(new UnauthorizedError("Review already marked as helpful"));
-      }
+      const review_id = simpleNumberValidate(body, "review_id");
+      await insertHelpfulMark({ review_id, username: params.username }).catch(() => {
+        throw new UnauthorizedError("Review already marked as helpful");
+      });
       res.sendStatus(201);
     }, next)
 );
 
 users_router.delete<UsernameParams, any, ReviewIDBody>(
   "/:username/helpful-marks",
-  checkBodyProperties(rk_review_id_body),
   ({ body, params }, res, next) =>
     catchNext(async () => {
-      await deleteHelpfulMark({ review_id: body.review_id, username: params.username });
+      const review_id = simpleNumberValidate(body, "review_id");
+      await deleteHelpfulMark({ review_id, username: params.username });
       res.sendStatus(204);
     }, next)
 );

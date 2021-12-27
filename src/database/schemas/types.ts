@@ -1,3 +1,7 @@
+import type { Knex } from "knex";
+
+export type RawDefault = Knex.Raw<"DEFAULT">;
+
 /**
  * @type {INT}
  */

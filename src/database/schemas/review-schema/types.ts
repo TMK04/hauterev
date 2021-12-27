@@ -1,4 +1,4 @@
-import type { ID, ImageURL, Timestamp, UserUsername } from "../types";
+import type { ID, ImageURL, RawDefault, Timestamp, UserUsername } from "../types";
 
 /**
  * @type {VARCHAR(30)}
@@ -15,6 +15,7 @@ export type ReviewRating = number;
  */
 export type ReviewDescription = string;
 
+export type EditedTimestamp = RawDefault | Timestamp;
 export interface Review {
   id: ID;
   restaurant_id: ID;
@@ -24,5 +25,5 @@ export interface Review {
   description: ReviewDescription;
   image_url: ImageURL;
   posted_timestamp: Timestamp;
-  edited_timestamp?: Timestamp;
+  edited_timestamp: EditedTimestamp;
 }

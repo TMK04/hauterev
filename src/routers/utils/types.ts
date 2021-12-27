@@ -1,11 +1,5 @@
-import type { ID } from "database/schemas";
+type Key = string | number | symbol;
 
-export type RKRecord<KT extends readonly string[]> = Record<KT[number], string>;
+export type NoFalsy<T> = Exclude<T, void | false>;
 
-export type RKMappedRecord<T, KT extends readonly (keyof T)[]> = {
-  [K in KT[number]]: T[K];
-};
-
-export interface IDParams {
-  id: ID;
-}
+export type UnknownRecord<K extends Key> = Record<K, unknown>;

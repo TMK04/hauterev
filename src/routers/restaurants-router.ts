@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { selectRestaurantByID, selectRestaurants } from "database/schemas";
 
-import { InvalidError } from "./utils/Errors";
+import { NotFoundError } from "./utils/Errors";
 import { catchNext } from "./utils/helpers";
 
 const restaurants_router = Router();
@@ -21,8 +21,9 @@ restaurants_router.get("/", (_, res, next) =>
 
 restaurants_router.get(`/:id`, ({ params }, res, next) =>
   catchNext(async () => {
-    const restaurant_result = await selectRestaurantByID(+params.id);
-    if (!restaurant_result[0]) return next(new InvalidError("id"));
+    const { id } = params;
+    const restaurant_result = await selectRestaurantByID(+id);
+    if (!restaurant_result[0]) throw new NotFoundError("Restaurant", id);
     res.json(restaurant_result[0]);
   }, next)
 );
