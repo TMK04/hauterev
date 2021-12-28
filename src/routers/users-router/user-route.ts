@@ -1,13 +1,5 @@
-import type { PostUserBody } from "../types";
-import type { AuthenticatedLocals, UsernameParams } from "./types";
-import type { UnknownRecord } from "routers/utils/types";
+import type { AuthenticatedLocals, PatchUserBody, UsernameParams } from "./types";
 
-import {
-  nullInvalidGender,
-  nullInvalidMobileNumber,
-  salted_hash,
-  validateUsername
-} from "../helpers";
 import {
   deleteUserByUsername,
   selectUserAsUser,
@@ -20,45 +12,47 @@ import {
   catchNext,
   isDefined,
   isEmpty,
-  mergeRouter,
   simpleStringNullInvalid,
   simpleStringValidate,
   validate
 } from "routers/utils/helpers";
 
-import bookmarks_router from "./bookmarks-router";
-import { authenticate, rejectUnauthenticated } from "./helpers";
-import helpful_marks_router from "./helpful-marks-router";
+import {
+  authenticate,
+  nullInvalidGender,
+  nullInvalidMobileNumber,
+  rejectUnauthenticated,
+  salted_hash,
+  validateUsername
+} from "./helpers";
+import users_router from "./router";
 
-const user_router = mergeRouter();
+// -------------------- //
+// * /users/:username * //
+// -------------------- //
 
-// ----- //
-// * / * //
-// ----- //
-
-user_router.use(authenticate);
+users_router.use("/:username", authenticate);
 
 // *--- GET ---* //
 
-user_router.get<UsernameParams, any, any, any, AuthenticatedLocals>("/", ({ params }, res, next) =>
-  catchNext(async () => {
-    const { username } = params;
-    const user_profile_result = await (res.locals.authenticated
-      ? selectUserAsUser(username)
-      : selectUserByUsername(username));
-    const user_profile = user_profile_result[0];
-    if (!user_profile) throw new NotFoundError("User", username);
-    res.json(user_profile);
-  }, next)
+users_router.get<UsernameParams, any, any, any, AuthenticatedLocals>(
+  "/:username",
+  ({ params }, res, next) =>
+    catchNext(async () => {
+      const { username } = params;
+      const user_profile_result = await (res.locals.authenticated
+        ? selectUserAsUser(username)
+        : selectUserByUsername(username));
+      const user_profile = user_profile_result[0];
+      if (!user_profile) throw new NotFoundError("User", username);
+      res.json(user_profile);
+    }, next)
 );
 
 // *--- PATCH ---* //
 
-type PatchUserBody = Omit<PostUserBody, "password" | "created_timestamp"> &
-  UnknownRecord<"new_password">;
-
-user_router.patch<UsernameParams, any, PatchUserBody>(
-  "/",
+users_router.patch<UsernameParams, any, PatchUserBody>(
+  "/:username",
   rejectUnauthenticated,
   ({ body, params }, res, next) =>
     catchNext(async () => {
@@ -100,20 +94,9 @@ user_router.patch<UsernameParams, any, PatchUserBody>(
 
 // *--- DELETE ---* //
 
-user_router.delete("/", rejectUnauthenticated, ({ params }, res, next) =>
+users_router.delete("/:username", rejectUnauthenticated, ({ params }, res, next) =>
   catchNext(async () => {
     await deleteUserByUsername(params.username);
     res.sendStatus(204);
   }, next)
 );
-
-// ---------------- //
-// * /:controller * //
-// ---------------- //
-
-user_router
-  .use("/:controller", rejectUnauthenticated)
-  .use("/bookmarks", bookmarks_router)
-  .use("/helpful-marks", helpful_marks_router);
-
-export default user_router;
