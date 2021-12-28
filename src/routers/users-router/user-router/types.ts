@@ -1,9 +1,5 @@
-import type { UserUsername } from "database/schemas/types";
+import type { ParamRecord } from "routers/utils/types";
 
-export interface UsernameParams {
-  username: UserUsername;
-}
+export type UsernameParams = ParamRecord<"username">;
 
-export interface AuthenticatedLocals {
-  authenticated?: boolean;
-}
+export type AuthenticatedLocals = Partial<Record<"authenticated", boolean>>;

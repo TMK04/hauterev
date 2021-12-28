@@ -1,9 +1,8 @@
 import { Router } from "express";
 
+import { NotFoundError } from "../utils/Errors";
+import { catchNext } from "../utils/helpers";
 import { selectRestaurantByID, selectRestaurants } from "database/schemas";
-
-import { NotFoundError } from "./utils/Errors";
-import { catchNext } from "./utils/helpers";
 
 const restaurants_router = Router();
 
