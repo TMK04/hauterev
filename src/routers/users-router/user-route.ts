@@ -13,8 +13,7 @@ import {
   isDefined,
   isEmpty,
   simpleStringDefaultInvalid,
-  simpleStringValidate,
-  validate
+  simpleStringValidate
 } from "routers/utils/helpers";
 
 import {
@@ -23,6 +22,7 @@ import {
   defaultInvalidMobileNumber,
   rejectUnauthenticated,
   salted_hash,
+  validatePassword,
   validateUsername
 } from "./helpers";
 import users_router from "./router";
@@ -70,13 +70,7 @@ users_router.patch<UsernameParams, any, PatchUserBody>(
       const update_user: UpdateUser = {};
       if (isDefined(username)) update_user.username = validateUsername(body);
       if (isDefined(new_password))
-        update_user.password_hash = await salted_hash(
-          validate(body, "new_password", (v) => {
-            if (typeof v !== "string") return;
-            const { length } = v;
-            if (length > 8 && length < 50) return v;
-          })
-        );
+        update_user.password_hash = await salted_hash(validatePassword(body, "new_password"));
       if (isDefined(email)) update_user.email = simpleStringValidate(body, "email");
       if (isDefined(last_name)) update_user.last_name = simpleStringValidate(body, "last_name");
       if (isDefined(first_name))

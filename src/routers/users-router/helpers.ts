@@ -18,9 +18,12 @@ export const validateUsername = <T extends UsernameBody>(body: T) =>
     if (v.length < 20) return v;
   });
 
-export const validatePassword = <T extends PasswordBody>(body: T) =>
-  validate(body, "password", (v) => {
-    if (typeof v !== "string") return;
+export const validatePassword = <T extends UnknownRecord<A>, A extends string>(
+  body: T,
+  alias: A = <A>"password"
+) =>
+  validate(body, alias, (v) => {
+    if (typeof v !== "string" || v.match(/\s/)) return;
     const { length } = v;
     if (length > 8 && length < 50) return v;
   });
