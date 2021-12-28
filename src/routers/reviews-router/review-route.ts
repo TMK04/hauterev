@@ -13,9 +13,9 @@ import { catchNext, isDefined, isEmpty, simpleStringValidate } from "routers/uti
 import { rejectUnauthed, validateRating } from "./helpers";
 import reviews_router from "./router";
 
-// -------- //
-// * /:id * //
-// -------- //
+// ---------------- //
+// * /reviews/:id * //
+// ---------------- //
 
 // *--- GET ---* //
 

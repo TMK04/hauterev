@@ -1,6 +1,7 @@
 import { NextFunction, Router } from "express";
 
 import type { NoFalsy } from "./types";
+import type { RawDefault } from "database/schemas/types";
 
 import raw_default from "database/raw-default";
 
@@ -10,32 +11,43 @@ export const mergeRouter = () => Router({ mergeParams: true });
 
 export const catchNext = <T>(fn: () => Promise<T>, next: NextFunction) => fn().catch(next);
 
-export const validate = <T extends object, R>(
+export function validate<T extends object, R>(
   body: T,
   key: keyof T,
-  validateFn: (value: unknown) => R
-) => {
+  validateFn: (value: unknown) => R,
+  defaultInvalid?: false
+): NoFalsy<R>;
+export function validate<T extends object, R>(
+  body: T,
+  key: keyof T,
+  validateFn: (value: unknown) => R,
+  defaultInvalid: true
+): NoFalsy<R> | RawDefault;
+export function validate<T extends object, R>(
+  body: T,
+  key: keyof T,
+  validateFn: (value: unknown) => R,
+  defaultInvalid = false
+) {
   const value = validateFn(body[key]);
   if (value) return <NoFalsy<R>>value;
 
+  if (defaultInvalid) return raw_default;
   throw new InvalidError(key.toString());
-};
+}
 
 export const defaultInvalid = <T extends object, R>(
   body: T,
   key: keyof T,
   validateFn: (value: unknown) => R
-) => {
-  const value = validateFn(body[key]);
-  return value ? <NoFalsy<R>>value : raw_default;
-};
+) => validate(body, key, validateFn, true);
 
 const simpleStringValidateFn = (v: unknown) => typeof v === "string" && v;
 
 export const simpleStringValidate = <T extends object>(body: T, key: keyof T) =>
   validate(body, key, simpleStringValidateFn);
 
-export const simpleStringNullInvalid = <T extends object>(body: T, key: keyof T) =>
+export const simpleStringDefaultInvalid = <T extends object>(body: T, key: keyof T) =>
   defaultInvalid(body, key, simpleStringValidateFn);
 
 const simpleNumberValidateFn = (v: unknown) => typeof v === "number" && v;

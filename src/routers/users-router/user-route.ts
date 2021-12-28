@@ -12,15 +12,15 @@ import {
   catchNext,
   isDefined,
   isEmpty,
-  simpleStringNullInvalid,
+  simpleStringDefaultInvalid,
   simpleStringValidate,
   validate
 } from "routers/utils/helpers";
 
 import {
   authenticate,
-  nullInvalidGender,
-  nullInvalidMobileNumber,
+  defaultInvalidGender,
+  defaultInvalidMobileNumber,
   rejectUnauthenticated,
   salted_hash,
   validateUsername
@@ -80,10 +80,10 @@ users_router.patch<UsernameParams, any, PatchUserBody>(
       if (isDefined(email)) update_user.email = simpleStringValidate(body, "email");
       if (isDefined(last_name)) update_user.last_name = simpleStringValidate(body, "last_name");
       if (isDefined(first_name))
-        update_user.first_name = simpleStringNullInvalid(body, "first_name");
-      if (isDefined(mobile_number)) update_user.mobile_number = nullInvalidMobileNumber(body);
-      if (isDefined(address)) update_user.address = simpleStringNullInvalid(body, "address");
-      if (isDefined(gender)) update_user.gender = nullInvalidGender(body);
+        update_user.first_name = simpleStringDefaultInvalid(body, "first_name");
+      if (isDefined(mobile_number)) update_user.mobile_number = defaultInvalidMobileNumber(body);
+      if (isDefined(address)) update_user.address = simpleStringDefaultInvalid(body, "address");
+      if (isDefined(gender)) update_user.gender = defaultInvalidGender(body);
 
       if (isEmpty(update_user)) throw new InvalidError("body");
 

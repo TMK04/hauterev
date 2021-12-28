@@ -25,7 +25,7 @@ export const validatePassword = <T extends PasswordBody>(body: T) =>
     if (length > 8 && length < 50) return v;
   });
 
-export const nullInvalidMobileNumber = <T extends UnknownRecord<"mobile_number">>(body: T) =>
+export const defaultInvalidMobileNumber = <T extends UnknownRecord<"mobile_number">>(body: T) =>
   defaultInvalid(
     body,
     "mobile_number",
@@ -34,8 +34,8 @@ export const nullInvalidMobileNumber = <T extends UnknownRecord<"mobile_number">
 
 const user_genders: readonly UserGender[] = <const>["F", "M", "O", "N"];
 
-export const nullInvalidGender = <T extends UnknownRecord<"gender">>(body: T) =>
-  defaultInvalid(body, "gender", (v) => user_genders.includes(<UserGender>v) && <UserGender>v);
+export const defaultInvalidGender = <T extends UnknownRecord<"gender">>(body: T) =>
+  validate(body, "gender", (v) => user_genders.includes(<UserGender>v) && <UserGender>v, true);
 
 /**
  * Check if provided password matches user password,

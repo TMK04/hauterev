@@ -10,9 +10,9 @@ import { rejectUnauthenticated, validateRating } from "./helpers";
 
 const reviews_router = Router();
 
-// ----- //
-// * / * //
-// ----- //
+// ------------ //
+// * /reviews * //
+// ------------ //
 
 // *--- POST ---* //
 
