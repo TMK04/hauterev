@@ -1,7 +1,6 @@
 import type { IDParams, PatchReviewBody } from "./types";
 import type { AuthenticateBody } from "routers/users-router/types";
 
-import { validateRating } from "../helpers";
 import {
   deleteReviewByID,
   selectReviewByID,
@@ -9,25 +8,18 @@ import {
   updateReviewByID
 } from "database/schemas";
 import { InvalidError, NotFoundError } from "routers/utils/Errors";
-import {
-  catchNext,
-  isDefined,
-  isEmpty,
-  mergeRouter,
-  simpleStringValidate
-} from "routers/utils/helpers";
+import { catchNext, isDefined, isEmpty, simpleStringValidate } from "routers/utils/helpers";
 
-import { rejectUnauthed } from "./helpers";
+import { rejectUnauthed, validateRating } from "./helpers";
+import reviews_router from "./router";
 
-const review_router = mergeRouter();
-
-// ----- //
-// * / * //
-// ----- //
+// -------- //
+// * /:id * //
+// -------- //
 
 // *--- GET ---* //
 
-review_router.get<IDParams>("/", ({ params }, res, next) =>
+reviews_router.get<IDParams>("/:id", ({ params }, res, next) =>
   catchNext(async () => {
     const { id } = params;
     const review_result = await selectReviewByID(+id);
@@ -39,8 +31,8 @@ review_router.get<IDParams>("/", ({ params }, res, next) =>
 
 // *--- PATCH ---* //
 
-review_router.patch<IDParams, any, PatchReviewBody>(
-  "/",
+reviews_router.patch<IDParams, any, PatchReviewBody>(
+  "/:id",
   rejectUnauthed,
   ({ body, params }, res, next) =>
     catchNext(async () => {
@@ -62,7 +54,7 @@ review_router.patch<IDParams, any, PatchReviewBody>(
 
 // *--- DELETE ---* //
 
-review_router.delete<IDParams, any, AuthenticateBody>(
+reviews_router.delete<IDParams, any, AuthenticateBody>(
   "/:id",
   rejectUnauthed,
   ({ params }, res, next) =>
@@ -71,5 +63,3 @@ review_router.delete<IDParams, any, AuthenticateBody>(
       res.sendStatus(204);
     }, next)
 );
-
-export default review_router;
