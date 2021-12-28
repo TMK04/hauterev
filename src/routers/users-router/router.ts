@@ -4,12 +4,12 @@ import { Router } from "express";
 import type { AuthenticateBody, PostUserBody } from "./types";
 
 import { NotFoundError, UnauthenticatedError } from "../utils/Errors";
-import { catchNext, simpleStringDefaultInvalid, simpleStringValidate } from "../utils/helpers";
+import { catchNext, simpleStringRawDefaultInvalid, simpleStringValidate } from "../utils/helpers";
 import { insertUser, selectPasswordHashByUsername } from "database/schemas";
 
 import {
-  defaultInvalidGender,
-  defaultInvalidMobileNumber,
+  rawDefaultInvalidGender,
+  rawDefaultInvalidMobileNumber,
   salted_hash,
   validatePassword,
   validateUsername
@@ -51,10 +51,10 @@ users_router.post<any, any, any, PostUserBody>("/", ({ body }, res, next) =>
     const password_hash = await salted_hash(password);
     const email = simpleStringValidate(body, "email");
     const last_name = simpleStringValidate(body, "last_name");
-    const first_name = simpleStringDefaultInvalid(body, "first_name");
-    const mobile_number = defaultInvalidMobileNumber(body);
-    const address = simpleStringDefaultInvalid(body, "address");
-    const gender = defaultInvalidGender(body);
+    const first_name = simpleStringRawDefaultInvalid(body, "first_name");
+    const mobile_number = rawDefaultInvalidMobileNumber(body);
+    const address = simpleStringRawDefaultInvalid(body, "address");
+    const gender = rawDefaultInvalidGender(body);
 
     await insertUser({
       username,

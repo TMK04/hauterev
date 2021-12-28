@@ -8,9 +8,18 @@ import type { UnknownRecord } from "routers/utils/types";
 import { bcrypt_config } from "configs";
 import { selectPasswordHashByUsername } from "database/schemas";
 import { NotFoundError, UnauthenticatedError } from "routers/utils/Errors";
-import { catchNext, defaultInvalid, simpleStringValidate, validate } from "routers/utils/helpers";
+import {
+  catchNext,
+  rawDefaultInvalid,
+  simpleStringValidate,
+  validate
+} from "routers/utils/helpers";
 
 export const salted_hash = (password: string) => hash(password, bcrypt_config.salt);
+
+// --------------------- //
+// * validate variants * //
+// --------------------- //
 
 export const validateUsername = <T extends UsernameBody>(body: T) =>
   validate(body, "username", (v) => {
@@ -28,8 +37,8 @@ export const validatePassword = <T extends UnknownRecord<A>, A extends string>(
     if (length > 8 && length < 50) return v;
   });
 
-export const defaultInvalidMobileNumber = <T extends UnknownRecord<"mobile_number">>(body: T) =>
-  defaultInvalid(
+export const rawDefaultInvalidMobileNumber = <T extends UnknownRecord<"mobile_number">>(body: T) =>
+  rawDefaultInvalid(
     body,
     "mobile_number",
     (v) => (typeof v === "number" || typeof v === "string") && v.toString()
@@ -37,8 +46,12 @@ export const defaultInvalidMobileNumber = <T extends UnknownRecord<"mobile_numbe
 
 const user_genders: readonly UserGender[] = <const>["F", "M", "O", "N"];
 
-export const defaultInvalidGender = <T extends UnknownRecord<"gender">>(body: T) =>
-  validate(body, "gender", (v) => user_genders.includes(<UserGender>v) && <UserGender>v, true);
+export const rawDefaultInvalidGender = <T extends UnknownRecord<"gender">>(body: T) =>
+  rawDefaultInvalid(body, "gender", (v: any) => user_genders.includes(v) && <UserGender>v);
+
+// -------- //
+// * auth * //
+// -------- //
 
 /**
  * Check if provided password matches user password,

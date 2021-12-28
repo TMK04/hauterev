@@ -1,7 +1,11 @@
 import { Router } from "express";
 
+import type { GetRestaurantsQuery } from "./types";
+
 import { selectRestaurants } from "database/schemas";
 import { catchNext } from "routers/utils/helpers";
+
+import { nullInvalidOpeningHours, nullInvalidRegion } from "./helpers";
 
 const restaurants_router = Router();
 
@@ -11,8 +15,12 @@ const restaurants_router = Router();
 
 // *--- GET ---* //
 
-restaurants_router.get("/", (_, res, next) =>
-  catchNext(async () => res.json(await selectRestaurants()), next)
+restaurants_router.get<any, any, any, any, GetRestaurantsQuery>("/", ({ query }, res, next) =>
+  catchNext(async () => {
+    const region = nullInvalidRegion(query);
+    const opening_hours = nullInvalidOpeningHours(query);
+    res.json(await selectRestaurants({ region, opening_hours }));
+  }, next)
 );
 
 export default restaurants_router;

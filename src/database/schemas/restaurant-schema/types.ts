@@ -1,4 +1,4 @@
-import type { ID, ImageURL, Name, RawDefault } from "../types";
+import type { ID, ImageURL, Name } from "../types";
 
 /**
  * @type {TEXT}
@@ -8,12 +8,12 @@ export type RestaurantDescription = string;
 /**
  * @type {VARCHAR(10)}
  */
-export type RestaurantRegion = RawDefault | "North" | "South" | "East" | "West" | "Central";
+export type RestaurantRegion = null | "North" | "South" | "East" | "West" | "Central";
 
 /**
- * @type {BIT(24)}
+ * @type {MEDIUMINT UNSIGNED}
  */
-export type RestaurantOpeningHours = RawDefault | number;
+export type RestaurantOpeningHours = null | number;
 
 export interface Restaurant {
   id: ID;
@@ -22,4 +22,9 @@ export interface Restaurant {
   image_url: ImageURL;
   region: RestaurantRegion;
   opening_hours: RestaurantOpeningHours;
+}
+
+export interface SelectRestaurantsOptions {
+  region?: RestaurantRegion;
+  opening_hours?: RestaurantOpeningHours;
 }

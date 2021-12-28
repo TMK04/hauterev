@@ -1,4 +1,5 @@
 import type { ID, Restaurant } from "../types";
+import type { SelectRestaurantsOptions } from "./types";
 
 import { selectAvgRating, selectReviewsByRestaurantID } from "..";
 import db from "database";
@@ -15,12 +16,21 @@ const restaurantSchema = () => db<Restaurant>("restaurant");
 
 // *--- Select ---* //
 
-// interface SelectRestaurantsOptions {}
-
-export const selectRestaurants = () => {
-  const query = restaurantSchema()
-    .select("restaurant.*", "avg_rating.avg_rating")
+export const selectRestaurants = ({ opening_hours, region }: SelectRestaurantsOptions) => {
+  let query = restaurantSchema()
+    .select(
+      "restaurant.id",
+      "restaurant.name",
+      db.raw(`CONCAT(LEFT(restaurant.description, 197), "...") AS description`),
+      "restaurant.image_url",
+      "restaurant.region",
+      "restaurant.opening_hours",
+      "avg_rating.avg_rating"
+    )
     .leftJoin(selectAvgRating(), "restaurant.id", "avg_rating.restaurant_id");
+
+  if (region) query = query.andWhere("restaurant.region", region);
+  if (opening_hours) query = query.andWhereRaw("(restaurant.opening_hours & ?) > 0", opening_hours);
 
   return query;
 };
