@@ -1,6 +1,6 @@
 @route = {{address}}/users
 
-### Create before testing
+### Create test user
 
 POST {{route}}
 Content-Type: application/json
@@ -11,13 +11,4 @@ Content-Type: application/json
   "email": "steven_alex@mail.com",
   "first_name": "Steven",
   "last_name": "Alex"
-}
-
-### Delete after testing
-
-DELETE {{route}}/StevenAlex
-Content-Type: application/json
-
-{
-  "password": "S+3v3n@1ex"
 }

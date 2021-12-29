@@ -1,4 +1,4 @@
-@route={{address}}/reviews
+@route = {{address}}/reviews
 
 ### Create new review
 
@@ -18,7 +18,6 @@ Content-Type: application/json
 ### Get review by ID
 
 GET {{route}}/1
-Content-Type: application/json
 
 ### Edit review by ID
 
@@ -29,14 +28,4 @@ Content-Type: application/json
   "password": "S+3v3n@1ex",
   "username": "StevenAlex",
   "rating": 4.5
-}
-
-### Delete review by ID
-
-DELETE {{route}}/1
-Content-Type: application/json
-
-{
-  "password": "S+3v3n@1ex",
-  "username": "StevenAlex"
 }

@@ -1,0 +1,11 @@
+@route = {{address}}/users/StevenAlex/helpful-marks
+
+### Mark review as helpful by review ID
+
+POST {{route}}
+Content-Type: application/json
+
+{
+  "password": "S+3v3n@1ex",
+  "review_id": 1
+}
