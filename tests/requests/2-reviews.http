@@ -6,8 +6,8 @@ POST {{route}}
 Content-Type: application/json
 
 {
-  "password": "S+3v3n@1ex",
-  "username": "StevenAlex",
+  "password": "Bob123Builder",
+  "username": "Bob123",
   "restaurant_id": 1,
   "rating": 2.5,
   "title": "Night at Prive",
@@ -25,7 +25,7 @@ PATCH {{route}}/1
 Content-Type: application/json
 
 {
-  "password": "S+3v3n@1ex",
-  "username": "StevenAlex",
+  "password": "Bob123Builder",
+  "username": "Bob123",
   "rating": 4.5
 }

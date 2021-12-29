@@ -48,12 +48,3 @@ Content-Type: application/json
   "password": "Bob123Builder",
   "new_password": "Bob123Builder"
 }
-
-### Delete user as user
-
-DELETE {{route}}/Bob123
-Content-Type: application/json
-
-{
-  "password": "Bob123Builder"
-}
