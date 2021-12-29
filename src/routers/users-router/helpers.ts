@@ -17,9 +17,9 @@ import {
 
 export const salted_hash = (password: string) => hash(password, bcrypt_config.salt);
 
-// --------------------- //
-// * validate variants * //
-// --------------------- //
+// ---------------------------- //
+// * validate Implementations * //
+// ---------------------------- //
 
 export const validateUsername = <T extends UsernameBody>(body: T) =>
   validate(body, "username", (v) => {

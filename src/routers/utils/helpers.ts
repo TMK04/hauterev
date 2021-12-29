@@ -8,9 +8,11 @@ import { InvalidError } from "./Errors";
 
 export const catchNext = <T>(fn: () => Promise<T>, next: NextFunction) => fn().catch(next);
 
-// ----------------------- //
-// * validate & variants * //
-// ----------------------- //
+// ------------ //
+// * validate * //
+// ------------ //
+
+// *--- validate ---* //
 
 export function validate<T extends object, R>(
   data: T,
@@ -39,6 +41,8 @@ export function validate<T extends object, R, D>(
   throw new InvalidError(key.toString());
 }
 
+// *--- Extensions ---* //
+
 export const defaultInvalid = <T extends object, R, D>(
   data: T,
   key: keyof T,
@@ -58,7 +62,13 @@ export const nullInvalid = <T extends object, R>(
   validateFn: (value: T[keyof T]) => R
 ) => defaultInvalid(query, key, validateFn, null);
 
+// *--- validateFn's ---* //
+
 const simpleStringValidateFn = <T>(v: T) => typeof v === "string" && v;
+
+const simpleNumberValidateFn = <T>(v: T) => typeof v === "number" && v;
+
+// *--- Implementations ---* //
 
 export const simpleStringValidate = <T extends object>(data: T, key: keyof T) =>
   validate(data, key, simpleStringValidateFn);
@@ -66,7 +76,8 @@ export const simpleStringValidate = <T extends object>(data: T, key: keyof T) =>
 export const simpleStringRawDefaultInvalid = <T extends object>(body: T, key: keyof T) =>
   rawDefaultInvalid(body, key, simpleStringValidateFn);
 
-const simpleNumberValidateFn = <T>(v: T) => typeof v === "number" && v;
+export const simpleStringNullInvalid = <T extends object>(body: T, key: keyof T) =>
+  nullInvalid(body, key, simpleStringValidateFn);
 
 export const simpleNumberValidate = <T extends object>(data: T, key: keyof T) =>
   validate(data, key, simpleNumberValidateFn);

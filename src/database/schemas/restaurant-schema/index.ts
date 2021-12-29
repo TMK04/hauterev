@@ -16,11 +16,11 @@ const restaurantSchema = () => db<Restaurant>("restaurant");
 
 // *--- Select ---* //
 
-export const selectRestaurants = ({ opening_hours, region }: SelectRestaurantsOptions) => {
+export const selectRestaurants = ({ opening_hours, region, search }: SelectRestaurantsOptions) => {
   let query = restaurantSchema()
     .select(
       "restaurant.id",
-      "restaurant.name",
+      "restaurant.name AS name",
       db.raw(`CONCAT(LEFT(restaurant.description, 197), "...") AS description`),
       "restaurant.image_url",
       "restaurant.region",
@@ -29,6 +29,11 @@ export const selectRestaurants = ({ opening_hours, region }: SelectRestaurantsOp
     )
     .leftJoin(selectAvgRating(), "restaurant.id", "avg_rating.restaurant_id");
 
+  if (search)
+    query = query.andWhereRaw(
+      "MATCH (name, description) AGAINST (? IN NATURAL LANGUAGE MODE)",
+      search
+    );
   if (region) query = query.andWhere("restaurant.region", region);
   if (opening_hours) query = query.andWhereRaw("(restaurant.opening_hours & ?) > 0", opening_hours);
 

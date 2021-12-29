@@ -25,6 +25,7 @@ export interface Restaurant {
 }
 
 export interface SelectRestaurantsOptions {
+  search?: string | null;
   region?: Restaurant["region"];
   opening_hours?: Restaurant["opening_hours"];
 }

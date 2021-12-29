@@ -9,9 +9,9 @@ import { selectPasswordHashByUsername, selectReviewIDByIDnUsername } from "datab
 import { NotFoundError, UnauthenticatedError, UnauthorizedError } from "routers/utils/Errors";
 import { catchNext, simpleStringValidate, validate } from "routers/utils/helpers";
 
-// --------------------- //
-// * validate variants * //
-// --------------------- //
+// ---------------------------- //
+// * validate Implementations * //
+// ---------------------------- //
 
 export const validateRating = <T extends UnknownRecord<"rating">>(body: T) =>
   validate(body, "rating", (v) => typeof v === "number" && v >= 1 && v <= 5 && v - (v % 0.5));
