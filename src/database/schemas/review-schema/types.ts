@@ -15,7 +15,6 @@ export type ReviewRating = number;
  */
 export type ReviewDescription = string;
 
-export type EditedTimestamp = RawDefault | Timestamp;
 export interface Review {
   id: ID;
   restaurant_id: ID;
@@ -25,5 +24,5 @@ export interface Review {
   description: ReviewDescription;
   image_url: ImageURL;
   posted_timestamp: Timestamp;
-  edited_timestamp: EditedTimestamp;
+  edited_timestamp: Timestamp | RawDefault;
 }
