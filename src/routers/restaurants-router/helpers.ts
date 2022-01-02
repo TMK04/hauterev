@@ -22,6 +22,5 @@ export const nullInvalidOpeningHours = <T extends QueryRecord<"opening_hours">>(
   nullInvalid(query, "opening_hours", (v: any) => {
     if (!v) return;
     v = parseInt(v, 2);
-    if (isNaN(v)) return;
-    return v;
+    if (isFinite(v)) return v;
   });

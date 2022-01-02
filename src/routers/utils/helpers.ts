@@ -64,9 +64,12 @@ export const nullInvalid = <T extends object, R>(
 
 // *--- validateFn's ---* //
 
-const simpleStringValidateFn = <T>(v: T) => typeof v === "string" && v;
+const simpleStringValidateFn = (v: unknown) => typeof v === "string" && v;
 
-const simpleNumberValidateFn = <T>(v: T) => typeof v === "number" && v;
+const simpleNumberValidateFn = (v: unknown) => {
+  if (typeof v === "string") v = +v;
+  if (typeof v === "number" && isFinite(v)) return v;
+};
 
 // *--- Implementations ---* //
 
@@ -76,11 +79,14 @@ export const simpleStringValidate = <T extends object>(data: T, key: keyof T) =>
 export const simpleStringRawDefaultInvalid = <T extends object>(body: T, key: keyof T) =>
   rawDefaultInvalid(body, key, simpleStringValidateFn);
 
-export const simpleStringNullInvalid = <T extends object>(body: T, key: keyof T) =>
-  nullInvalid(body, key, simpleStringValidateFn);
+export const simpleStringNullInvalid = <T extends object>(query: T, key: keyof T) =>
+  nullInvalid(query, key, simpleStringValidateFn);
 
 export const simpleNumberValidate = <T extends object>(data: T, key: keyof T) =>
   validate(data, key, simpleNumberValidateFn);
+
+export const simpleNumberNullInvalid = <T extends object>(query: T, key: keyof T) =>
+  nullInvalid(query, key, simpleNumberValidateFn);
 
 // ---------- //
 // * Checks * //

@@ -16,7 +16,12 @@ const restaurantSchema = () => db<Restaurant>("restaurant");
 
 // *--- Select ---* //
 
-export const selectRestaurants = ({ opening_hours, region, search }: SelectRestaurantsOptions) => {
+export const selectRestaurants = ({
+  opening_hours,
+  rating,
+  region,
+  search
+}: SelectRestaurantsOptions) => {
   let query = restaurantSchema()
     .select(
       "restaurant.id",
@@ -34,6 +39,7 @@ export const selectRestaurants = ({ opening_hours, region, search }: SelectResta
       "MATCH (name, description) AGAINST (? IN NATURAL LANGUAGE MODE)",
       search
     );
+  if (rating) query = query.andWhere("avg_rating.avg_rating", ">=", rating);
   if (region) query = query.andWhere("restaurant.region", region);
   if (opening_hours) query = query.andWhereRaw("(restaurant.opening_hours & ?) > 0", opening_hours);
 

@@ -1,4 +1,4 @@
-import type { ID, ImageURL, Name } from "../types";
+import type { ID, ImageURL, Name, Review } from "../types";
 
 /**
  * @type {TEXT}
@@ -25,7 +25,8 @@ export interface Restaurant {
 }
 
 export interface SelectRestaurantsOptions {
-  search?: string | null;
+  search?: Restaurant["name" | "description"] | null;
+  rating?: Review["rating"] | null;
   region?: Restaurant["region"];
   opening_hours?: Restaurant["opening_hours"];
 }
