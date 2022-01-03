@@ -1,4 +1,4 @@
-@route = {{address}}/reviews
+@route = {{address}}/users/Bob123/reviews
 
 ### Create new review
 
@@ -17,7 +17,7 @@ Content-Type: application/json
 
 ### Get review by ID
 
-GET {{route}}/1
+GET {{address}}/reviews/1
 
 ### Edit review by ID
 

@@ -1,7 +1,5 @@
 import type { AuthenticateBody } from "routers/users-router/types";
-import type { ParamsRecord, UnknownRecord } from "routers/utils/types";
-
-export type IDParams = ParamsRecord<"id">;
+import type { UnknownRecord } from "routers/utils/types";
 
 export type PostReviewBody = AuthenticateBody &
   UnknownRecord<"restaurant_id" | "username" | "rating" | "title" | "description" | "image_url">;

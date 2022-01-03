@@ -1,7 +1,7 @@
 import type { UsernameParams } from "../types";
 import type { RestaurantIDBody } from "./types";
 
-import users_router from "../router";
+import users_router from "../../router";
 import {
   deleteBookmarkByRestaurantIDnUsername,
   insertBookmark,

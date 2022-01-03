@@ -1,6 +1,14 @@
 import type { AuthenticatedLocals, PatchUserBody, UsernameParams } from "./types";
 
 import {
+  rawDefaultInvalidGender,
+  rawDefaultInvalidMobileNumber,
+  salted_hash,
+  validatePassword,
+  validateUsername
+} from "../helpers";
+import users_router from "../router";
+import {
   deleteUserByUsername,
   selectUserAsUser,
   selectUserByUsername,
@@ -16,22 +24,11 @@ import {
   simpleStringValidate
 } from "routers/utils/helpers";
 
-import {
-  authenticate,
-  rawDefaultInvalidGender,
-  rawDefaultInvalidMobileNumber,
-  rejectUnauthenticated,
-  salted_hash,
-  validatePassword,
-  validateUsername
-} from "./helpers";
-import users_router from "./router";
+import { rejectUnauthenticated } from "./helpers";
 
 // -------------------- //
 // * /users/:username * //
 // -------------------- //
-
-users_router.use("/:username", authenticate);
 
 // *--- GET ---* //
 

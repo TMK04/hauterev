@@ -12,7 +12,7 @@ Content-Type: application/json
 
 ### Delete review by ID
 
-DELETE {{address}}/reviews/1
+DELETE {{route}}/reviews/1
 Content-Type: application/json
 
 {

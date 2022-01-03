@@ -1,39 +1,22 @@
-import type { IDParams, PatchReviewBody } from "./types";
-import type { AuthenticateBody } from "routers/users-router/types";
+import type { AuthenticateBody } from "../../types";
+import type { PatchReviewBody } from "./types";
+import type { IDParams } from "routers/review-router/types";
 
-import {
-  deleteReviewByID,
-  selectReviewByID,
-  UpdateReview,
-  updateReviewByID
-} from "database/schemas";
-import { InvalidError, NotFoundError } from "routers/utils/Errors";
+import users_router from "../../router";
+import { deleteReviewByID, UpdateReview, updateReviewByID } from "database/schemas";
+import { InvalidError } from "routers/utils/Errors";
 import { catchNext, isDefined, isEmpty, simpleStringValidate } from "routers/utils/helpers";
 
-import { rejectUnauthed, validateRating } from "./helpers";
-import reviews_router from "./router";
+import { validateRating } from "./helpers";
 
-// ---------------- //
-// * /reviews/:id * //
-// ---------------- //
-
-// *--- GET ---* //
-
-reviews_router.get<IDParams>("/:id", ({ params }, res, next) =>
-  catchNext(async () => {
-    const { id } = params;
-    const review_result = await selectReviewByID(+id);
-    const review = review_result[0];
-    if (!review) throw new NotFoundError("Review", id);
-    res.json(review);
-  }, next)
-);
+// -------------------------------- //
+// * /users/:username/reviews/:id * //
+// -------------------------------- //
 
 // *--- PATCH ---* //
 
-reviews_router.patch<IDParams, any, PatchReviewBody>(
-  "/:id",
-  rejectUnauthed,
+users_router.patch<IDParams, any, PatchReviewBody>(
+  "/:username/reviews/:id",
   ({ body, params }, res, next) =>
     catchNext(async () => {
       const { rating, title, description, image_url } = body;
@@ -54,9 +37,8 @@ reviews_router.patch<IDParams, any, PatchReviewBody>(
 
 // *--- DELETE ---* //
 
-reviews_router.delete<IDParams, any, AuthenticateBody>(
-  "/:id",
-  rejectUnauthed,
+users_router.delete<IDParams, any, AuthenticateBody>(
+  "/:username/reviews/:id",
   ({ params }, res, next) =>
     catchNext(async () => {
       await deleteReviewByID(+params.id);
