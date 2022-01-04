@@ -19,8 +19,8 @@
     "build:src": "tsc -p src",
     "build:public": "webpack",
     "commit": "cz",
-    "dev:src": "nodemon --config nodemon.src.json",
-    "dev:public": "nodemon --config nodemon.public.json"
+    "dev:src": "nodemon --config src/nodemon.json",
+    "dev:public": "nodemon --config public-ts/nodemon.json"
   },
   "dependencies": {
     "dotenv-safe": "^8.2.0",
