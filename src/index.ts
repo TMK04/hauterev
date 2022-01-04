@@ -8,4 +8,4 @@ import server from "server";
 
 const { port, hostname } = express_config;
 
-server.listen(port, hostname);
+server.listen(port, hostname, () => console.log(`Listening on http://${hostname}:${port}`));
