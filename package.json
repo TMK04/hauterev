@@ -19,7 +19,8 @@
     "build:src": "tsc -p src",
     "build:public": "webpack",
     "commit": "cz",
-    "dev": "nodemon"
+    "dev:src": "nodemon --config nodemon.src.json",
+    "dev:public": "nodemon --config nodemon.public.json"
   },
   "dependencies": {
     "dotenv-safe": "^8.2.0",
@@ -68,13 +69,5 @@
     "*.ts": [
       "eslint --fix"
     ]
-  },
-  "nodemonConfig": {
-    "watch": [
-      "src",
-      "public"
-    ],
-    "ext": "ts,js,html,css",
-    "exec": "yarn start:dev"
   }
 }
