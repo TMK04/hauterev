@@ -1,12 +1,12 @@
-import type { InitialOptionsTsJest } from "ts-jest/dist/types";
+import type { InitialOptionsTsJest } from "ts-jest";
 
 const config: InitialOptionsTsJest = {
-  moduleNameMapper: {
-    "@/(.*)": "<rootDir>/src/$1"
-  },
-  moduleDirectories: ["node_modules", "src"],
+  globals: { "ts-jest": { tsconfig: "tests/tsconfig.json" } },
+  forceExit: true,
+  moduleDirectories: ["tests", "src", "node_modules"],
   preset: "ts-jest",
-  testEnvironment: "node"
+  testEnvironment: "node",
+  verbose: true
 };
 
 export default config;
