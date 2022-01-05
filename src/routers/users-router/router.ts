@@ -5,7 +5,7 @@ import type { AuthenticateBody, PostUserBody } from "./types";
 
 import { NotFoundError, UnauthenticatedError } from "../utils/Errors";
 import { catchNext, simpleStringRawDefaultInvalid, simpleStringValidate } from "../utils/helpers";
-import { insertUser, selectPasswordHashByUsername } from "database/schemas";
+import { insertUser, selectPasswordHashByUsername } from "database/queries";
 
 import {
   rawDefaultInvalidGender,

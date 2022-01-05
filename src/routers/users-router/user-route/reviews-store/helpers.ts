@@ -3,7 +3,7 @@ import type { RequestHandler } from "express";
 import type { IDParams } from "routers/review-router/types";
 import type { UnknownRecord } from "routers/utils/types";
 
-import { selectReviewIDByIDnUsername } from "database/schemas";
+import { selectReviewIDByIDnUsername } from "database/queries";
 import { UnauthorizedError } from "routers/utils/Errors";
 import { catchNext, validate } from "routers/utils/helpers";
 

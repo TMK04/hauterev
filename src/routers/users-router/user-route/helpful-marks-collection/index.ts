@@ -2,7 +2,7 @@ import type { UsernameParams } from "../types";
 import type { ReviewIDBody } from "./types";
 
 import users_router from "../../router";
-import { deleteHelpfulMark, insertHelpfulMark } from "database/schemas";
+import { deleteHelpfulMark, insertHelpfulMark } from "database/queries";
 import { UnauthorizedError } from "routers/utils/Errors";
 import { catchNext, simpleNumberValidate } from "routers/utils/helpers";
 

@@ -6,7 +6,7 @@ import db from "database";
 // * Helpers * //
 // ----------- //
 
-const helpfulMarkSchema = () => db<HelpfulMark>("helpful_mark");
+const helpfulMarkTable = () => db<HelpfulMark>("helpful_mark");
 
 // ----------- //
 // * Queries * //
@@ -15,12 +15,12 @@ const helpfulMarkSchema = () => db<HelpfulMark>("helpful_mark");
 // *--- Insert ---* //
 
 export const insertHelpfulMark = (helpful_mark: HelpfulMark) =>
-  helpfulMarkSchema().insert(helpful_mark);
+  helpfulMarkTable().insert(helpful_mark);
 
 // *--- Select ---* //
 
 export const selectHelpfulMarksHelpfulCount = () =>
-  helpfulMarkSchema()
+  helpfulMarkTable()
     .select("review_id")
     .count({ helpful_count: "*" })
     .groupBy("review_id")
@@ -29,4 +29,4 @@ export const selectHelpfulMarksHelpfulCount = () =>
 // *--- Delete ---* //
 
 export const deleteHelpfulMark = (helpful_mark: HelpfulMark) =>
-  helpfulMarkSchema().del().where(helpful_mark);
+  helpfulMarkTable().del().where(helpful_mark);

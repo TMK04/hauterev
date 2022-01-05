@@ -6,7 +6,7 @@ import {
   deleteBookmarkByRestaurantIDnUsername,
   insertBookmark,
   selectBookmarksByUsername
-} from "database/schemas";
+} from "database/queries";
 import { UnauthorizedError } from "routers/utils/Errors";
 import { catchNext, simpleNumberValidate } from "routers/utils/helpers";
 

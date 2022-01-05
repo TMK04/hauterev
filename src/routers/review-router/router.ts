@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import type { IDParams } from "./types";
 
-import { selectReviewByID } from "database/schemas";
+import { selectReviewByID } from "database/queries";
 import { NotFoundError } from "routers/utils/Errors";
 import { catchNext } from "routers/utils/helpers";
 

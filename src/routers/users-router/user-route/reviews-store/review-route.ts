@@ -3,7 +3,7 @@ import type { PatchReviewBody } from "./types";
 import type { IDParams } from "routers/review-router/types";
 
 import users_router from "../../router";
-import { deleteReviewByID, UpdateReview, updateReviewByID } from "database/schemas";
+import { deleteReviewByID, UpdateReview, updateReviewByID } from "database/queries";
 import { InvalidError } from "routers/utils/Errors";
 import { catchNext, isDefined, isEmpty, simpleStringValidate } from "routers/utils/helpers";
 

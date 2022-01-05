@@ -3,7 +3,7 @@ import type { UsernameParams } from "../types";
 import type { PostReviewBody } from "./types";
 
 import users_router from "../../router";
-import { insertReview } from "database/schemas";
+import { insertReview } from "database/queries";
 import { catchNext, simpleNumberValidate, simpleStringValidate } from "routers/utils/helpers";
 
 import { validateRating } from "./helpers";

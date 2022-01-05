@@ -4,7 +4,7 @@ import type { PasswordBody } from "../types";
 import type { AuthenticatedLocals, UsernameParams } from "./types";
 import type { RequestHandler } from "express";
 
-import { selectPasswordHashByUsername } from "database/schemas";
+import { selectPasswordHashByUsername } from "database/queries";
 import { NotFoundError, UnauthenticatedError } from "routers/utils/Errors";
 import { catchNext, simpleStringValidate } from "routers/utils/helpers";
 

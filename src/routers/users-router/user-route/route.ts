@@ -14,7 +14,7 @@ import {
   selectUserByUsername,
   UpdateUser,
   updateUserByUsername
-} from "database/schemas";
+} from "database/queries";
 import { InvalidError, NotFoundError } from "routers/utils/Errors";
 import {
   catchNext,

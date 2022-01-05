@@ -7,20 +7,20 @@ import db from "database";
 // * Helpers * //
 // ----------- //
 
-const reviewSchema = () => db<Review>("review");
+const reviewTable = () => db<Review>("review");
 
 const jsonObjectAgg = (key: string, value: string, alias = "") =>
   `JSON_OBJECTAGG(${key}, ${value})${alias && ` AS ${alias}`}`;
 
-type SchemaColumn = `${string}.${string}`;
+type TableColumn = `${string}.${string}`;
 
 type JsonObjectKeyValue = `"${string}", ${string}`;
 
-const jsonObject = (...schema_columns: SchemaColumn[]) => {
+const jsonObject = (...table_columns: TableColumn[]) => {
   const key_value_arr: JsonObjectKeyValue[] = [];
-  for (const schema_column of schema_columns) {
-    const column = schema_column.split(/\./)[1];
-    if (column) key_value_arr.push(`"${column}", ${schema_column}`);
+  for (const table_column of table_columns) {
+    const column = table_column.split(/\./)[1];
+    if (column) key_value_arr.push(`"${column}", ${table_column}`);
   }
   return `JSON_OBJECT(${key_value_arr.join(", ")})`;
 };
@@ -34,18 +34,18 @@ const jsonObject = (...schema_columns: SchemaColumn[]) => {
 export type InsertReview = Omit<Review, "id" | "edited_timestamp">;
 
 export const insertReview = async (insert_review: InsertReview) =>
-  reviewSchema().insert(insert_review);
+  reviewTable().insert(insert_review);
 
 // *--- Select ---* //
 
 export const selectAvgRating = () =>
-  reviewSchema()
+  reviewTable()
     .select("restaurant_id")
     .avg({ avg_rating: "rating" })
     .groupBy("restaurant_id")
     .as("avg_rating");
 
-const reviews_columns: SchemaColumn[] = [
+const reviews_columns: TableColumn[] = [
   "review.rating",
   "review.title",
   "review.description",
@@ -56,7 +56,7 @@ const reviews_columns: SchemaColumn[] = [
 ];
 
 export const selectReviewsByRestaurantID = (restaurant_id: ID) =>
-  reviewSchema()
+  reviewTable()
     .select(
       "review.restaurant_id AS restaurant_id",
       db.raw(
@@ -70,7 +70,7 @@ export const selectReviewsByRestaurantID = (restaurant_id: ID) =>
     .as("reviews");
 
 export const selectReviewsByUsername = (username: UserUsername) =>
-  reviewSchema()
+  reviewTable()
     .select(
       "review.username AS username",
       db.raw(
@@ -87,7 +87,7 @@ export const selectReviewsByUsername = (username: UserUsername) =>
     .as("reviews");
 
 export const selectReviewByID = (id: ID) =>
-  reviewSchema()
+  reviewTable()
     .select("review.*", "helpful_marks.helpful_count")
     .leftJoin(selectHelpfulMarksHelpfulCount(), "review.id", "helpful_marks.review_id")
     .where({ "review.id": id });
@@ -101,7 +101,7 @@ export const selectReviewByID = (id: ID) =>
  *  b. no elements otherwise
  */
 export const selectReviewIDByIDnUsername = (id: ID, username: UserUsername) =>
-  reviewSchema().select("id").where({ id, username });
+  reviewTable().select("id").where({ id, username });
 
 // *--- Update ---* //
 
@@ -112,10 +112,10 @@ export const updateReviewByID = (
   update_review: UpdateReview,
   edited_timestamp: Timestamp
 ) =>
-  reviewSchema()
+  reviewTable()
     .update({ ...update_review, edited_timestamp })
     .where({ id });
 
 // *--- Delete ---* //
 
-export const deleteReviewByID = (id: ID) => reviewSchema().del().where({ id });
+export const deleteReviewByID = (id: ID) => reviewTable().del().where({ id });

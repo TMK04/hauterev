@@ -1,7 +1,7 @@
 import { hash } from "bcryptjs";
 
 import type { UsernameBody } from "./types";
-import type { UserGender } from "database/schemas/types";
+import type { UserGender } from "database/queries/types";
 import type { UnknownRecord } from "routers/utils/types";
 
 import { bcrypt_config } from "configs";

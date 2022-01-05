@@ -7,9 +7,9 @@ import db from "database";
 // * Helpers * //
 // ----------- //
 
-const userSchema = () => db<User>("user");
+const userTable = () => db<User>("user");
 
-const user = (username: UserUsername) => userSchema().where({ username });
+const user = (username: UserUsername) => userTable().where({ username });
 
 // ----------- //
 // * Queries * //
@@ -17,7 +17,7 @@ const user = (username: UserUsername) => userSchema().where({ username });
 
 // *--- Insert ---* //
 
-export const insertUser = async (insert_user: User) => userSchema().insert(insert_user);
+export const insertUser = async (insert_user: User) => userTable().insert(insert_user);
 
 // *--- Select ---* //
 
