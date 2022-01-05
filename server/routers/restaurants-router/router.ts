@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import type { GetRestaurantsQuery } from "./types";
 
-import { selectRestaurants } from "database/schemas";
+import { selectRestaurants } from "database/queries";
 import { catchNext, simpleNumberNullInvalid, simpleStringNullInvalid } from "routers/utils/helpers";
 
 import { nullInvalidOpeningHours, nullInvalidRegion } from "./helpers";

@@ -8,7 +8,7 @@ import db from "database";
 // * Helpers * //
 // ----------- //
 
-const restaurantSchema = () => db<Restaurant>("restaurant");
+const restaurantTable = () => db<Restaurant>("restaurant");
 
 // ----------- //
 // * Queries * //
@@ -22,7 +22,7 @@ export const selectRestaurants = ({
   region,
   search
 }: SelectRestaurantsOptions) => {
-  let query = restaurantSchema()
+  let query = restaurantTable()
     .select(
       "restaurant.id",
       "restaurant.name AS name",
@@ -47,7 +47,7 @@ export const selectRestaurants = ({
 };
 
 export const selectRestaurantByID = (id: ID) =>
-  restaurantSchema()
+  restaurantTable()
     .select("restaurant.*", "reviews.avg_rating", "reviews.reviews")
     .leftJoin(selectReviewsByRestaurantID(id), "restaurant.id", "reviews.restaurant_id")
     .where({ "restaurant.id": id });

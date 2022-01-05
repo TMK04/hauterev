@@ -4,7 +4,7 @@ import type { AuthenticateBody } from "../users-router/types";
 import type { PostReviewBody } from "./types";
 
 import { catchNext, simpleNumberValidate, simpleStringValidate } from "../utils/helpers";
-import { insertReview } from "database/schemas";
+import { insertReview } from "database/queries";
 
 import { rejectUnauthenticated, validateRating } from "./helpers";
 

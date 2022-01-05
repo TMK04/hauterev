@@ -1,4 +1,4 @@
-import { selectRestaurantByID } from "database/schemas";
+import { selectRestaurantByID } from "database/queries";
 import { NotFoundError } from "routers/utils/Errors";
 import { catchNext } from "routers/utils/helpers";
 

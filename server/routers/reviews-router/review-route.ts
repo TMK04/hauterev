@@ -6,7 +6,7 @@ import {
   selectReviewByID,
   UpdateReview,
   updateReviewByID
-} from "database/schemas";
+} from "database/queries";
 import { InvalidError, NotFoundError } from "routers/utils/Errors";
 import { catchNext, isDefined, isEmpty, simpleStringValidate } from "routers/utils/helpers";
 

@@ -5,7 +5,7 @@ import type { RequestHandler } from "express";
 import type { AuthenticateBody } from "routers/users-router/types";
 import type { UnknownRecord } from "routers/utils/types";
 
-import { selectPasswordHashByUsername, selectReviewIDByIDnUsername } from "database/schemas";
+import { selectPasswordHashByUsername, selectReviewIDByIDnUsername } from "database/queries";
 import { NotFoundError, UnauthenticatedError, UnauthorizedError } from "routers/utils/Errors";
 import { catchNext, simpleStringValidate, validate } from "routers/utils/helpers";
 

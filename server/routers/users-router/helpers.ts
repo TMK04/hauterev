@@ -1,12 +1,12 @@
 import { compare, hash } from "bcryptjs";
 
 import type { AuthenticatedLocals, PasswordBody, UsernameBody, UsernameParams } from "./types";
-import type { UserGender } from "database/schemas/types";
+import type { UserGender } from "database/queries/types";
 import type { RequestHandler } from "express";
 import type { UnknownRecord } from "routers/utils/types";
 
 import { bcrypt_config } from "configs";
-import { selectPasswordHashByUsername } from "database/schemas";
+import { selectPasswordHashByUsername } from "database/queries";
 import { NotFoundError, UnauthenticatedError } from "routers/utils/Errors";
 import {
   catchNext,

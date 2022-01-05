@@ -1,6 +1,6 @@
 import type { QueryRecord } from "routers/utils/types";
 
-import { RestaurantRegion } from "database/schemas/types";
+import { RestaurantRegion } from "database/queries/types";
 import { nullInvalid } from "routers/utils/helpers";
 
 // --------------------- //

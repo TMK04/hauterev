@@ -1,4 +1,4 @@
-import type { RawDefault } from "./schemas/types";
+import type { RawDefault } from "./queries/types";
 
 import db from "database";
 

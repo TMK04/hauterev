@@ -6,7 +6,7 @@ import db from "database";
 // * Helpers * //
 // ----------- //
 
-const bookmarkSchema = () => db<Bookmark>("bookmark");
+const bookmarkTable = () => db<Bookmark>("bookmark");
 
 // ----------- //
 // * Queries * //
@@ -14,14 +14,14 @@ const bookmarkSchema = () => db<Bookmark>("bookmark");
 
 // *--- Insert ---* //
 
-export const insertBookmark = (bookmark: Bookmark) => bookmarkSchema().insert(bookmark);
+export const insertBookmark = (bookmark: Bookmark) => bookmarkTable().insert(bookmark);
 
 // *--- Select ---* //
 
 export const selectBookmarksByUsername = (username: UserUsername) =>
-  bookmarkSchema().select().where({ username });
+  bookmarkTable().select().where({ username });
 
 // *--- Delete ---* //
 
 export const deleteBookmarkByRestaurantIDnUsername = (restaurant_id: ID, username: UserUsername) =>
-  bookmarkSchema().del().where({ username, restaurant_id });
+  bookmarkTable().del().where({ username, restaurant_id });

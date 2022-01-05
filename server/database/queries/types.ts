@@ -19,8 +19,8 @@ export type ImageURL = string;
  */
 export type Timestamp = Date;
 
-export * from "./bookmark-schema/types";
-export * from "./helpful-mark-schema/types";
-export * from "./restaurant-schema/types";
-export * from "./review-schema/types";
-export * from "./user-schema/types";
+export * from "./bookmark-queries/types";
+export * from "./helpful-mark-queries/types";
+export * from "./restaurant-queries/types";
+export * from "./review-queries/types";
+export * from "./user-queries/types";
