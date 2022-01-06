@@ -1,14 +1,20 @@
-import type { UsernameParams } from "../types";
-import type { RestaurantIDBody } from "./types";
+import type { UsernameParams } from ".";
+import type { UnknownRecord } from "routers/types";
 
-import users_router from "../../router";
+import users_router from "..";
 import {
   deleteBookmarkByRestaurantIDnUsername,
   insertBookmark,
   selectBookmarksByUsername
 } from "database/queries";
-import { UnauthorizedError } from "routers/utils/Errors";
-import { catchNext, simpleNumberValidate } from "routers/utils/helpers";
+import { UnauthorizedError } from "routers/Errors";
+import { catchNext, simpleNumberValidate } from "routers/helpers";
+
+// --------- //
+// * Types * //
+// --------- //
+
+type RestaurantIDBody = UnknownRecord<"restaurant_id">;
 
 // ------------------------------ //
 // * /users/:username/bookmarks * //

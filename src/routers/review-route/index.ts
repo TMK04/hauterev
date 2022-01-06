@@ -1,10 +1,10 @@
 import { Router } from "express";
 
-import type { IDParams } from "./types";
+import type { IDParams } from "routers/types";
 
 import { selectReviewByID } from "database/queries";
-import { NotFoundError } from "routers/utils/Errors";
-import { catchNext } from "routers/utils/helpers";
+import { NotFoundError } from "routers/Errors";
+import { catchNext } from "routers/helpers";
 
 const review_router = Router({ mergeParams: true });
 
