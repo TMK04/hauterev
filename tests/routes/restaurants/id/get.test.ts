@@ -1,6 +1,6 @@
-import type { MockedAnyFn } from "../../types";
+import type { MockedAnyFn } from "../../../types";
 
-import { sserver } from "../../helpers";
+import { sserver } from "../../../helpers";
 jest.mock("database/queries");
 import { selectRestaurantByID } from "database/queries";
 

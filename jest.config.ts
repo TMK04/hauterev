@@ -5,8 +5,7 @@ const config: InitialOptionsTsJest = {
   forceExit: true,
   moduleDirectories: ["tests", "src", "node_modules"],
   preset: "ts-jest",
-  testEnvironment: "node",
-  verbose: true
+  testEnvironment: "node"
 };
 
 export default config;
