@@ -1,9 +1,0 @@
-{
-  "extends": "..",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "noEmit": false,
-    "outDir": "../dist"
-  },
-  "include": ["."]
-}

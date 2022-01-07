@@ -1,7 +1,0 @@
-{
-  "extends": "..",
-  "compilerOptions": {
-    "baseUrl": "../src"
-  },
-  "include": [".", "../src"]
-}

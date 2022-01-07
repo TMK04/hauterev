@@ -1,5 +1,0 @@
-{
-  "watch": ["public-ts"],
-  "ext": "ts",
-  "exec": "yarn build:public && yarn start"
-}
