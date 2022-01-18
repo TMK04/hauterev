@@ -10,19 +10,8 @@ import db from "database";
 
 const restaurantTable = () => db<Restaurant>("restaurant");
 
-// ----------- //
-// * Queries * //
-// ----------- //
-
-// *--- Select ---* //
-
-export const selectRestaurants = ({
-  opening_hours,
-  rating,
-  region,
-  search
-}: SelectRestaurantsOptions) => {
-  let query = restaurantTable()
+const selectRestaurants = () =>
+  restaurantTable()
     .select(
       "restaurant.id",
       "restaurant.name AS name",
@@ -33,6 +22,20 @@ export const selectRestaurants = ({
       "avg_rating.avg_rating"
     )
     .leftJoin(selectAvgRating(), "restaurant.id", "avg_rating.restaurant_id");
+
+// ----------- //
+// * Queries * //
+// ----------- //
+
+// *--- Select ---* //
+
+export const selectRestaurantsWithOptions = ({
+  opening_hours,
+  rating,
+  region,
+  search
+}: SelectRestaurantsOptions) => {
+  let query = selectRestaurants();
 
   if (search)
     query = query.andWhereRaw(
@@ -45,6 +48,8 @@ export const selectRestaurants = ({
 
   return query;
 };
+
+export const selectRandomRestaurants = () => selectRestaurants().orderByRaw("RAND()").limit(6);
 
 export const selectRestaurantByID = async (id: ID) => {
   const restaurants = await restaurantTable()

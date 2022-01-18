@@ -20,6 +20,10 @@ GET {{route}}?region=South
 
 GET {{route}}?opening_hours=000000000000000000000001
 
+### Get random restaurants
+
+GET {{route}}/random
+
 ### Get restaurant by ID
 
 GET {{route}}/1
