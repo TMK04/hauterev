@@ -46,8 +46,14 @@ export const selectRestaurants = ({
   return query;
 };
 
-export const selectRestaurantByID = (id: ID) =>
-  restaurantTable()
-    .select("restaurant.*", "reviews.avg_rating", "reviews.reviews")
-    .leftJoin(selectReviewsByRestaurantID(id), "restaurant.id", "reviews.restaurant_id")
+export const selectRestaurantByID = async (id: ID) => {
+  const restaurants = await restaurantTable()
+    .select("restaurant.*", "avg_rating.avg_rating")
+    .leftJoin(selectAvgRating(), "restaurant.id", "avg_rating.restaurant_id")
     .where({ "restaurant.id": id });
+
+  if (!restaurants[0]) return restaurants;
+
+  restaurants[0].reviews = await selectReviewsByRestaurantID(id);
+  return restaurants;
+};

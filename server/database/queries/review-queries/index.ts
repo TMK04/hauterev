@@ -1,4 +1,5 @@
 import type { ID, Review, Timestamp, UserUsername } from "../types";
+import type { InsertReview } from "./types";
 
 import { selectHelpfulMarksHelpfulCount } from "..";
 import db from "database";
@@ -9,29 +10,16 @@ import db from "database";
 
 const reviewTable = () => db<Review>("review");
 
-const jsonObjectAgg = (key: string, value: string, alias = "") =>
-  `JSON_OBJECTAGG(${key}, ${value})${alias && ` AS ${alias}`}`;
-
-type TableColumn = `${string}.${string}`;
-
-type JsonObjectKeyValue = `"${string}", ${string}`;
-
-const jsonObject = (...table_columns: TableColumn[]) => {
-  const key_value_arr: JsonObjectKeyValue[] = [];
-  for (const table_column of table_columns) {
-    const column = table_column.split(/\./)[1];
-    if (column) key_value_arr.push(`"${column}", ${table_column}`);
-  }
-  return `JSON_OBJECT(${key_value_arr.join(", ")})`;
-};
+const selectReviews = () =>
+  reviewTable()
+    .select("review.*", "helpful_marks.helpful_count")
+    .leftJoin(selectHelpfulMarksHelpfulCount(), "review.id", "helpful_marks.review_id");
 
 // ----------- //
 // * Queries * //
 // ----------- //
 
 // *--- Insert ---* //
-
-export type InsertReview = Omit<Review, "id" | "edited_timestamp">;
 
 export const insertReview = async (insert_review: InsertReview) =>
   reviewTable().insert(insert_review);
@@ -45,46 +33,11 @@ export const selectAvgRating = () =>
     .groupBy("restaurant_id")
     .as("avg_rating");
 
-const reviews_columns: TableColumn[] = [
-  "review.rating",
-  "review.title",
-  "review.description",
-  "review.image_url",
-  "review.posted_timestamp",
-  "review.edited_timestamp",
-  "helpful_marks.helpful_count"
-];
-
 export const selectReviewsByRestaurantID = (restaurant_id: ID) =>
-  reviewTable()
-    .select(
-      "review.restaurant_id AS restaurant_id",
-      db.raw(
-        jsonObjectAgg("review.id", jsonObject("review.username", ...reviews_columns), "reviews")
-      )
-    )
-    .avg({ avg_rating: "rating" })
-    .leftJoin(selectHelpfulMarksHelpfulCount(), "review.id", "helpful_marks.review_id")
-    .where({ restaurant_id })
-    .groupBy("restaurant_id")
-    .as("reviews");
+  selectReviews().where({ "review.restaurant_id": restaurant_id });
 
 export const selectReviewsByUsername = (username: UserUsername) =>
-  reviewTable()
-    .select(
-      "review.username AS username",
-      db.raw(
-        jsonObjectAgg(
-          "review.id",
-          jsonObject("review.restaurant_id", ...reviews_columns),
-          "reviews"
-        )
-      )
-    )
-    .leftJoin(selectHelpfulMarksHelpfulCount(), "review.id", "helpful_marks.review_id")
-    .where({ username })
-    .groupBy("username")
-    .as("reviews");
+  selectReviews().where({ "review.username": username });
 
 export const selectReviewByID = (id: ID) =>
   reviewTable()

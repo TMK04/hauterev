@@ -26,3 +26,5 @@ export interface Review {
   posted_timestamp: Timestamp;
   edited_timestamp: Timestamp | RawDefault;
 }
+
+export type InsertReview = Omit<Review, "id" | "edited_timestamp">;
