@@ -1,7 +1,7 @@
 import { knex } from "knex";
 
-import { mysql_config } from "configs";
+import { db_config } from "configs";
 
-const db = knex({ client: "mysql2", connection: mysql_config });
+const db = knex({ client: "mysql2", connection: db_config });
 
 export default db;
