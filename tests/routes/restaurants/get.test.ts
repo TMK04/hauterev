@@ -1,14 +1,14 @@
 import type { MockedAnyFn } from "../../types";
 
 import { sserver } from "../../helpers";
-jest.mock("database/queries");
-import { selectRestaurants } from "database/queries";
+jest.mock("db");
+import { restaurant_db } from "db";
 
 /*
   It does not matter what values are returned;
   If the result is empty, it is up to the client side to render it so.
 */
-(<MockedAnyFn>selectRestaurants).mockReturnValue([]);
+(<MockedAnyFn>restaurant_db.selectRestaurantsWithOptions).mockReturnValue([]);
 
 describe("GET /restaurants", () => {
   describe("Given no query parameters", () => {

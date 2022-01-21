@@ -4,7 +4,7 @@ import { config } from "dotenv-safe";
 config();
 
 import { express_config } from "configs";
-import server from "server";
+import { server } from "connections";
 
 const { port, hostname } = express_config;
 

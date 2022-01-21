@@ -1,24 +1,26 @@
 import type { MockedAnyFn } from "../../../types";
-import type { User } from "database/queries/types";
+import type { User } from "db/types";
 
 import { deleteBob, deleteBobAuthed, postBob } from "../helpers";
-jest.mock("database/queries");
-import { insertUser, deleteUserByUsername, selectPasswordHashByUsername } from "database/queries";
+jest.mock("db");
+import { user_db } from "db";
 
 const users: Record<string, User> = {};
 
-(<MockedAnyFn>insertUser).mockImplementation((user: User) => {
+(<MockedAnyFn>user_db.insertUser).mockImplementation((user: User) => {
   const { username } = user;
   if (users[username]) throw Error();
   users[username] = user;
 });
-(<MockedAnyFn>deleteUserByUsername).mockImplementation(
+(<MockedAnyFn>user_db.deleteUserByUsername).mockImplementation(
   (username: User["username"]) => delete users[username]
 );
-(<MockedAnyFn>selectPasswordHashByUsername).mockImplementation((username: User["username"]) => {
-  const password_hash = users[username]?.password_hash;
-  return password_hash ? [{ password_hash }] : [];
-});
+(<MockedAnyFn>user_db.selectPasswordHashByUsername).mockImplementation(
+  (username: User["username"]) => {
+    const password_hash = users[username]?.password_hash;
+    return password_hash ? [{ password_hash }] : [];
+  }
+);
 
 beforeEach(postBob);
 afterEach(deleteBobAuthed);

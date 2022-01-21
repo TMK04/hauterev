@@ -1,10 +1,12 @@
 import type { MockedAnyFn } from "../../../types";
 
 import { sserver } from "../../../helpers";
-jest.mock("database/queries");
-import { selectRestaurantByID } from "database/queries";
+jest.mock("db");
+import { restaurant_db } from "db";
 
-(<MockedAnyFn>selectRestaurantByID).mockImplementation((id: number) => (id === 1 ? ["Found"] : []));
+(<MockedAnyFn>restaurant_db.selectRestaurantByID).mockImplementation((id: number) =>
+  id === 1 ? ["Found"] : []
+);
 
 describe("GET /restaurants/:id", () => {
   describe("Given a valid id", () => {

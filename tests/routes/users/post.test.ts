@@ -1,20 +1,20 @@
 import type { MockedAnyFn } from "../../types";
-import type { User } from "database/queries/types";
+import type { User } from "db/types";
 
 import { post } from "../../helpers";
-jest.mock("database/queries");
-import { insertUser, deleteUserByUsername } from "database/queries";
+jest.mock("db");
+import { user_db } from "db";
 
 import { deleteBobAuthed, postBob } from "./helpers";
 
 const users: Record<string, User> = {};
 
-(<MockedAnyFn>insertUser).mockImplementation((user: User) => {
+(<MockedAnyFn>user_db.insertUser).mockImplementation((user: User) => {
   const { username } = user;
   if (users[username]) throw Error();
   users[username] = user;
 });
-(<MockedAnyFn>deleteUserByUsername).mockImplementation((username: User["username"]) => {
+(<MockedAnyFn>user_db.deleteUserByUsername).mockImplementation((username: User["username"]) => {
   if (username) delete users[username];
 });
 

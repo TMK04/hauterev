@@ -1,4 +1,4 @@
-import db from "database";
+import { db } from "connections";
 
 export const createDatabase = () =>
   db.raw(`

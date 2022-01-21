@@ -1,6 +1,6 @@
 import supertest from "supertest";
 
-import server from "server";
+import { server } from "connections";
 
 export const sserver = supertest(server);
 
