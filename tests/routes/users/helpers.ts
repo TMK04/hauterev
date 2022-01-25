@@ -1,7 +1,7 @@
 import { post, sserver } from "../../helpers";
 
 export const postBob = () =>
-  post("/users", {
+  post("/api/users", {
     username: "Bob123",
     password: "Bob123Builder",
     email: "bob_staub_123@mail.com",
@@ -12,6 +12,6 @@ export const postBob = () =>
     gender: "M"
   });
 
-export const deleteBob = () => sserver.del("/users/Bob123");
+export const deleteBob = () => sserver.del("/api/users/Bob123");
 
 export const deleteBobAuthed = () => deleteBob().send({ password: "Bob123Builder" });

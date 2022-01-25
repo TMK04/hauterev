@@ -10,18 +10,18 @@ import { restaurant_db } from "db";
 */
 (<MockedAnyFn>restaurant_db.selectRestaurantsWithOptions).mockReturnValue([]);
 
-describe("GET /restaurants", () => {
+describe("GET /api/restaurants", () => {
   describe("Given no query parameters", () => {
-    it("should return a 200", () => sserver.get("/restaurants").expect(200));
+    it("should return a 200", () => sserver.get("/api/restaurants").expect(200));
   });
 
   describe("Given valid query parameters", () => {
     it("should return a 200", () =>
-      sserver.get("/restaurants?search=Corner&region=South&rating=2").expect(200));
+      sserver.get("/api/restaurants?search=Corner&region=South&rating=2").expect(200));
   });
 
   describe("Given invalid query parameters", () => {
     it("Given invalid query parameters, it should return a 200", () =>
-      sserver.get("/restaurants?search=&region=S&rating=invalid&unimplemented=s").expect(200));
+      sserver.get("/api/restaurants?search=&region=S&rating=invalid&unimplemented=s").expect(200));
   });
 });

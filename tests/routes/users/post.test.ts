@@ -20,13 +20,13 @@ const users: Record<string, User> = {};
 
 afterEach(deleteBobAuthed);
 
-describe("POST /users", () => {
+describe("POST /api/users", () => {
   describe("Given valid body parameters", () => {
     it("should return a 201", () => postBob().expect(201));
   });
 
   describe("Given invalid body parameters", () => {
-    it("should return a 400", () => post("/users", {}).expect(400));
+    it("should return a 400", () => post("/api/users", {}).expect(400));
   });
 
   describe("If username conflicts with existing user", () => {

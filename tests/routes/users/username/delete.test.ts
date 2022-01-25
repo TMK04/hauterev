@@ -25,7 +25,7 @@ const users: Record<string, User> = {};
 beforeEach(postBob);
 afterEach(deleteBobAuthed);
 
-describe("DELETE /users/:username", () => {
+describe("DELETE /api/users/:username", () => {
   describe("Given a correct password", () => {
     it("should return a 204", () => deleteBobAuthed().expect(204));
   });

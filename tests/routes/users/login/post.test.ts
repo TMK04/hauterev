@@ -26,22 +26,22 @@ const users: Record<string, User> = {};
 beforeAll(postBob);
 afterAll(deleteBob);
 
-describe("POST /users/login", () => {
+describe("POST /api/users/login", () => {
   describe("Given a valid body", () => {
     it("should return a 200", () =>
-      post("/users/login", {
+      post("/api/users/login", {
         username: "Bob123",
         password: "Bob123Builder"
       }).expect(200));
   });
 
   describe("Given an invalid body", () => {
-    it("should return a 400", () => post("/users/login", {}).expect(400));
+    it("should return a 400", () => post("/api/users/login", {}).expect(400));
   });
 
   describe("Given an incorrect body", () => {
     it("should return a 401", () =>
-      post("/users/login", {
+      post("/api/users/login", {
         username: "Bob123",
         password: "Bob123"
       }).expect(401));
@@ -49,7 +49,7 @@ describe("POST /users/login", () => {
 
   describe("If the user does not exist", () => {
     it("should return a 404", () =>
-      post("/users/login", {
+      post("/api/users/login", {
         username: "Bob132",
         password: "Bob123Builder"
       }).expect(404));
