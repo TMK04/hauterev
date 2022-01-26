@@ -3,7 +3,7 @@ import type { RequestHandler } from "express";
 
 import { UnauthorizedError } from "Errors";
 import { helpful_mark_db } from "db";
-import { catchNext } from "utils";
+import { catchNext } from "helpers";
 import { validateReviewIDBody } from "validation";
 
 export const markAsHelpful: RequestHandler<UsernameParams, any, ReviewIDBody> = (

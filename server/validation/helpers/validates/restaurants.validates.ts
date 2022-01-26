@@ -1,5 +1,5 @@
 import type { RestaurantRegion, SelectRestaurantsOptions } from "db/types";
-import type { QueryRecord } from "utils/types";
+import type { QueryRecord } from "helpers/types";
 
 import { nullInvalid } from "./wrappers.validates";
 

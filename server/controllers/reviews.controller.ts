@@ -3,7 +3,7 @@ import type { IDParams } from "types";
 
 import { NotFoundError } from "Errors";
 import { review_db } from "db";
-import { catchNext } from "utils";
+import { catchNext } from "helpers";
 
 export const retrieveReview: RequestHandler<IDParams> = ({ params }, res, next) =>
   catchNext(async () => {

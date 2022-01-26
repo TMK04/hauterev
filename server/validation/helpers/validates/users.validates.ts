@@ -1,6 +1,6 @@
 import type { UserGender } from "db/types";
+import type { UnknownRecord } from "helpers/types";
 import type { UsernameBody } from "types";
-import type { UnknownRecord } from "utils/types";
 
 import validate from "validation/utils/validate";
 

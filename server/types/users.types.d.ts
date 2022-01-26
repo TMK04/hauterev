@@ -1,4 +1,4 @@
-import { ParamsRecord, UnknownRecord } from "utils/types";
+import { ParamsRecord, UnknownRecord } from "helpers/types";
 
 export type UsernameBody = UnknownRecord<"username">;
 

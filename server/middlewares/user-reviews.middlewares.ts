@@ -3,7 +3,7 @@ import type { IDParams, UsernameParams } from "types";
 
 import { UnauthorizedError } from "Errors";
 import { review_db } from "db";
-import { catchNext } from "utils";
+import { catchNext } from "helpers";
 
 /**
  * Reject both unauthenticated & unauthorized requests

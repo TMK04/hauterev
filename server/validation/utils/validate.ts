@@ -1,4 +1,4 @@
-import type { NoFalsy } from "utils/types";
+import type { NoFalsy } from "helpers/types";
 
 import { InvalidError } from "Errors";
 

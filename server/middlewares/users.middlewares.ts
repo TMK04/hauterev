@@ -5,7 +5,7 @@ import type { AuthenticatedLocals, PasswordBody, UsernameParams } from "types";
 
 import { NotFoundError, UnauthenticatedError } from "Errors";
 import { user_db } from "db";
-import { catchNext } from "utils";
+import { catchNext } from "helpers";
 import { validatePasswordBody } from "validation/users.validation";
 
 /**

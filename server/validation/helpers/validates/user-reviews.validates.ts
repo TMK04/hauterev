@@ -1,4 +1,4 @@
-import type { UnknownRecord } from "utils/types";
+import type { UnknownRecord } from "helpers/types";
 
 import validate from "validation/utils/validate";
 

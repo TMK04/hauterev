@@ -3,7 +3,7 @@ import type { RequestHandler } from "express";
 
 import { NotFoundError } from "Errors";
 import { restaurant_db } from "db";
-import { catchNext } from "utils";
+import { catchNext } from "helpers";
 import { castGetRestaurantsQuery } from "validation";
 
 export const retrieveRestaurants: RequestHandler<any, any, any, GetRestaurantsQuery> = (

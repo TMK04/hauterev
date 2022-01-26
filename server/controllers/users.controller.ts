@@ -11,7 +11,7 @@ import type {
 
 import { NotFoundError, UnauthenticatedError } from "Errors";
 import { user_db } from "db";
-import { catchNext } from "utils";
+import { catchNext } from "helpers";
 import { validateAuthenticateBody, validatePatchUserBody, validatePostUserBody } from "validation";
 
 export const createUser: RequestHandler<any, any, PostUserBody> = ({ body }, res, next) =>

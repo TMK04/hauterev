@@ -2,7 +2,7 @@ import type { UpdateUser, User } from "db/types";
 import type { AuthenticateBody, PasswordBody, PatchUserBody, PostUserBody } from "types";
 
 import { InvalidError } from "Errors";
-import { saltedHash } from "utils";
+import { saltedHash } from "helpers";
 
 import { isDefined, isEmpty } from "./helpers/checks";
 import {

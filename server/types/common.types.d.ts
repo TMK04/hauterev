@@ -1,4 +1,4 @@
-import type { ParamsRecord, UnknownRecord } from "utils/types";
+import type { ParamsRecord, UnknownRecord } from "helpers/types";
 
 export type IDParams = ParamsRecord<"id">;
 

@@ -2,7 +2,7 @@ import type { IDParams, PatchReviewBody, PostReviewBody, UsernameParams } from "
 import type { RequestHandler } from "express";
 
 import { review_db } from "db";
-import { catchNext } from "utils";
+import { catchNext } from "helpers";
 import { validatePatchReviewBody, validatePostReviewBody } from "validation";
 
 export const createReview: RequestHandler<UsernameParams, any, any, PostReviewBody> = (

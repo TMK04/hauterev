@@ -3,7 +3,7 @@ import type { RequestHandler } from "express";
 
 import { UnauthorizedError } from "Errors";
 import { bookmark_db } from "db";
-import { catchNext } from "utils";
+import { catchNext } from "helpers";
 import { validateRestaurantIDBody } from "validation";
 
 export const bookmark: RequestHandler<UsernameParams, any, RestaurantIDBody> = (
