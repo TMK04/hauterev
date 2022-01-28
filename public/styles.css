@@ -1,8 +1,22 @@
+#search_input {
+  height: 56px;
+}
+
+.hr-top-header {
+  margin-top: 42px;
+  margin-bottom: 64px;
+}
+
+.hr-collection-header {
+  margin-bottom: 36px;
+}
+
 .card-deck {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 60px 80px;
+  margin-bottom: 64px;
 }
 
 .card {
