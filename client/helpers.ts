@@ -5,3 +5,5 @@ export const btn = () => {
   btn.classList.add("btn");
   return btn;
 };
+
+export const center_content_classes = ["justify-content-center", "align-items-center"];
