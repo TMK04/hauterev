@@ -6,7 +6,7 @@ const restaurants_router = Router();
 
 restaurants_router.route("/").get(restaurants_controller.retrieveRestaurants);
 
-restaurants_router.route("/random").get(restaurants_controller.retrieveRandomRestaurants);
+restaurants_router.route("/top-rated").get(restaurants_controller.retrieveTopRatedRestaurants);
 
 restaurants_router.route("/:id").get(restaurants_controller.retrieveRestaurant);
 

@@ -17,8 +17,8 @@ export const retrieveRestaurants: RequestHandler<any, any, any, GetRestaurantsQu
     next
   );
 
-export const retrieveRandomRestaurants: RequestHandler = (_, res, next) =>
-  catchNext(async () => res.json(await restaurant_db.selectRandomRestaurants()), next);
+export const retrieveTopRatedRestaurants: RequestHandler = (_, res, next) =>
+  catchNext(async () => res.json(await restaurant_db.selectTopRatedRestaurants()), next);
 
 export const retrieveRestaurant: RequestHandler<IDParams> = ({ params }, res, next) =>
   catchNext(async () => {

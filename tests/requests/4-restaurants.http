@@ -8,21 +8,9 @@ GET {{route}}
 
 GET {{route}}?search=Corner
 
-### Get restaurants by minimum rating
+### Get top rated restaurants
 
-GET {{route}}?rating=2
-
-### Get restaurants in South region
-
-GET {{route}}?region=South
-
-### Get restaurants open after 11pm 
-
-GET {{route}}?opening_hours=000000000000000000000001
-
-### Get random restaurants
-
-GET {{route}}/random
+GET {{route}}/top-rated
 
 ### Get restaurant by ID
 

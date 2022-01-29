@@ -24,9 +24,10 @@
 
     <script>
       const url = new URL(document.URL);
-      document
-        .querySelector("hr-top-header")
-        .setAttribute("text", `Search Results for "${url.searchParams.get("search") ?? ""}"`);
+      const search = url.searchParams.get("search");
+      const top_header = document.querySelector("hr-top-header");
+      if (search) top_header.setAttribute("text", `Search Results for "${search}"`);
+      else top_header.classList.add("d-none");
       document
         .querySelector("hr-res-collection")
         .setAttribute("src", `/api/restaurants${url.search}`);

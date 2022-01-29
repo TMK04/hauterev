@@ -1,4 +1,4 @@
-import type { ID, ImageURL, Name, RawDefault, Review } from ".";
+import type { ID, ImageURL, Name, RawDefault } from ".";
 
 /**
  * @type {TEXT}
@@ -26,7 +26,4 @@ export interface Restaurant {
 
 export interface SelectRestaurantsOptions {
   search: Restaurant["name" | "description"] | null | undefined;
-  rating: Review["rating"] | null | undefined;
-  region: Restaurant["region"] | undefined;
-  opening_hours?: Restaurant["opening_hours"] | undefined;
 }
