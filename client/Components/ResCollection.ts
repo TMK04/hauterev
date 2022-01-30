@@ -4,14 +4,14 @@ export default class ResCollection extends HTMLElement {
   constructor() {
     super();
 
-    const src = this.getAttribute("src");
-    if (!src) return;
+    const path = this.getAttribute("path");
+    if (!path) return;
 
     // <div>
     const container = document.createElement("div");
     container.classList.add("card-deck", "d-flex", "justify-content-center", "mx-5");
 
-    get(src).then((restaurants) => {
+    get(`/api/restaurants${path}`).then((restaurants) => {
       for (const { id, name, description, image_url } of restaurants) {
         // <div>
         const card = document.createElement("div");

@@ -1,6 +1,9 @@
 export default class CollectionHeader extends HTMLElement {
   constructor() {
     super();
-    this.innerHTML = `<h2 class="text-center mb-4">${this.getAttribute("text")}</h2>`;
+    const h2 = document.createElement("h2");
+    h2.classList.add("text-center", "mb-4");
+    h2.innerHTML = this.innerHTML;
+    this.replaceChildren(h2);
   }
 }

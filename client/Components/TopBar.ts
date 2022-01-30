@@ -1,16 +1,31 @@
 import { btn, center_content_classes } from "helpers";
 
-const endBtn = (src: string, name: string) => {
-  const div = document.createElement("div");
-  div.classList.add("d-flex", ...center_content_classes, "ms-lg-3", "mt-lg-0", "mt-1");
+import Icon from "./Icon";
+
+const TopBarLink = (src: string, href: string, name: string, id: string) => {
+  id = `top-bar-${id}`;
+
+  // <a>
+  const link = document.createElement("a");
+  link.classList.add("d-flex", ...center_content_classes, "ms-lg-3", "mt-lg-0", "mt-1");
+  link.href = href;
+  // - <button>
   const b = btn();
-  b.innerHTML = `<hr-icon src="${src}" size="28"></hr-icon>`;
-  div.append(b);
-  const n = document.createElement("a");
-  n.classList.add("d-lg-none");
-  n.textContent = name;
-  div.append(n);
-  return div;
+  // - - <img />
+  const icon = new Icon(src, 28);
+  b.append(icon);
+  b.id = id;
+  // - </button>
+  link.append(b);
+  // - <label>
+  const label = document.createElement("label");
+  label.classList.add("d-lg-none", "fw-bold");
+  label.textContent = name;
+  label.htmlFor = id;
+  // - </label>
+  link.append(label);
+  // </a>
+  return link;
 };
 
 export default class TopBar extends HTMLElement {
@@ -19,7 +34,7 @@ export default class TopBar extends HTMLElement {
 
     // <nav>
     const nav = document.createElement("nav");
-    nav.classList.add("navbar", "navbar-expand-lg", "navbar-light", "bg-light", "p-0");
+    nav.classList.add("navbar", "navbar-expand-lg", "navbar-light", "bg-light", "p-0", "mb-4");
     // - <div>
     const nav_div = document.createElement("div");
     nav_div.classList.add(
@@ -92,7 +107,10 @@ export default class TopBar extends HTMLElement {
       "py-0"
     );
     search_btn.type = "submit";
-    search_btn.innerHTML += "<hr-icon src='icons/search.svg' size='24' class='mx-3'></hr-icon>";
+    // - - - - - - <img />
+    const search_icon = new Icon("search.svg", 24);
+    search_icon.classList.add("mx-3");
+    search_btn.append(search_icon);
     // - - - - - </button>
     input_group.append(search_btn);
     // - - - - - <input />
@@ -107,8 +125,7 @@ export default class TopBar extends HTMLElement {
     // - - - </form>
     collapse.append(
       searchbar,
-      endBtn("icons/user.svg", "Profile"),
-      endBtn("icons/bookmarked.svg", "Bookmarks")
+      TopBarLink("logsig.svg", "/logsig.html", "Login / Sign-up", "logsig")
     );
     // - - </div>
     nav_div.append(collapse);

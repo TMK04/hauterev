@@ -1,11 +1,12 @@
 export default class Icon extends HTMLElement {
-  constructor() {
+  constructor(src = "", length = 0) {
     super();
 
-    const src = this.getAttribute("src");
-    if (!src) return;
-    const size = +(this.getAttribute("size") || 0);
-
-    this.innerHTML = `<img src="${src}" width="${size}" height="${size}" />`;
+    const img = document.createElement("img");
+    const l = +(<string>this.getAttribute("l")) || length;
+    img.width = l;
+    img.height = l;
+    img.src = `icons/${this.getAttribute("src") || src}`;
+    this.replaceChildren(img);
   }
 }
