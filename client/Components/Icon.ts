@@ -2,6 +2,7 @@ export default class Icon extends HTMLElement {
   constructor(src = "", length = 0) {
     super();
 
+    this.classList.add("d-inline-flex");
     const img = document.createElement("img");
     const l = +(<string>this.getAttribute("l")) || length;
     img.width = l;

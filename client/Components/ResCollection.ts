@@ -4,8 +4,7 @@ export default class ResCollection extends HTMLElement {
   constructor() {
     super();
 
-    const path = this.getAttribute("path");
-    if (!path) return;
+    const path = this.getAttribute("path") || "";
 
     this.classList.add("card-deck", "d-flex", "justify-content-center", "mx-5");
 

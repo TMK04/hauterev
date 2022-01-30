@@ -100,6 +100,8 @@ export default class TopBar extends HTMLElement {
       "border",
       "border-end-0",
       "rounded-0",
+      "d-flex",
+      "align-items-center",
       "ps-1",
       "pe-0",
       "py-0"
