@@ -32,10 +32,8 @@ export default class TopBar extends HTMLElement {
   constructor() {
     super();
 
-    // <nav>
-    const nav = document.createElement("nav");
-    nav.classList.add("navbar", "navbar-expand-lg", "navbar-light", "bg-light", "p-0", "mb-4");
-    // - <div>
+    this.classList.add("navbar", "navbar-expand-lg", "navbar-light", "bg-light", "p-0", "mb-4");
+    // <div>
     const nav_div = document.createElement("div");
     nav_div.classList.add(
       "d-flex",
@@ -47,10 +45,10 @@ export default class TopBar extends HTMLElement {
       "my-3",
       ...center_content_classes
     );
-    // - - <div>
+    // - <div>
     const no_collapse = document.createElement("div");
     no_collapse.classList.add("d-flex", "w-25", ...center_content_classes);
-    // - - - <a>
+    // - - <a>
     const brand = document.createElement("a");
     brand.classList.add(
       "navbar-brand",
@@ -67,34 +65,34 @@ export default class TopBar extends HTMLElement {
     );
     brand.href = "index.html";
     brand.textContent = "Hauterev";
-    // - - - </a>
+    // - - </a>
     no_collapse.append(brand);
-    // - - - <button>
+    // - - <button>
     const toggler = document.createElement("button");
     toggler.classList.add("navbar-toggler", "d-lg-none");
     toggler.type = "button";
     toggler.setAttribute("data-bs-toggle", "collapse");
     toggler.setAttribute("data-bs-target", "#top-bar-collapse");
-    // - - - - <i>
+    // - - - <i>
     const toggler_icon = document.createElement("i");
     toggler_icon.classList.add("navbar-toggler-icon");
-    // - - - - </i>
+    // - - - </i>
     toggler.append(toggler_icon);
     // - - - </button>
     no_collapse.append(toggler);
-    // - - </div>
+    // - </div>
     nav_div.append(no_collapse);
-    // - - <div>
+    // - <div>
     const collapse = document.createElement("div");
     collapse.classList.add("collapse", "navbar-collapse", "w-75");
     collapse.id = "top-bar-collapse";
-    // - - - <form>
+    // - - <form>
     const searchbar = document.createElement("form");
     searchbar.classList.add("container-fluid", "navbar-form", "mx-1", "my-lg-0", "my-2");
-    // - - - - <div>
+    // - - - <div>
     const input_group = document.createElement("div");
     input_group.classList.add("input-group");
-    // - - - - - <button>
+    // - - - - <button>
     const search_btn = btn();
     search_btn.classList.add(
       "btn-outline-secondary",
@@ -107,20 +105,20 @@ export default class TopBar extends HTMLElement {
       "py-0"
     );
     search_btn.type = "submit";
-    // - - - - - - <img />
+    // - - - - - <img />
     const search_icon = new Icon("search.svg", 24);
     search_icon.classList.add("mx-3");
     search_btn.append(search_icon);
-    // - - - - - </button>
+    // - - - - </button>
     input_group.append(search_btn);
-    // - - - - - <input />
+    // - - - - <input />
     const search_input = document.createElement("input");
     search_input.classList.add("form-control", "border", "border-start-0", "rounded-0", "fs-5");
     search_input.type = "search";
     search_input.placeholder = "Search";
     search_input.id = "search_input";
     input_group.append(search_input);
-    // - - - - </div>
+    // - - - </div>
     searchbar.append(input_group);
     // - - - </form>
     collapse.append(
@@ -130,9 +128,9 @@ export default class TopBar extends HTMLElement {
     // - - </div>
     nav_div.append(collapse);
     // - </div>
-    nav.append(nav_div);
-    // </nav>
-    this.append(nav);
+    nav_div.append(collapse);
+    // </div>
+    this.append(nav_div);
 
     searchbar.onsubmit = () => {
       let url = "/search.html?";

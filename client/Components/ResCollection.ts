@@ -7,9 +7,7 @@ export default class ResCollection extends HTMLElement {
     const path = this.getAttribute("path");
     if (!path) return;
 
-    // <div>
-    const container = document.createElement("div");
-    container.classList.add("card-deck", "d-flex", "justify-content-center", "mx-5");
+    this.classList.add("card-deck", "d-flex", "justify-content-center", "mx-5");
 
     get(`/api/restaurants${path}`).then((restaurants) => {
       for (const { id, name, description, image_url } of restaurants) {
@@ -45,11 +43,8 @@ export default class ResCollection extends HTMLElement {
         // </div>
         card.append(a, card_body);
 
-        container.append(card);
+        this.append(card);
       }
     });
-
-    // </div>
-    this.append(container);
   }
 }
