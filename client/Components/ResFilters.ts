@@ -1,4 +1,6 @@
-import Icon from "./Icon";
+import { center_content_classes } from "helpers";
+
+import BsIcon from "./BsIcon";
 
 const Row = () => {
   const row = document.createElement("div");
@@ -6,7 +8,7 @@ const Row = () => {
   return row;
 };
 
-const Toggler = (id: string, src: string, name: string) => {
+const Toggler = (id: string, icon_name: string, name: string) => {
   id = `filter-toggler-${id}`;
 
   // <div>
@@ -21,14 +23,15 @@ const Toggler = (id: string, src: string, name: string) => {
     "d-flex",
     "justify-content-between",
     "align-items-center",
-    "p-3"
+    "px-3",
+    "py-2"
   );
   toggler.id = id;
   // - <div>
   const start = document.createElement("div");
-  start.classList.add("d-flex", "w-100", "justify-content-md-start", "justify-content-center");
+  start.classList.add("d-flex", "w-100", "justify-content-md-start", ...center_content_classes);
   // - - <hr-icon>
-  const icon = new Icon(src, 24);
+  const icon = new BsIcon(icon_name, "24px");
   // - - </hr-icon>
   start.append(icon);
   // - - <label>
@@ -41,8 +44,7 @@ const Toggler = (id: string, src: string, name: string) => {
   // - </div>
   toggler.append(start);
   // - <hr-icon>
-  const dropdown_icon = new Icon("dropdown.svg", 16);
-  icon.classList.add("mt-1");
+  const dropdown_icon = new BsIcon("caret-down-fill", "16px");
   // - </hr-icon>
   toggler.append(dropdown_icon);
   // </div>
@@ -50,7 +52,7 @@ const Toggler = (id: string, src: string, name: string) => {
 };
 
 const Dropdown = (id: string) => {
-  id = `filter-filter-${id}`;
+  id = `filter-dropdown-${id}`;
 
   // <div>
   const dropdown = document.createElement("form");
@@ -82,10 +84,10 @@ export default class ResFilters extends HTMLElement {
     super();
 
     const options: [string, string, string][] = [
-      ["min-rating", "rating.svg", "Min. Rating"],
-      ["opening-hours", "opening-hours.svg", "Opening Hours"],
-      ["region", "region.svg", "Region"],
-      ["sort-by", "sort.svg", "Sort by"]
+      ["min-rating", "star-half", "Min. Rating"],
+      ["opening-hours", "clock-history", "Opening Hours"],
+      ["region", "geo-fill", "Region"],
+      ["sort-by", "sort-down", "Sort by"]
     ];
 
     // <div>

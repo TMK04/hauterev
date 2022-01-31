@@ -1,8 +1,8 @@
 import { btn, center_content_classes } from "helpers";
 
-import Icon from "./Icon";
+import BsIcon from "./BsIcon";
 
-const TopBarLink = (src: string, href: string, name: string, id: string) => {
+const TopBarLink = (icon_name: string, href: string, name: string, id: string) => {
   id = `top-bar-${id}`;
 
   // <a>
@@ -12,7 +12,7 @@ const TopBarLink = (src: string, href: string, name: string, id: string) => {
   // - <button>
   const b = btn();
   // - - <img />
-  const icon = new Icon(src, 28);
+  const icon = new BsIcon(icon_name, "28px");
   b.append(icon);
   b.id = id;
   // - </button>
@@ -107,9 +107,8 @@ export default class TopBar extends HTMLElement {
       "py-0"
     );
     search_btn.type = "submit";
-    // - - - - - <img />
-    const search_icon = new Icon("search.svg", 24);
-    search_icon.classList.add("mx-3");
+    const search_icon = new BsIcon("search", "24px");
+    search_icon.classList.add("mx-3", "text-dark");
     search_btn.append(search_icon);
     // - - - - </button>
     input_group.append(search_btn);
@@ -125,7 +124,7 @@ export default class TopBar extends HTMLElement {
     // - - - </form>
     collapse.append(
       searchbar,
-      TopBarLink("logsig.svg", "/logsig.html", "Login / Sign-up", "logsig")
+      TopBarLink("box-arrow-in-right", "/logsig.html", "Login / Sign-up", "logsig")
     );
     // - - </div>
     nav_div.append(collapse);
