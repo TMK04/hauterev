@@ -1,6 +1,7 @@
 import { center_content_classes } from "helpers";
 
 import BsIcon from "./BsIcon";
+import RatingInput from "./RatingInput";
 
 const Row = () => {
   const row = document.createElement("div");
@@ -51,7 +52,7 @@ const Toggler = (id: string, icon_name: string, name: string) => {
   return toggler;
 };
 
-const Dropdown = (id: string) => {
+const Dropdown = (id: string, inner?: HTMLElement) => {
   id = `filter-dropdown-${id}`;
 
   // <div>
@@ -65,7 +66,7 @@ const Dropdown = (id: string) => {
     "justify-content-center"
   );
   dropdown.id = id;
-  dropdown.textContent = id;
+  if (inner) dropdown.append(inner);
   // </div>
   return dropdown;
 };
@@ -83,8 +84,8 @@ export default class ResFilters extends HTMLElement {
   constructor() {
     super();
 
-    const options: [string, string, string][] = [
-      ["min-rating", "star-half", "Min. Rating"],
+    const options: [string, string, string, HTMLElement?][] = [
+      ["min-rating", "star-half", "Min. Rating", new RatingInput()],
       ["opening-hours", "clock-history", "Opening Hours"],
       ["region", "geo-fill", "Region"],
       ["sort-by", "sort-down", "Sort by"]
@@ -96,9 +97,9 @@ export default class ResFilters extends HTMLElement {
     // - <div> * 2
     const togglers_row = Row();
     const dropdowns_row = Row();
-    for (const [id, src, name] of options) {
+    for (const [id, src, name, inner] of options) {
       const toggler = Toggler(id, src, name);
-      const dropdown = Dropdown(id);
+      const dropdown = Dropdown(id, inner);
       toggler.addEventListener("click", () =>
         this.active?.toggler === toggler
           ? (this.active = undefined)
@@ -116,7 +117,7 @@ export default class ResFilters extends HTMLElement {
   #deactivate = () => {
     if (this.#active) {
       const { toggler, dropdown } = this.#active;
-      toggler.classList.remove("border-primary");
+      toggler.classList.remove("border-primary", "border-2");
       toggler.classList.add("btn-light", "border-secondary");
       dropdown.classList.remove("show");
     }
@@ -131,7 +132,7 @@ export default class ResFilters extends HTMLElement {
     if (active) {
       const { toggler, dropdown } = active;
       toggler.classList.remove("btn-light", "border-secondary");
-      toggler.classList.add("border-primary");
+      toggler.classList.add("border-primary", "border-2");
       dropdown.classList.add("show");
     }
     this.#active = active;

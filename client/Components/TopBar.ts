@@ -117,7 +117,7 @@ export default class TopBar extends HTMLElement {
     search_input.classList.add("form-control", "border", "border-start-0", "rounded-0", "fs-5");
     search_input.type = "search";
     search_input.placeholder = "Search";
-    search_input.id = "search_input";
+    search_input.id = "search-input";
     input_group.append(search_input);
     // - - - </div>
     searchbar.append(input_group);
