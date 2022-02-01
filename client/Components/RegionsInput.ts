@@ -6,7 +6,7 @@ export default class RegionsInput extends HTMLElement implements Input {
   #id = "regions-input";
   readonly input: HTMLFormElement;
 
-  constructor(regions: string[], oninput?: (regions: string[]) => any) {
+  constructor(regions: string[] = [], oninput?: (regions: string[]) => any) {
     super();
 
     // <form>
