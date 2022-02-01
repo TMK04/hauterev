@@ -6,6 +6,7 @@ import { center_content_classes } from "helpers";
 import BsIcon from "./BsIcon";
 import OpeningHoursInput from "./OpeningHoursInput";
 import RatingInput from "./RatingInput";
+import RegionsInput from "./RegionsInput";
 
 const Row = () => {
   const row = document.createElement("div");
@@ -86,7 +87,7 @@ export default class ResFilters extends HTMLElement {
   #active: ActiveGroup | undefined;
   #min_rating = 0;
   #opening_hours = 16777215;
-
+  #regions = ["North", "South", "East", "West", "Central"];
   #collection = <ResCollection>document.querySelector("hr-res-collection");
 
   constructor() {
@@ -103,11 +104,15 @@ export default class ResFilters extends HTMLElement {
       );
       this.#filter();
     });
+    const regions = new RegionsInput(this.#regions, (regions) => {
+      this.#regions = regions;
+      this.#filter();
+    });
 
     const options: [string, string, string, Input?][] = [
       ["min-rating", "star-half", "Min. Rating", min_rating],
       ["opening-hours", "clock-history", "Opening Hours", opening_hours],
-      ["region", "geo-fill", "Region"],
+      ["regions", "geo-fill", "Regions", regions],
       ["sort-by", "sort-down", "Sort by"]
     ];
 
@@ -138,11 +143,12 @@ export default class ResFilters extends HTMLElement {
     for (const card of <HTMLCollectionOf<HTMLDivElement>>(
       this.#collection.getElementsByClassName("card")
     )) {
-      const { avgRating, openingHours } = <Record<"avgRating" | "openingHours", string>>(
-        card.dataset
-      );
+      const { avgRating, openingHours, region } = <
+        Record<"avgRating" | "openingHours" | "region", string>
+      >card.dataset;
       if (this.#min_rating && !(+avgRating >= this.#min_rating)) card.classList.add("d-none");
       else if ((this.#opening_hours & +openingHours) === 0) card.classList.add("d-none");
+      else if (!this.#regions.includes(region)) card.classList.add("d-none");
       else card.classList.remove("d-none");
     }
   };
