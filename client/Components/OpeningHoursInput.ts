@@ -1,4 +1,4 @@
-import type { Input } from "./Input";
+import type Input from "./Input";
 
 export default class OpeningHoursInput extends HTMLElement implements Input {
   static min = 0;
@@ -14,8 +14,8 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
     this.input = document.createElement("form");
     this.input.id = OpeningHoursInput.id;
     // - <input /> * 2
-    const inputLeft = this.#Input(OpeningHoursInput.min.toString());
-    const inputRight = this.#Input(OpeningHoursInput.max.toString());
+    const inputLeft = OpeningHoursInput.Input(OpeningHoursInput.min.toString());
+    const inputRight = OpeningHoursInput.Input(OpeningHoursInput.max.toString());
     this.input.append(inputLeft, inputRight);
     // - <div>
     const slider = document.createElement("div");
@@ -25,9 +25,9 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
     track.classList.add("track", "bg-secondary");
     const range = document.createElement("div");
     range.classList.add("range", "bg-primary");
-    const thumbLeft = this.#Thumb();
+    const thumbLeft = OpeningHoursInput.Thumb();
     thumbLeft.classList.add("left");
-    const thumbRight = this.#Thumb();
+    const thumbRight = OpeningHoursInput.Thumb();
     thumbRight.classList.add("right");
     // - - <div> * 4
     slider.append(track, range, thumbLeft, thumbRight);
@@ -75,7 +75,7 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
     inputRight.addEventListener("mouseup", () => thumbRight.classList.remove("active"));
   }
 
-  #Input = (value: string) => {
+  static Input = (value: string) => {
     const input = document.createElement("input");
     input.type = "range";
     input.name = OpeningHoursInput.id;
@@ -85,7 +85,7 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
     return input;
   };
 
-  #Thumb = () => {
+  static Thumb = () => {
     const thumb = document.createElement("div");
     thumb.classList.add("thumb", "bg-primary");
     return thumb;

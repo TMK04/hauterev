@@ -1,8 +1,10 @@
+import type Interdependent from "./Interdependent";
+
 import { btn, center_content_classes, whenDefined } from "helpers";
 
 import BsIcon from "./BsIcon";
 
-export default class TopBar extends HTMLElement {
+export default class TopBar extends HTMLElement implements Interdependent {
   constructor() {
     super();
 
@@ -103,7 +105,7 @@ export default class TopBar extends HTMLElement {
     // - - - </form>
     collapse.append(
       searchbar,
-      this.#TopBarLink("box-arrow-in-right", "/logsig.html", "Login / Sign-up", "logsig")
+      TopBar.TopBarLink("box-arrow-in-right", "/logsig.html", "Login / Sign-up", "logsig")
     );
     // - - </div>
     nav_div.append(collapse);
@@ -122,7 +124,7 @@ export default class TopBar extends HTMLElement {
     };
   };
 
-  #TopBarLink = (icon_name: string, href: string, name: string, id: string) => {
+  static TopBarLink = (icon_name: string, href: string, name: string, id: string) => {
     id = `top-bar-${id}`;
 
     // <a>

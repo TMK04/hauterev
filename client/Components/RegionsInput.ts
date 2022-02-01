@@ -1,9 +1,9 @@
-import type { Input } from "./Input";
+import type Input from "./Input";
 
 import { center_content_classes } from "helpers";
 
 export default class RegionsInput extends HTMLElement implements Input {
-  #id = "regions-input";
+  static id = "regions-input";
   readonly input: HTMLFormElement;
 
   constructor(regions: string[] = [], oninput?: (regions: string[]) => any) {
@@ -11,7 +11,7 @@ export default class RegionsInput extends HTMLElement implements Input {
 
     // <form>
     this.input = document.createElement("form");
-    this.input.id = this.#id;
+    this.input.id = RegionsInput.id;
     this.input.classList.add(
       "d-flex",
       "gap-2",
@@ -24,7 +24,7 @@ export default class RegionsInput extends HTMLElement implements Input {
       const check = document.createElement("div");
       check.classList.add("form-check");
       // - <input />
-      const id = `${this.#id}-${region}`;
+      const id = `${RegionsInput.id}-${region}`;
       const checkbox = document.createElement("input");
       checkbox.classList.add("form-check-input");
       checkbox.setAttribute("value", region);

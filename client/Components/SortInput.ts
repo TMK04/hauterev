@@ -1,4 +1,4 @@
-import type { Input } from "./Input";
+import type Input from "./Input";
 
 import { center_content_classes } from "helpers";
 
