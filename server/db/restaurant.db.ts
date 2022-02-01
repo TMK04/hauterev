@@ -1,4 +1,10 @@
-import type { ID, Restaurant, SelectRestaurantsOptions } from "./types";
+import type {
+  ID,
+  Restaurant,
+  SelectRestaurant,
+  SelectRestaurants,
+  SelectRestaurantsOptions
+} from "./types";
 
 import { db } from "connections";
 
@@ -29,7 +35,9 @@ const selectRestaurants = () =>
 
 // *--- Select ---* //
 
-export const selectRestaurantsWithOptions = ({ search }: SelectRestaurantsOptions) => {
+export const selectRestaurantsWithOptions = ({
+  search
+}: SelectRestaurantsOptions): Promise<SelectRestaurants> => {
   let query = selectRestaurants();
   if (search)
     query = query.andWhereRaw(
@@ -39,11 +47,11 @@ export const selectRestaurantsWithOptions = ({ search }: SelectRestaurantsOption
   return query;
 };
 
-export const selectTopRatedRestaurants = () =>
+export const selectTopRatedRestaurants = (): Promise<SelectRestaurants> =>
   selectRestaurants().orderBy("avg_rating.avg_rating", "desc").limit(3);
 
-export const selectRestaurantByID = async (id: ID) => {
-  const restaurants = await restaurantTable()
+export const selectRestaurantByID = async (id: ID): Promise<SelectRestaurant> => {
+  const restaurants: SelectRestaurant = await restaurantTable()
     .select("restaurant.*", "avg_rating.avg_rating")
     .leftJoin(review_db.selectAvgRating(), "restaurant.id", "avg_rating.restaurant_id")
     .where({ "restaurant.id": id });

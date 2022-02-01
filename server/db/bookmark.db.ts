@@ -1,4 +1,4 @@
-import type { Bookmark, ID, UserUsername } from "./types";
+import type { Bookmark, ID, SelectBookmarks, UserUsername } from "./types";
 
 import { db } from "connections";
 
@@ -18,7 +18,7 @@ export const insertBookmark = (bookmark: Bookmark) => bookmarkTable().insert(boo
 
 // *--- Select ---* //
 
-export const selectBookmarksByUsername = (username: UserUsername) =>
+export const selectBookmarksByUsername = (username: UserUsername): Promise<SelectBookmarks> =>
   bookmarkTable().select().where({ username });
 
 // *--- Delete ---* //

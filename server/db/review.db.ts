@@ -1,4 +1,13 @@
-import type { ID, InsertReview, Review, Timestamp, UpdateReview, UserUsername } from "./types";
+import type {
+  ID,
+  InsertReview,
+  Review,
+  SelectReviewID,
+  SelectReviews,
+  Timestamp,
+  UpdateReview,
+  UserUsername
+} from "./types";
 
 import { db } from "connections";
 
@@ -43,15 +52,8 @@ export const selectReviewsByRestaurantID = (restaurant_id: ID) =>
 export const selectReviewsByUsername = (username: UserUsername) =>
   selectReviews().where({ "review.username": username });
 
-export const selectReviewByID = (id: ID) =>
-  reviewTable()
-    .select("review.*", "helpful_marks.helpful_count")
-    .leftJoin(
-      helpful_mark_db.selectHelpfulMarksHelpfulCount(),
-      "review.id",
-      "helpful_marks.review_id"
-    )
-    .where({ "review.id": id });
+export const selectReviewByID = (id: ID): Promise<SelectReviews> =>
+  selectReviews().where({ "review.id": id });
 
 /**
  * Use to check if review belongs to user
@@ -61,8 +63,10 @@ export const selectReviewByID = (id: ID) =>
  *  a. 1 review ID if review belongs to user
  *  b. no elements otherwise
  */
-export const selectReviewIDByIDnUsername = (id: ID, username: UserUsername) =>
-  reviewTable().select("id").where({ id, username });
+export const selectReviewIDByIDnUsername = (
+  id: ID,
+  username: UserUsername
+): Promise<SelectReviewID> => reviewTable().select("id").where({ id, username });
 
 // *--- Update ---* //
 

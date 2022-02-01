@@ -1,4 +1,6 @@
-import type { ID, ImageURL, RawDefault, Timestamp, UserUsername } from ".";
+import type { ID, ImageURL, RawDefault, Timestamp } from "./common.types";
+import type { SelectHelpfulCount } from "./helpful-mark.types";
+import type { UserUsername } from "./user.types";
 
 /**
  * @type {VARCHAR(30)}
@@ -32,3 +34,7 @@ export type InsertReview = Omit<Review, "id" | "edited_timestamp">;
 export type UpdateReview = Partial<
   Omit<InsertReview, "restaurant_id" | "username" | "posted_timestamp">
 >;
+
+export type SelectAvgRating = Record<"avg_rating", ReviewRating>[];
+export type SelectReviews = (Review & SelectHelpfulCount)[];
+export type SelectReviewID = Record<"id", Review["id"]>[];

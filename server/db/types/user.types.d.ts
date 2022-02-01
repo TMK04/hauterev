@@ -1,4 +1,4 @@
-import type { Name, RawDefault, Timestamp } from "./types/types";
+import type { Name, RawDefault, Timestamp } from "./common.types";
 
 /**
  * @type {VARCHAR(20)}

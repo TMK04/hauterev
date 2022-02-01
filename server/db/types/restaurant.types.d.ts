@@ -1,4 +1,5 @@
-import type { ID, ImageURL, Name, RawDefault } from ".";
+import type { ID, ImageURL, Name, RawDefault } from "./common.types";
+import type { SelectAvgRating, SelectReviews } from "./review.types";
 
 /**
  * @type {TEXT}
@@ -27,3 +28,6 @@ export interface Restaurant {
 export interface SelectRestaurantsOptions {
   search: Restaurant["name" | "description"] | null | undefined;
 }
+
+export type SelectRestaurants = (Restaurant & SelectAvgRating)[];
+export type SelectRestaurant = (SelectRestaurants[0] & Record<"reviews", SelectReviews>)[];
