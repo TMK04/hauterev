@@ -1,8 +1,10 @@
+import type { Input } from "./Input";
 import type ResCollection from "./ResCollection";
 
 import { center_content_classes } from "helpers";
 
 import BsIcon from "./BsIcon";
+import OpeningHoursInput from "./OpeningHoursInput";
 import RatingInput from "./RatingInput";
 
 const Row = () => {
@@ -58,7 +60,7 @@ const Dropdown = (id: string, inner?: HTMLElement) => {
   id = `filter-dropdown-${id}`;
 
   // <div>
-  const dropdown = document.createElement("form");
+  const dropdown = document.createElement("div");
   dropdown.classList.add(
     "collapse",
     "p-3",
@@ -82,24 +84,29 @@ interface ActiveGroup {
 
 export default class ResFilters extends HTMLElement {
   #active: ActiveGroup | undefined;
+  #min_rating = 0;
+  #opening_hours = 16777215;
+
   #collection = <ResCollection>document.querySelector("hr-res-collection");
 
   constructor() {
     super();
 
     const min_rating = new RatingInput((min_rating) => {
-      for (const card of <HTMLCollectionOf<HTMLDivElement>>(
-        this.#collection.getElementsByClassName("card")
-      )) {
-        const avg_rating = +(<string>card.dataset["avgRating"]);
-        if ((min_rating && !avg_rating) || avg_rating < min_rating) card.classList.add("d-none");
-        else card.classList.remove("d-none");
-      }
+      this.#min_rating = min_rating;
+      this.#filter();
+    });
+    const opening_hours = new OpeningHoursInput((min, max) => {
+      this.#opening_hours = parseInt(
+        `${"0".repeat(min)}${"1".repeat(max - min + 1)}${"0".repeat(OpeningHoursInput.max - max)}`,
+        2
+      );
+      this.#filter();
     });
 
-    const options: [string, string, string, HTMLElement?][] = [
+    const options: [string, string, string, Input?][] = [
       ["min-rating", "star-half", "Min. Rating", min_rating],
-      ["opening-hours", "clock-history", "Opening Hours"],
+      ["opening-hours", "clock-history", "Opening Hours", opening_hours],
       ["region", "geo-fill", "Region"],
       ["sort-by", "sort-down", "Sort by"]
     ];
@@ -126,6 +133,19 @@ export default class ResFilters extends HTMLElement {
     // </div>
     this.append(container);
   }
+
+  #filter = () => {
+    for (const card of <HTMLCollectionOf<HTMLDivElement>>(
+      this.#collection.getElementsByClassName("card")
+    )) {
+      const { avgRating, openingHours } = <Record<"avgRating" | "openingHours", string>>(
+        card.dataset
+      );
+      if (this.#min_rating && !(+avgRating >= this.#min_rating)) card.classList.add("d-none");
+      else if ((this.#opening_hours & +openingHours) === 0) card.classList.add("d-none");
+      else card.classList.remove("d-none");
+    }
+  };
 
   #deactivate = () => {
     if (this.#active) {

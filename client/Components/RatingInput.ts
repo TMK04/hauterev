@@ -1,6 +1,8 @@
+import type { Input } from "./Input";
+
 import { center_content_classes } from "helpers";
 
-export default class RatingInput extends HTMLElement {
+export default class RatingInput extends HTMLElement implements Input {
   #id = "rating-input";
   #rating: HTMLLabelElement;
   readonly input: HTMLFormElement;
