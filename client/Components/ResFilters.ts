@@ -1,3 +1,5 @@
+import type ResCollection from "./ResCollection";
+
 import { center_content_classes } from "helpers";
 
 import BsIcon from "./BsIcon";
@@ -80,12 +82,23 @@ interface ActiveGroup {
 
 export default class ResFilters extends HTMLElement {
   #active: ActiveGroup | undefined;
+  #collection = <ResCollection>document.querySelector("hr-res-collection");
 
   constructor() {
     super();
 
+    const min_rating = new RatingInput((min_rating) => {
+      for (const card of <HTMLCollectionOf<HTMLDivElement>>(
+        this.#collection.getElementsByClassName("card")
+      )) {
+        const avg_rating = +(<string>card.dataset["avgRating"]);
+        if ((min_rating && !avg_rating) || avg_rating < min_rating) card.classList.add("d-none");
+        else card.classList.remove("d-none");
+      }
+    });
+
     const options: [string, string, string, HTMLElement?][] = [
-      ["min-rating", "star-half", "Min. Rating", new RatingInput()],
+      ["min-rating", "star-half", "Min. Rating", min_rating],
       ["opening-hours", "clock-history", "Opening Hours"],
       ["region", "geo-fill", "Region"],
       ["sort-by", "sort-down", "Sort by"]

@@ -44,6 +44,6 @@
   color: #dbceca;
 }
 
-input:checked ~ .rate {
+input:checked ~ .rate:not(input:checked + .rate-0) {
   color: #e6d113;
 }

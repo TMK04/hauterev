@@ -5,7 +5,7 @@ export default class RatingInput extends HTMLElement {
   #rating: HTMLLabelElement;
   readonly input: HTMLFormElement;
 
-  constructor(oninput?: (value: string) => any) {
+  constructor(oninput?: (value: number) => any) {
     super();
 
     this.classList.add("d-flex", ...center_content_classes, "flex-md-row", "flex-column");
@@ -23,7 +23,7 @@ export default class RatingInput extends HTMLElement {
     const stars = document.createElement("div");
     stars.classList.add("d-flex", "flex-row-reverse");
 
-    for (let i = 9; i > 1; i--) {
+    for (let i = 10; --i; ) {
       const id = `${this.#id}-${i}`;
       const value = (i / 2 + 0.5).toFixed(1);
 
@@ -35,30 +35,29 @@ export default class RatingInput extends HTMLElement {
       stars.append(input, label);
     }
 
-    const id_1 = "rating-1";
-    const value_1 = "1.0";
-    const input_1 = this.#Input(id_1, value_1);
-    input_1.checked = true;
-    const label_1 = this.#Label(id_1, value_1, "bi-star-fill");
-    label_1.classList.add("rate-1");
-    stars.append(input_1, label_1);
+    const id_0 = "rating-0";
+    const value_0 = "0.0";
+    const input_0 = this.#Input(id_0, value_0);
+    const label_0 = this.#Label(id_0, value_0);
+    label_0.classList.add("rate-half", "rate-0");
+    stars.append(input_0, label_0);
 
     this.#rating = document.createElement("label");
     this.#rating.htmlFor = this.#id;
     this.#rating.classList.add("fs-5");
-    this.#setRating(value_1);
+    this.#setRating("0.0");
     this.input.append(this.#rating, stars);
 
     this.input.addEventListener("input", () => {
       stars
-        .querySelectorAll(".rate:not(.rate-1, input:checked ~ .rate)")
+        .querySelectorAll(".rate")
         .forEach((e) => e.classList.replace("bi-star-fill", "bi-star"));
       stars
-        .querySelectorAll("input:checked ~ .rate")
+        .querySelectorAll("input:checked ~ .rate:not(.rate-0)")
         .forEach((e) => e.classList.replace("bi-star", "bi-star-fill"));
       const value = (<RadioNodeList>this.input.elements.namedItem(this.#id)).value;
       this.#setRating(value);
-      if (oninput) oninput(value);
+      if (oninput) oninput(+value);
     });
 
     this.append(this.input);
@@ -77,9 +76,9 @@ export default class RatingInput extends HTMLElement {
     return input;
   };
 
-  #Label = (id: string, value: string, star = "bi-star") => {
+  #Label = (id: string, value: string) => {
     const label = document.createElement("label");
-    label.classList.add(star, "rate");
+    label.classList.add("bi-star", "rate");
     label.htmlFor = id;
     label.title = value;
 
