@@ -1,37 +1,15 @@
-import { btn, center_content_classes } from "helpers";
+import { btn, center_content_classes, whenDefined } from "helpers";
 
 import BsIcon from "./BsIcon";
-
-const TopBarLink = (icon_name: string, href: string, name: string, id: string) => {
-  id = `top-bar-${id}`;
-
-  // <a>
-  const link = document.createElement("a");
-  link.classList.add("d-flex", ...center_content_classes, "ms-lg-3", "mt-lg-0", "mt-1");
-  link.href = href;
-  // - <button>
-  const b = btn();
-  // - - <img />
-  const icon = new BsIcon(icon_name, "28px");
-  b.append(icon);
-  b.id = id;
-  // - </button>
-  link.append(b);
-  // - <label>
-  const label = document.createElement("label");
-  label.classList.add("d-lg-none", "fw-bold");
-  label.textContent = name;
-  label.htmlFor = id;
-  // - </label>
-  link.append(label);
-  // </a>
-  return link;
-};
 
 export default class TopBar extends HTMLElement {
   constructor() {
     super();
 
+    this.#init();
+  }
+
+  #init = async () => {
     this.classList.add("navbar", "navbar-expand-lg", "navbar-light", "bg-light", "p-0", "mb-4");
     // <div>
     const nav_div = document.createElement("div");
@@ -107,6 +85,7 @@ export default class TopBar extends HTMLElement {
       "py-0"
     );
     search_btn.type = "submit";
+    await whenDefined("BsIcon");
     const search_icon = new BsIcon("search", "24px");
     search_icon.classList.add("mx-3", "text-dark");
     search_btn.append(search_icon);
@@ -124,7 +103,7 @@ export default class TopBar extends HTMLElement {
     // - - - </form>
     collapse.append(
       searchbar,
-      TopBarLink("box-arrow-in-right", "/logsig.html", "Login / Sign-up", "logsig")
+      this.#TopBarLink("box-arrow-in-right", "/logsig.html", "Login / Sign-up", "logsig")
     );
     // - - </div>
     nav_div.append(collapse);
@@ -141,5 +120,31 @@ export default class TopBar extends HTMLElement {
       // Prevent default
       return false;
     };
-  }
+  };
+
+  #TopBarLink = (icon_name: string, href: string, name: string, id: string) => {
+    id = `top-bar-${id}`;
+
+    // <a>
+    const link = document.createElement("a");
+    link.classList.add("d-flex", ...center_content_classes, "ms-lg-3", "mt-lg-0", "mt-1");
+    link.href = href;
+    // - <button>
+    const b = btn();
+    // - - <img />
+    const icon = new BsIcon(icon_name, "28px");
+    b.append(icon);
+    b.id = id;
+    // - </button>
+    link.append(b);
+    // - <label>
+    const label = document.createElement("label");
+    label.classList.add("d-lg-none", "fw-bold");
+    label.textContent = name;
+    label.htmlFor = id;
+    // - </label>
+    link.append(label);
+    // </a>
+    return link;
+  };
 }

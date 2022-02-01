@@ -1,7 +1,7 @@
 import type { Input } from "./Input";
 import type ResCollection from "./ResCollection";
 
-import { center_content_classes } from "helpers";
+import { center_content_classes, whenDefined } from "helpers";
 
 import BsIcon from "./BsIcon";
 import OpeningHoursInput from "./OpeningHoursInput";
@@ -98,12 +98,12 @@ export default class ResFilters extends HTMLElement {
   }
 
   #init = async () => {
-    await customElements.whenDefined("hr-rating-input");
+    await whenDefined("RatingInput");
     const min_rating = new RatingInput((min_rating) => {
       this.#min_rating = min_rating;
       this.#filter();
     });
-    await customElements.whenDefined("hr-opening-hours-input");
+    await whenDefined("OpeningHoursInput");
     const opening_hours = new OpeningHoursInput((min, max) => {
       this.#opening_hours = parseInt(
         `${"0".repeat(min)}${"1".repeat(max - min + 1)}${"0".repeat(OpeningHoursInput.max - max)}`,
@@ -111,12 +111,12 @@ export default class ResFilters extends HTMLElement {
       );
       this.#filter();
     });
-    await customElements.whenDefined("hr-regions-input");
+    await whenDefined("RegionsInput");
     const regions = new RegionsInput(this.#regions, (regions) => {
       this.#regions = regions;
       this.#filter();
     });
-    await customElements.whenDefined("hr-sort-input");
+    await whenDefined("SortInput");
     const sort = new SortInput([]);
 
     const options: [string, string, string, Input?][] = [
@@ -132,7 +132,7 @@ export default class ResFilters extends HTMLElement {
     // - <div> * 2
     const togglers_row = Row();
     const dropdowns_row = Row();
-    await customElements.whenDefined("hr-sort-input");
+    await whenDefined("BsIcon");
     for (const [id, src, name, inner] of options) {
       const toggler = Toggler(id, src, name);
       const dropdown = Dropdown(id, inner);

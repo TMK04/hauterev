@@ -1,3 +1,8 @@
+export const tag = (Class: string) =>
+  `hr${Class.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`)}`;
+
+export const whenDefined = (Class: string) => customElements.whenDefined(tag(Class));
+
 export const get = (input: RequestInfo) => fetch(input).then((res) => res.json());
 
 export const btn = () => {
