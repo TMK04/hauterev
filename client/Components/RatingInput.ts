@@ -10,8 +10,32 @@ export default class RatingInput extends HTMLElement implements Input {
   constructor(oninput?: (value: number) => any) {
     super();
 
-    this.classList.add("d-flex", ...center_content_classes, "flex-md-row", "flex-column");
+    this.innerHTML += `
+      <style>
+        .rate::before {
+          font-size: 24px;
+          cursor: pointer;
+        }
+        
+        .rate-half::before {
+          position: absolute;
+          width: 12px;
+          overflow: hidden;
+        }
+        
+        .rate:hover,
+        .rate:hover ~ .rate {
+          color: #dbceca;
+        }
+        
+        input:checked ~ .rate:not(input:checked + .rate-0) {
+          color: #e6d113;
+        }
+      </style>
+      `;
 
+    this.classList.add("d-flex", ...center_content_classes, "flex-md-row", "flex-column");
+    // <form>
     this.input = document.createElement("form");
     this.input.id = RatingInput.id;
     this.input.classList.add(
@@ -21,34 +45,33 @@ export default class RatingInput extends HTMLElement implements Input {
       "flex-column",
       ...center_content_classes
     );
-
+    // - <label>
+    this.#rating = document.createElement("label");
+    this.#rating.htmlFor = RatingInput.id;
+    this.#rating.classList.add("fs-5");
+    this.#setRating("0.0");
+    // - </label>
+    this.input.append(this.#rating);
+    // - <div>
     const stars = document.createElement("div");
     stars.classList.add("d-flex", "flex-row-reverse");
-
     for (let i = 10; --i; ) {
       const id = `${RatingInput.id}-${i}`;
       const value = (i / 2 + 0.5).toFixed(1);
 
       const input = RatingInput.Input(id, value);
-
       const label = RatingInput.Label(id, value);
       if (i % 2 === 0) label.classList.add("rate-half");
-
       stars.append(input, label);
     }
-
     const id_0 = "rating-0";
     const value_0 = "0.0";
     const input_0 = RatingInput.Input(id_0, value_0);
     const label_0 = RatingInput.Label(id_0, value_0);
     label_0.classList.add("rate-half", "rate-0");
     stars.append(input_0, label_0);
-
-    this.#rating = document.createElement("label");
-    this.#rating.htmlFor = RatingInput.id;
-    this.#rating.classList.add("fs-5");
-    this.#setRating("0.0");
-    this.input.append(this.#rating, stars);
+    // - </div>
+    this.input.append(stars);
 
     this.input.addEventListener("input", () => {
       stars
@@ -62,6 +85,7 @@ export default class RatingInput extends HTMLElement implements Input {
       if (oninput) oninput(+value);
     });
 
+    // </form>
     this.append(this.input);
   }
 

@@ -99,6 +99,7 @@ export default class TopBar extends HTMLElement implements Interdependent {
     search_input.type = "search";
     search_input.placeholder = "Search";
     search_input.id = "search-input";
+    search_input.style.height = "56px";
     input_group.append(search_input);
     // - - - </div>
     searchbar.append(input_group);

@@ -6,7 +6,7 @@ export default class ResCollection extends HTMLElement {
 
     const path = this.getAttribute("path") || "";
 
-    this.classList.add("card-deck", "d-flex", "justify-content-center", "mx-5");
+    this.classList.add("card-deck", "d-flex", "flex-wrap", "justify-content-center", "mx-5");
 
     get(`/api/restaurants${path}`).then((restaurants) => {
       for (const {
@@ -21,7 +21,7 @@ export default class ResCollection extends HTMLElement {
         // <div>
         const card = document.createElement("div");
         card.id = id;
-        card.classList.add("card", "box-shadow");
+        card.classList.add("card", "shadow-sm");
         card.setAttribute("data-avg-rating", avg_rating);
         card.setAttribute("data-opening-hours", opening_hours);
         card.setAttribute("data-region", region);
@@ -32,8 +32,11 @@ export default class ResCollection extends HTMLElement {
         const card_img = document.createElement("img");
         card_img.classList.add("card-img-top");
         card_img.src = image_url;
-        // - </a>
+        card_img.style.height = "200px";
+        card_img.style.objectFit = "cover";
         a.append(card_img);
+        // - </a>
+        card.append(a);
         // - <div>
         const card_body = document.createElement("div");
         card_body.classList.add("card-body");
@@ -50,11 +53,14 @@ export default class ResCollection extends HTMLElement {
         // - - </p>
         card_body.append(card_text);
         // - </div>
+        card.append(card_body);
+        card.style.width = "300px";
         // </div>
-        card.append(a, card_body);
-
         this.append(card);
       }
     });
+
+    this.style.gap = "60px 80px";
+    this.style.marginBottom = "64px";
   }
 }
