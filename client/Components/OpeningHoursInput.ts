@@ -3,8 +3,6 @@ import type Input from "./Input";
 import { center_content_classes, padHour } from "helpers";
 
 export default class OpeningHoursInput extends HTMLElement implements Input {
-  static slider_height = 8;
-  static thumb_size = 20;
   static min = 0;
   static max = 23;
   static id = "opening-hours-input";
@@ -12,20 +10,6 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
 
   constructor(oninput?: (min: number, max: number) => any) {
     super();
-
-    this.innerHTML += `
-      <style>
-        input[type="range"]::-webkit-slider-thumb {
-          pointer-events: all;
-          width: ${OpeningHoursInput.thumb_size}px;
-          height: ${OpeningHoursInput.thumb_size}px;
-          border-radius: 0;
-          border: 0 none;
-          background-color: red;
-          appearance: none;
-        }
-      </style>
-      `;
 
     this.classList.add("d-flex", ...center_content_classes);
     // <div>
@@ -46,37 +30,26 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
 
     // - - <div>
     const slider = document.createElement("div");
-    slider.classList.add("slider", "position-relative");
-    slider.style.zIndex = "1";
-    slider.style.height = `${OpeningHoursInput.slider_height}px`;
-    slider.style.margin = `${(30 - OpeningHoursInput.slider_height) / 2}px ${
-      OpeningHoursInput.slider_height
-    }px`;
+    slider.classList.add(`${OpeningHoursInput.id}-slider`, "position-relative");
     // - - - <div> * 4
     const track = document.createElement("div");
-    track.classList.add("track", "bg-secondary", "position-absolute", "rounded-pill");
-    track.style.zIndex = "1";
-    track.style.left = "0";
-    track.style.right = "0";
-    track.style.top = "0";
-    track.style.bottom = "0";
+    track.classList.add(
+      `${OpeningHoursInput.id}-track`,
+      "bg-secondary",
+      "position-absolute",
+      "rounded-pill"
+    );
     const range = document.createElement("div");
-    range.classList.add("range", "bg-primary", "position-absolute", "rounded-pill");
-    range.style.zIndex = "2";
-    range.style.left = "25%";
-    range.style.right = "25%";
-    range.style.top = "0";
-    range.style.bottom = "0";
-    const transform_x = `${OpeningHoursInput.thumb_size / 2}px`;
-    const transform_y = `-${
-      (OpeningHoursInput.thumb_size - OpeningHoursInput.slider_height) / 2
-    }px`;
+    range.classList.add(
+      `${OpeningHoursInput.id}-range`,
+      "bg-primary",
+      "position-absolute",
+      "rounded-pill"
+    );
     const thumb_left = OpeningHoursInput.Thumb();
-    thumb_left.style.left = "25%";
-    thumb_left.style.transform = `translate(-${transform_x}, ${transform_y})`;
+    thumb_left.classList.add("left");
     const thumb_right = OpeningHoursInput.Thumb();
-    thumb_left.style.right = "25%";
-    thumb_right.style.transform = `translate(${transform_x}, ${transform_y})`;
+    thumb_right.classList.add("right");
     // - - - <div> * 4
     slider.append(track, range, thumb_left, thumb_right);
     // - - </div>
@@ -93,7 +66,8 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
       input_left.setAttribute("value", new_value.toString());
       label_left.textContent = padHour(new_value);
 
-      const percent = (100 * value) / OpeningHoursInput.max + "%";
+      const percent = `${(value / OpeningHoursInput.max) * 100}%`;
+
       thumb_left.style.left = percent;
       range.style.left = percent;
     };
@@ -105,7 +79,8 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
       input_right.setAttribute("value", new_value.toString());
       label_right.textContent = padHour(new_value);
 
-      const percent = 100 - (100 * value) / OpeningHoursInput.max + "%";
+      const percent = `${100 - (value / OpeningHoursInput.max) * 100}%`;
+
       thumb_right.style.right = percent;
       range.style.right = percent;
     };
@@ -118,29 +93,41 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
     input_left.addEventListener("input", setLeftValue);
     input_right.addEventListener("input", setRightValue);
 
-    input_left.addEventListener("mouseover", () => thumb_left.classList.add("shadow"));
-    input_left.addEventListener("mouseout", () => thumb_left.classList.remove("shadow"));
-    input_left.addEventListener("mousedown", () => thumb_left.classList.add("shadow-lg"));
-    input_left.addEventListener("mouseup", () => thumb_left.classList.remove("shadow-lg"));
+    input_left.addEventListener("mouseover", () =>
+      thumb_left.classList.replace("shadow-sm", "shadow")
+    );
+    input_left.addEventListener("mouseout", () =>
+      thumb_left.classList.replace("shadow", "shadow-sm")
+    );
+    input_left.addEventListener("mousedown", () =>
+      thumb_left.classList.replace("shadow", "shadow-lg")
+    );
+    input_left.addEventListener("mouseup", () =>
+      thumb_left.classList.replace("shadow-lg", "shadow")
+    );
 
-    input_right.addEventListener("mouseover", () => thumb_right.classList.add("shadow"));
-    input_right.addEventListener("mouseout", () => thumb_right.classList.remove("shadow"));
-    input_right.addEventListener("mousedown", () => thumb_right.classList.add("shadow-lg"));
-    input_right.addEventListener("mouseup", () => thumb_right.classList.remove("shadow-lg"));
+    input_right.addEventListener("mouseover", () =>
+      thumb_right.classList.replace("shadow-sm", "shadow")
+    );
+    input_right.addEventListener("mouseout", () =>
+      thumb_right.classList.replace("shadow", "shadow-sm")
+    );
+    input_right.addEventListener("mousedown", () =>
+      thumb_right.classList.replace("shadow", "shadow-lg")
+    );
+    input_right.addEventListener("mouseup", () =>
+      thumb_right.classList.replace("shadow-lg", "shadow")
+    );
   }
 
   static Input = (value: string) => {
     const input = document.createElement("input");
-    input.classList.add("position-absolute", "w-100", "opacity-0");
+    input.classList.add(`${OpeningHoursInput.id}-input`, "position-absolute", "w-100", "opacity-0");
     input.type = "range";
     input.name = OpeningHoursInput.id;
     input.min = OpeningHoursInput.min.toString();
     input.max = OpeningHoursInput.max.toString();
     input.setAttribute("value", value);
-    input.style.zIndex = "2";
-    input.style.height = "10px";
-    input.style.pointerEvents = "none";
-    input.style.appearance = "none";
     return input;
   };
 
@@ -153,11 +140,13 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
 
   static Thumb = () => {
     const thumb = document.createElement("div");
-    thumb.classList.add("thumb", "bg-primary", "position-absolute", "rounded-circle", "shadow-sm");
-    thumb.style.zIndex = "3";
-    thumb.style.width = "20px";
-    thumb.style.height = "20px";
-    thumb.style.transition = "box-shadow 0.3s ease-in-out";
+    thumb.classList.add(
+      `${OpeningHoursInput.id}-thumb`,
+      "bg-primary",
+      "position-absolute",
+      "rounded-circle",
+      "shadow-sm"
+    );
     return thumb;
   };
 }

@@ -23,7 +23,8 @@ const config: Configuration = {
     extensions: [".ts", ".js"],
     modules: include,
     roots: include
-  }
+  },
+  mode: "development"
 };
 
 export default config;

@@ -10,30 +10,6 @@ export default class RatingInput extends HTMLElement implements Input {
   constructor(oninput?: (value: number) => any) {
     super();
 
-    this.innerHTML += `
-      <style>
-        .rate::before {
-          font-size: 24px;
-          cursor: pointer;
-        }
-        
-        .rate-half::before {
-          position: absolute;
-          width: 12px;
-          overflow: hidden;
-        }
-        
-        .rate:hover,
-        .rate:hover ~ .rate {
-          color: #dbceca;
-        }
-        
-        input:checked ~ .rate:not(input:checked + .rate-0) {
-          color: #e6d113;
-        }
-      </style>
-      `;
-
     this.classList.add("d-flex", ...center_content_classes, "flex-md-row", "flex-column");
     // <form>
     this.input = document.createElement("form");
@@ -61,24 +37,24 @@ export default class RatingInput extends HTMLElement implements Input {
 
       const input = RatingInput.Input(id, value);
       const label = RatingInput.Label(id, value);
-      if (i % 2 === 0) label.classList.add("rate-half");
+      if (i % 2 === 0) label.classList.add("half");
       stars.append(input, label);
     }
-    const id_0 = "rating-0";
+    const id_0 = `${RatingInput.id}-0`;
     const value_0 = "0.0";
     const input_0 = RatingInput.Input(id_0, value_0);
     const label_0 = RatingInput.Label(id_0, value_0);
-    label_0.classList.add("rate-half", "rate-0");
+    label_0.classList.add("half", "zero");
     stars.append(input_0, label_0);
     // - </div>
     this.input.append(stars);
 
     this.input.addEventListener("input", () => {
       stars
-        .querySelectorAll(".rate")
+        .querySelectorAll(`.${RatingInput.id}-label`)
         .forEach((e) => e.classList.replace("bi-star-fill", "bi-star"));
       stars
-        .querySelectorAll("input:checked ~ .rate:not(.rate-0)")
+        .querySelectorAll(`.${RatingInput.id}-input:checked ~ .${RatingInput.id}-label:not(.zero)`)
         .forEach((e) => e.classList.replace("bi-star", "bi-star-fill"));
       const value = (<RadioNodeList>this.input.elements.namedItem(RatingInput.id)).value;
       this.#setRating(value);
@@ -93,7 +69,7 @@ export default class RatingInput extends HTMLElement implements Input {
 
   static Input = (id: string, value: string) => {
     const input = document.createElement("input");
-    input.classList.add("d-none");
+    input.classList.add(`${RatingInput.id}-input`, "d-none");
     input.type = "radio";
     input.name = RatingInput.id;
     input.id = id;
@@ -104,7 +80,7 @@ export default class RatingInput extends HTMLElement implements Input {
 
   static Label = (id: string, value: string) => {
     const label = document.createElement("label");
-    label.classList.add("bi-star", "rate");
+    label.classList.add(`${RatingInput.id}-label`, "bi-star");
     label.htmlFor = id;
     label.title = value;
 

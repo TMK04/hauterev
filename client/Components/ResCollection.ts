@@ -15,6 +15,7 @@ export default class ResCollection extends HTMLElement implements AsyncInit {
     const restaurants = await get(`/api/restaurants${path}`);
 
     this.classList.add(
+      "collection",
       "card-deck",
       ResCollection.display,
       "flex-wrap",
@@ -44,8 +45,6 @@ export default class ResCollection extends HTMLElement implements AsyncInit {
       const card_img = document.createElement("img");
       card_img.classList.add("card-img-top");
       card_img.src = image_url;
-      card_img.style.height = "200px";
-      card_img.style.objectFit = "cover";
       a.append(card_img);
       // - </a>
       card.append(a);
@@ -66,12 +65,8 @@ export default class ResCollection extends HTMLElement implements AsyncInit {
       card_body.append(card_text);
       // - </div>
       card.append(card_body);
-      card.style.width = "300px";
       // </div>
       this.append(card);
     }
-
-    this.style.gap = "60px 80px";
-    this.style.marginBottom = "64px";
   };
 }

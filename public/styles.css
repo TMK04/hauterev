@@ -1,0 +1,112 @@
+:root {
+  --filter-height: 30px;
+  --opening-hours-input-slider-height: 8px;
+  --opening-hours-input-thumb-size: 20px;
+}
+
+hr-top-header {
+  margin-top: 42px;
+  margin-bottom: 64px;
+}
+
+.opening-hours-input-slider {
+  z-index: 1;
+  height: var(--opening-hours-input-slider-height);
+  margin: calc((var(--filter-height) - var(--opening-hours-input-slider-height)) / 2)
+    var(--opening-hours-input-slider-height);
+}
+
+.opening-hours-input-track {
+  z-index: 1;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.opening-hours-input-range {
+  z-index: 2;
+  left: 25%;
+  right: 25%;
+  top: 0;
+  bottom: 0;
+}
+
+.opening-hours-input-input {
+  z-index: 2;
+  height: var(--opening-hours-input-slider-height);
+  pointer-events: none;
+  appearance: none;
+  opacity: 0;
+}
+
+.opening-hours-input-input::-webkit-slider-thumb {
+  pointer-events: all;
+  width: var(--opening-hours-input-thumb-size);
+  height: var(--opening-hours-input-thumb-size);
+  border-radius: 0;
+  border: 0 none;
+  background-color: red;
+  appearance: none;
+}
+
+.opening-hours-input-thumb {
+  z-index: 3;
+  width: var(--opening-hours-input-thumb-size);
+  height: var(--opening-hours-input-thumb-size);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.opening-hours-input-thumb.left {
+  left: 25%;
+  transform: translate(
+    calc(var(--opening-hours-input-thumb-size) / -2),
+    calc((var(--opening-hours-input-thumb-size) - var(--opening-hours-input-slider-height)) / -2)
+  );
+}
+
+.opening-hours-input-thumb.right {
+  right: 25%;
+  transform: translate(
+    calc(var(--opening-hours-input-thumb-size) / 2),
+    calc((var(--opening-hours-input-thumb-size) - var(--opening-hours-input-slider-height)) / -2)
+  );
+}
+
+.rating-input-label::before {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.rating-input-label.half::before {
+  position: absolute;
+  width: 12px;
+  overflow: hidden;
+}
+
+.rating-input-label:hover,
+.rating-input-label:hover ~ .rating-input-label {
+  color: #dbceca;
+}
+
+.rating-input-input:checked ~ .rating-input-label:not(.rating-input-input:checked + .zero) {
+  color: #e6d113;
+}
+
+.collection {
+  gap: 60px 80px;
+  margin-bottom: 64px;
+}
+
+.collection .card {
+  width: 300px;
+}
+
+.collection .card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+
+#search-input {
+  height: 56px;
+}
