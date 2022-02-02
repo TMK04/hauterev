@@ -33,5 +33,5 @@ export const parseOpeningHours = (opening_hours: number) => {
     }
     start = end = end + 1;
   }
-  return hours.join("; ");
+  return hours.join(", ");
 };

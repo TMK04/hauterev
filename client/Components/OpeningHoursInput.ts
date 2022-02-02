@@ -1,5 +1,7 @@
 import type Input from "./Input";
 
+import { center_content_classes, padHour } from "helpers";
+
 export default class OpeningHoursInput extends HTMLElement implements Input {
   static slider_height = 8;
   static thumb_size = 20;
@@ -25,15 +27,24 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
       </style>
       `;
 
-    this.classList.add("d-block", "position-relative", "mx-5");
-    // <form>
+    this.classList.add("d-flex", ...center_content_classes);
+    // <div>
+    const input_div = document.createElement("div");
+    input_div.classList.add("position-relative", "mx-3", "w-75");
+    // - <form>
     this.input = document.createElement("form");
     this.input.id = OpeningHoursInput.id;
-    // - <input /> * 2
-    const inputLeft = OpeningHoursInput.Input(OpeningHoursInput.min.toString());
-    const inputRight = OpeningHoursInput.Input(OpeningHoursInput.max.toString());
-    this.input.append(inputLeft, inputRight);
-    // - <div>
+    // - - <input /> * 2
+    const input_left = OpeningHoursInput.Input(OpeningHoursInput.min.toString());
+    input_left.id = `${OpeningHoursInput.id}-left`;
+    const input_right = OpeningHoursInput.Input(OpeningHoursInput.max.toString());
+    input_right.id = `${OpeningHoursInput.id}-right`;
+    this.input.append(input_left, input_right);
+
+    const label_left = OpeningHoursInput.Label(input_left.id);
+    const label_right = OpeningHoursInput.Label(input_right.id);
+
+    // - - <div>
     const slider = document.createElement("div");
     slider.classList.add("slider", "position-relative");
     slider.style.zIndex = "1";
@@ -41,7 +52,7 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
     slider.style.margin = `${(30 - OpeningHoursInput.slider_height) / 2}px ${
       OpeningHoursInput.slider_height
     }px`;
-    // - - <div> * 4
+    // - - - <div> * 4
     const track = document.createElement("div");
     track.classList.add("track", "bg-secondary", "position-absolute", "rounded-pill");
     track.style.zIndex = "1";
@@ -60,56 +71,62 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
     const transform_y = `-${
       (OpeningHoursInput.thumb_size - OpeningHoursInput.slider_height) / 2
     }px`;
-    const thumbLeft = OpeningHoursInput.Thumb();
-    thumbLeft.style.left = "25%";
-    thumbLeft.style.transform = `translate(-${transform_x}, ${transform_y})`;
-    const thumbRight = OpeningHoursInput.Thumb();
-    thumbLeft.style.right = "25%";
-    thumbRight.style.transform = `translate(${transform_x}, ${transform_y})`;
-    // - - <div> * 4
-    slider.append(track, range, thumbLeft, thumbRight);
-    // - </div>
+    const thumb_left = OpeningHoursInput.Thumb();
+    thumb_left.style.left = "25%";
+    thumb_left.style.transform = `translate(-${transform_x}, ${transform_y})`;
+    const thumb_right = OpeningHoursInput.Thumb();
+    thumb_left.style.right = "25%";
+    thumb_right.style.transform = `translate(${transform_x}, ${transform_y})`;
+    // - - - <div> * 4
+    slider.append(track, range, thumb_left, thumb_right);
+    // - - </div>
     this.input.append(slider);
-    // </form>
-    this.append(this.input);
+    // - </form>
+    input_div.append(this.input);
+    // </div>
+    this.append(label_left, input_div, label_right);
 
     const setLeftValue = () => {
-      const value = inputLeft.valueAsNumber;
-      const opposite = inputRight.valueAsNumber;
-      inputLeft.setAttribute("value", Math.min(value, opposite - 1).toString());
+      const value = input_left.valueAsNumber;
+      const opposite = input_right.valueAsNumber;
+      const new_value = Math.min(value, opposite - 1);
+      input_left.setAttribute("value", new_value.toString());
+      label_left.textContent = padHour(new_value);
 
       const percent = (100 * value) / OpeningHoursInput.max + "%";
-      thumbLeft.style.left = percent;
+      thumb_left.style.left = percent;
       range.style.left = percent;
     };
     setLeftValue();
     const setRightValue = () => {
-      const value = inputRight.valueAsNumber;
-      const opposite = inputLeft.valueAsNumber;
-      inputRight.setAttribute("value", Math.max(value, opposite + 1).toString());
+      const value = input_right.valueAsNumber;
+      const opposite = input_left.valueAsNumber;
+      const new_value = Math.max(value, opposite + 1);
+      input_right.setAttribute("value", new_value.toString());
+      label_right.textContent = padHour(new_value);
 
       const percent = 100 - (100 * value) / OpeningHoursInput.max + "%";
-      thumbRight.style.right = percent;
+      thumb_right.style.right = percent;
       range.style.right = percent;
     };
     setRightValue();
 
     this.input.addEventListener(
       "input",
-      () => oninput && oninput(inputLeft.valueAsNumber, inputRight.valueAsNumber)
+      () => oninput && oninput(input_left.valueAsNumber, input_right.valueAsNumber)
     );
-    inputLeft.addEventListener("input", setLeftValue);
-    inputRight.addEventListener("input", setRightValue);
+    input_left.addEventListener("input", setLeftValue);
+    input_right.addEventListener("input", setRightValue);
 
-    inputLeft.addEventListener("mouseover", () => thumbLeft.classList.add("shadow"));
-    inputLeft.addEventListener("mouseout", () => thumbLeft.classList.remove("shadow"));
-    inputLeft.addEventListener("mousedown", () => thumbLeft.classList.add("shadow-lg"));
-    inputLeft.addEventListener("mouseup", () => thumbLeft.classList.remove("shadow-lg"));
+    input_left.addEventListener("mouseover", () => thumb_left.classList.add("shadow"));
+    input_left.addEventListener("mouseout", () => thumb_left.classList.remove("shadow"));
+    input_left.addEventListener("mousedown", () => thumb_left.classList.add("shadow-lg"));
+    input_left.addEventListener("mouseup", () => thumb_left.classList.remove("shadow-lg"));
 
-    inputRight.addEventListener("mouseover", () => thumbRight.classList.add("shadow"));
-    inputRight.addEventListener("mouseout", () => thumbRight.classList.remove("shadow"));
-    inputRight.addEventListener("mousedown", () => thumbRight.classList.add("shadow-lg"));
-    inputRight.addEventListener("mouseup", () => thumbRight.classList.remove("shadow-lg"));
+    input_right.addEventListener("mouseover", () => thumb_right.classList.add("shadow"));
+    input_right.addEventListener("mouseout", () => thumb_right.classList.remove("shadow"));
+    input_right.addEventListener("mousedown", () => thumb_right.classList.add("shadow-lg"));
+    input_right.addEventListener("mouseup", () => thumb_right.classList.remove("shadow-lg"));
   }
 
   static Input = (value: string) => {
@@ -125,6 +142,13 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
     input.style.pointerEvents = "none";
     input.style.appearance = "none";
     return input;
+  };
+
+  static Label = (id: string) => {
+    const label = document.createElement("label");
+    label.classList.add("fs-5");
+    label.htmlFor = id;
+    return label;
   };
 
   static Thumb = () => {
