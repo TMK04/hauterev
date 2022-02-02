@@ -1,10 +1,10 @@
-import type Interdependent from "./Interdependent";
+import type AsyncInit from "./AsyncInit";
 
 import { btn, center_content_classes, whenDefined } from "helpers";
 
 import BsIcon from "./BsIcon";
 
-export default class TopBar extends HTMLElement implements Interdependent {
+export default class TopBar extends HTMLElement implements AsyncInit {
   constructor() {
     super();
 

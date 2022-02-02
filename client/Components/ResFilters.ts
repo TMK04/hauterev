@@ -1,5 +1,5 @@
+import type AsyncInit from "./AsyncInit";
 import type Input from "./Input";
-import type Interdependent from "./Interdependent";
 import type ResCollection from "./ResCollection";
 
 import { center_content_classes, whenDefined } from "helpers";
@@ -17,7 +17,7 @@ interface ActiveGroup {
   dropdown: DropdownType;
 }
 
-export default class ResFilters extends HTMLElement implements Interdependent {
+export default class ResFilters extends HTMLElement implements AsyncInit {
   #active: ActiveGroup | undefined;
   #min_rating = 0;
   #opening_hours = 16777215;
@@ -59,10 +59,8 @@ export default class ResFilters extends HTMLElement implements Interdependent {
       ["sort-by", "sort-down", "Sort by", sort]
     ];
 
-    // <div>
-    const container = document.createElement("div");
-    container.classList.add("container", "justify-content-center", "mx-auto", "mb-4");
-    // - <div> * 2
+    this.classList.add("d-block", "container", "justify-content-center", "mx-auto", "mb-4");
+    // <div> * 2
     const togglers_row = ResFilters.Row();
     const dropdowns_row = ResFilters.Row();
     await whenDefined("BsIcon");
@@ -77,10 +75,8 @@ export default class ResFilters extends HTMLElement implements Interdependent {
       togglers_row.append(toggler);
       dropdowns_row.append(dropdown);
     }
-    // - </div> * 2
-    container.append(togglers_row, dropdowns_row);
-    // </div>
-    this.append(container);
+    // </div> * 2
+    this.append(togglers_row, dropdowns_row);
   };
 
   #filter = () => {
