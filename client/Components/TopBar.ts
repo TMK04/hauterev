@@ -7,7 +7,6 @@ import BsIcon from "./BsIcon";
 export default class TopBar extends HTMLElement implements AsyncInit {
   constructor() {
     super();
-
     this.#init();
   }
 
@@ -115,14 +114,13 @@ export default class TopBar extends HTMLElement implements AsyncInit {
     // </div>
     this.append(nav_div);
 
-    searchbar.onsubmit = () => {
+    searchbar.addEventListener("submit", (ev) => {
       let url = "/search.html?";
       const search = search_input.value;
       if (search) url += `search=${search}`;
       location.assign(url);
-      // Prevent default
-      return false;
-    };
+      ev.preventDefault();
+    });
   };
 
   static TopBarLink = (icon_name: string, href: string, name: string, id: string) => {

@@ -2,7 +2,7 @@ import type AsyncInit from "./AsyncInit";
 import type Input from "./Input";
 import type ResCollection from "./ResCollection";
 
-import { center_content_classes, whenDefined } from "helpers";
+import { center_content_classes, selectCustomElement, whenDefined } from "helpers";
 
 import BsIcon from "./BsIcon";
 import OpeningHoursInput from "./OpeningHoursInput";
@@ -18,15 +18,16 @@ interface ActiveGroup {
 }
 
 export default class ResFilters extends HTMLElement implements AsyncInit {
+  static display = "d-block";
+
   #active: ActiveGroup | undefined;
   #min_rating = 0;
   #opening_hours = 16777215;
   #regions = ["North", "South", "East", "West", "Central"];
-  #collection = <ResCollection>document.querySelector("hr-res-collection");
+  #collection = <ResCollection>selectCustomElement("ResCollection");
 
   constructor() {
     super();
-
     this.#init();
   }
 
@@ -59,7 +60,13 @@ export default class ResFilters extends HTMLElement implements AsyncInit {
       ["sort-by", "sort-down", "Sort by", sort]
     ];
 
-    this.classList.add("d-block", "container", "justify-content-center", "mx-auto", "mb-4");
+    this.classList.add(
+      ResFilters.display,
+      "container",
+      "justify-content-center",
+      "mx-auto",
+      "mb-4"
+    );
     // <div> * 2
     const togglers_row = ResFilters.Row();
     const dropdowns_row = ResFilters.Row();
@@ -102,11 +109,11 @@ export default class ResFilters extends HTMLElement implements AsyncInit {
     }
   };
 
-  get active() {
+  private get active() {
     return this.#active;
   }
 
-  set active(active: ActiveGroup | undefined) {
+  private set active(active: ActiveGroup | undefined) {
     this.#deactivate();
     if (active) {
       const { toggler, dropdown } = active;

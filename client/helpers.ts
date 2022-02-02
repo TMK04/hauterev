@@ -3,6 +3,8 @@ export const tag = (Class: string) =>
 
 export const whenDefined = (Class: string) => customElements.whenDefined(tag(Class));
 
+export const selectCustomElement = (Class: string) => document.querySelector(tag(Class));
+
 export const get = (input: RequestInfo) => fetch(input).then((res) => res.json());
 
 export const btn = () => {

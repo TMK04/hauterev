@@ -3,9 +3,10 @@ import type AsyncInit from "./AsyncInit";
 import { get } from "helpers";
 
 export default class ResCollection extends HTMLElement implements AsyncInit {
+  static display = "d-flex";
+
   constructor() {
     super();
-
     this.#init();
   }
 
@@ -13,7 +14,13 @@ export default class ResCollection extends HTMLElement implements AsyncInit {
     const path = this.getAttribute("path") || "";
     const restaurants = await get(`/api/restaurants${path}`);
 
-    this.classList.add("card-deck", "d-flex", "flex-wrap", "justify-content-center", "mx-5");
+    this.classList.add(
+      "card-deck",
+      ResCollection.display,
+      "flex-wrap",
+      "justify-content-center",
+      "mx-5"
+    );
     for (const {
       id,
       name,

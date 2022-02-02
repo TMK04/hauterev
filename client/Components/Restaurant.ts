@@ -6,7 +6,6 @@ import { get, parseOpeningHours, tag, whenDefined } from "helpers";
 export default class Restaurant extends HTMLElement implements AsyncInit {
   constructor() {
     super();
-
     this.#init();
   }
 
