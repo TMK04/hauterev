@@ -1,4 +1,4 @@
-USE `hauterev_test`;
+USE `hauterev`;
 
 -- Reset
 DELETE FROM `restaurant`;
@@ -14,7 +14,7 @@ INSERT INTO `restaurant` (
 ) VALUES (
     "Privé @ Keppel Bay",
     "Located on Singapore’s only private island, Privé's laidback atmosphere and simple yet wholesome café fare has cemented its position as one of the best places in Singapore to enjoy a casual meal or to grab brunch by the water’s edge. As a family-friendly venue, we also have an outdoor playground and fun kid’s corner (think television airing cartoons, story books and fun kids colouring activities) to entertain your little ones.\n<https://www.theprivegroup.com.sg/prive-keppel-bay>",
-    "https://lh5.googleusercontent.com/p/AF1QipMw_e_jZBRcCdescriptionnCH37uhUm8dRT8R8eoMHI53Ovzh=w408-h571-k-no",
+    "https://lh5.googleusercontent.com/p/AF1QipMw_e_jZBRcCnCH37uhUm8dRT8R8eoMHI53Ovzh=w408-h571-k-no",
     "South",
     0b000000000111111111111100
   ), (
