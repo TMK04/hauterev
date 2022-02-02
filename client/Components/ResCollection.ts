@@ -32,7 +32,7 @@ export default class ResCollection extends HTMLElement implements AsyncInit {
       card.setAttribute("data-region", region);
       // - <a>
       const a = document.createElement("a");
-      a.href = `/api/restaurant.html?id=${id}`;
+      a.href = `/restaurant.html?id=${id}`;
       // - - <img />
       const card_img = document.createElement("img");
       card_img.classList.add("card-img-top");

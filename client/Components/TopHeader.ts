@@ -1,10 +1,13 @@
 export default class TopHeader extends HTMLElement {
+  readonly top_header: HTMLHeadingElement;
+
   constructor() {
     super();
-    const h1 = document.createElement("h1");
-    h1.classList.add("text-center", "mb-5");
-    h1.innerHTML = this.innerHTML;
-    this.replaceChildren(h1);
+
+    this.top_header = document.createElement("h1");
+    this.top_header.classList.add("text-center", "mb-5");
+    this.top_header.innerHTML = this.innerHTML;
+    this.replaceChildren(this.top_header);
 
     this.style.marginTop = "42px";
     this.style.marginBottom = "64px";

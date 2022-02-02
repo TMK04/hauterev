@@ -1,8 +1,10 @@
+import { marked } from "marked";
+
 import type { GetRestaurantsQuery, IDParams } from "../types";
 import type { RequestHandler } from "express";
 
 import { NotFoundError } from "Errors";
-import { restaurant_db } from "db";
+import { restaurant_db, review_db } from "db";
 import { catchNext } from "helpers";
 import { castGetRestaurantsQuery } from "validation";
 
@@ -23,7 +25,10 @@ export const retrieveTopRatedRestaurants: RequestHandler = (_, res, next) =>
 export const retrieveRestaurant: RequestHandler<IDParams> = ({ params }, res, next) =>
   catchNext(async () => {
     const { id } = params;
-    const restaurant_result = await restaurant_db.selectRestaurantByID(+id);
-    if (!restaurant_result[0]) throw new NotFoundError("Restaurant", id);
-    res.json(restaurant_result[0]);
+    const restaurant = (await restaurant_db.selectRestaurantByID(+id))[0];
+    if (!restaurant) throw new NotFoundError("Restaurant", id);
+
+    restaurant.description = marked.parse(restaurant.description);
+    restaurant.reviews = await review_db.selectReviewsByRestaurantID(+id);
+    res.json(restaurant);
   }, next);

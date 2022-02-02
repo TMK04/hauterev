@@ -46,10 +46,10 @@ export const selectAvgRating = () =>
     .groupBy("restaurant_id")
     .as("avg_rating");
 
-export const selectReviewsByRestaurantID = (restaurant_id: ID) =>
+export const selectReviewsByRestaurantID = (restaurant_id: ID): Promise<SelectReviews> =>
   selectReviews().where({ "review.restaurant_id": restaurant_id });
 
-export const selectReviewsByUsername = (username: UserUsername) =>
+export const selectReviewsByUsername = (username: UserUsername): Promise<SelectReviews> =>
   selectReviews().where({ "review.username": username });
 
 export const selectReviewByID = (id: ID): Promise<SelectReviews> =>

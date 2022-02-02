@@ -50,14 +50,8 @@ export const selectRestaurantsWithOptions = ({
 export const selectTopRatedRestaurants = (): Promise<SelectRestaurants> =>
   selectRestaurants().orderBy("avg_rating.avg_rating", "desc").limit(3);
 
-export const selectRestaurantByID = async (id: ID): Promise<SelectRestaurant> => {
-  const restaurants: SelectRestaurant = await restaurantTable()
+export const selectRestaurantByID = async (id: ID): Promise<SelectRestaurant> =>
+  restaurantTable()
     .select("restaurant.*", "avg_rating.avg_rating")
     .leftJoin(review_db.selectAvgRating(), "restaurant.id", "avg_rating.restaurant_id")
     .where({ "restaurant.id": id });
-
-  if (!restaurants[0]) return restaurants;
-
-  restaurants[0].reviews = await review_db.selectReviewsByRestaurantID(id);
-  return restaurants;
-};

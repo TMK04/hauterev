@@ -5,6 +5,7 @@ import RatingInput from "./RatingInput";
 import RegionsInput from "./RegionsInput";
 import ResCollection from "./ResCollection";
 import ResFilters from "./ResFilters";
+import Restaurant from "./Restaurant";
 import SortInput from "./SortInput";
 import TopBar from "./TopBar";
 import TopHeader from "./TopHeader";
@@ -17,6 +18,7 @@ export {
   RegionsInput,
   ResCollection,
   ResFilters,
+  Restaurant,
   SortInput,
   TopBar,
   TopHeader
