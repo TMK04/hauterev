@@ -19,6 +19,8 @@ export const selectCustomElement = (Class: string) => document.querySelector(tag
 export const get = (input: RequestInfo) => fetch(input).then((res) => res.json());
 export const post = (input: RequestInfo, body: BodyInit) => fetch(input, { method: "POST", body });
 
+export const goHome = () => location.assign("/index.html");
+
 export const center_content_classes = ["justify-content-center", "align-items-center"];
 
 export const padHour = (hour: number) => hour.toString().padStart(2, "0").concat(":00");
@@ -43,6 +45,8 @@ export const parseOpeningHours = (opening_hours: number) => {
   }
   return hours.join(", ");
 };
+
+export const utcString = (date_string: string) => new Date(date_string).toUTCString();
 
 export const urlEncode = (form: HTMLFormElement) => {
   const url_encoded = new URLSearchParams();

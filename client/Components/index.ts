@@ -13,6 +13,7 @@ import RevCollection from "./RevCollection";
 import SortForm from "./SortForm";
 import TopBar from "./TopBar";
 import TopHeader from "./TopHeader";
+import User from "./User";
 
 export {
   BsIcon,
@@ -29,5 +30,6 @@ export {
   RevCollection,
   SortForm,
   TopBar,
-  TopHeader
+  TopHeader,
+  User
 };

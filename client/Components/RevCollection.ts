@@ -1,6 +1,6 @@
 import type AsyncInit from "./AsyncInit";
 
-import { createElement, get, whenDefined } from "helpers";
+import { createElement, get, utcString, whenDefined } from "helpers";
 
 import BsIcon from "./BsIcon";
 
@@ -8,14 +8,14 @@ export default class RevCollection extends HTMLElement implements AsyncInit {
   static display = "d-flex";
   static prefix = "rev";
 
-  constructor() {
+  constructor(reviews?: any) {
     super();
-    this.#init();
+    this.#init(reviews);
   }
 
-  #init = async () => {
+  #init = async (_reviews?: any) => {
     const path = this.getAttribute("path") || "";
-    const restaurants = await get(`/api/reviews${path}`);
+    const reviews = _reviews || (await get(`/api/reviews${path}`));
 
     this.classList.add(
       "collection",
@@ -34,7 +34,7 @@ export default class RevCollection extends HTMLElement implements AsyncInit {
       username,
       posted_timestamp,
       edited_timestamp
-    } of restaurants) {
+    } of reviews) {
       // <div>
       const card = createElement("div", ["card", "shadow-sm"], `${RevCollection.prefix}-${id}`);
       // - <div>
@@ -80,9 +80,7 @@ export default class RevCollection extends HTMLElement implements AsyncInit {
       const card_footer = createElement("div", ["card-footer"]);
       const small = createElement("small", ["text-muted"]);
       small.append(
-        edited_timestamp
-          ? `${new Date(edited_timestamp).toUTCString()} (edited)`
-          : new Date(posted_timestamp).toUTCString()
+        edited_timestamp ? `${utcString(edited_timestamp)} (edited)` : utcString(posted_timestamp)
       );
       // - </div>
       card.appendChild(card_footer).appendChild(small);

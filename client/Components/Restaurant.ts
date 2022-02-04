@@ -1,7 +1,7 @@
 import type AsyncInit from "./AsyncInit";
 import type TopHeader from "./TopHeader";
 
-import { createElement, get, parseOpeningHours, selectCustomElement, whenDefined } from "helpers";
+import { createElement, get, parseOpeningHours, selectCustomElement } from "helpers";
 
 export default class Restaurant extends HTMLElement implements AsyncInit {
   constructor() {
@@ -76,7 +76,6 @@ export default class Restaurant extends HTMLElement implements AsyncInit {
     // </div>
     shadow.append(shadow_div);
 
-    await whenDefined("TopHeader");
     const top_header = <TopHeader>selectCustomElement("TopHeader");
     top_header.top_header.textContent = name;
   };
