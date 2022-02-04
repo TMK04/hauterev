@@ -54,8 +54,7 @@ export default class User extends HTMLElement implements AsyncInit {
       if (content) row.append(User.Detail(content, title, bi));
     this.append(row);
 
-    await whenDefined("RevCollection");
-    document.body.append(new RevCollection(reviews));
+    if (reviews) RevCollection.appendToBody(reviews);
   };
 
   static Detail = (content: string, title: string, bi?: string) => {

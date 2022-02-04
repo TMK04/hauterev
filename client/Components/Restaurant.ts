@@ -1,7 +1,9 @@
 import type AsyncInit from "./AsyncInit";
 import type TopHeader from "./TopHeader";
 
-import { createElement, get, parseOpeningHours, selectCustomElement } from "helpers";
+import { createElement, get, goHome, parseOpeningHours, selectCustomElement } from "helpers";
+
+import RevCollection from "./RevCollection";
 
 export default class Restaurant extends HTMLElement implements AsyncInit {
   constructor() {
@@ -12,10 +14,13 @@ export default class Restaurant extends HTMLElement implements AsyncInit {
   #init = async () => {
     const url = new URL(document.URL);
     const id = url.searchParams.get("id");
-    if (!id) return;
+    if (!id) return goHome();
     const restaurant = await get(`/api/restaurants/${id}`);
-    if (!restaurant) return;
-    const { name, description, image_url, avg_rating, opening_hours, region } = restaurant;
+    if (!restaurant) return goHome();
+    const { name, description, image_url, avg_rating, opening_hours, region, reviews } = restaurant;
+
+    const top_header = <TopHeader>selectCustomElement("TopHeader");
+    top_header.top_header.textContent = name;
 
     this.innerHTML += `
       <style>
@@ -76,7 +81,6 @@ export default class Restaurant extends HTMLElement implements AsyncInit {
     // </div>
     shadow.append(shadow_div);
 
-    const top_header = <TopHeader>selectCustomElement("TopHeader");
-    top_header.top_header.textContent = name;
+    if (reviews) RevCollection.appendToBody(reviews);
   };
 }

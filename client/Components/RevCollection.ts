@@ -3,6 +3,7 @@ import type AsyncInit from "./AsyncInit";
 import { createElement, get, utcString, whenDefined } from "helpers";
 
 import BsIcon from "./BsIcon";
+import CollectionHeader from "./CollectionHeader";
 
 export default class RevCollection extends HTMLElement implements AsyncInit {
   static display = "d-flex";
@@ -87,5 +88,11 @@ export default class RevCollection extends HTMLElement implements AsyncInit {
       // </div>
       this.append(card);
     }
+  };
+
+  static appendToBody = async (reviews: any) => {
+    await whenDefined("CollectionHeader");
+    await whenDefined("RevCollection");
+    document.body.append(new CollectionHeader("Reviews"), new RevCollection(reviews));
   };
 }
