@@ -65,12 +65,12 @@ export default class RevCollection extends HTMLElement implements AsyncInit {
       const card_body = createElement("div", ["card-body"]);
       // - - <a>
       const card_title = <HTMLAnchorElement>a.cloneNode();
-      card_title.classList.add("card-title", "h5");
+      card_title.classList.add("card-title", "h5", "overflow-hidden");
       card_title.textContent = title;
       // - - </a>
       card_body.append(card_title);
       // - - <p>
-      const card_text = createElement("p", ["card-text"]);
+      const card_text = createElement("p", ["card-text", "overflow-hidden"]);
       card_text.textContent = description;
       // - - </p>
       card_body.append(card_text);
