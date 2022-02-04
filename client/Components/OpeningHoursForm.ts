@@ -1,6 +1,6 @@
 import type Form from "./Form";
 
-import { center_content_classes, padHour } from "helpers";
+import { center_content_classes, createElement, padHour } from "helpers";
 
 export default class OpeningHoursForm extends HTMLElement implements Form {
   static min = 0;
@@ -13,39 +13,32 @@ export default class OpeningHoursForm extends HTMLElement implements Form {
 
     this.classList.add("d-flex", ...center_content_classes);
     // <div>
-    const input_div = document.createElement("div");
-    input_div.classList.add("position-relative", "mx-3", "w-75");
+    const input_div = createElement("div", ["position-relative", "mx-3", "w-75"]);
     // - <form>
-    this.form = document.createElement("form");
-    this.form.id = OpeningHoursForm.id;
+    this.form = createElement("form", [], OpeningHoursForm.id);
     // - - <input /> * 2
-    const input_left = OpeningHoursForm.Input(OpeningHoursForm.min.toString());
-    input_left.id = `${OpeningHoursForm.id}-left`;
-    const input_right = OpeningHoursForm.Input(OpeningHoursForm.max.toString());
-    input_right.id = `${OpeningHoursForm.id}-right`;
+    const input_left = OpeningHoursForm.Input(OpeningHoursForm.min.toString(), "left");
+    const input_right = OpeningHoursForm.Input(OpeningHoursForm.max.toString(), "right");
     this.form.append(input_left, input_right);
 
     const label_left = OpeningHoursForm.Label(input_left.id);
     const label_right = OpeningHoursForm.Label(input_right.id);
 
     // - - <div>
-    const slider = document.createElement("div");
-    slider.classList.add(`${OpeningHoursForm.id}-slider`, "position-relative");
+    const slider = createElement("div", [`${OpeningHoursForm.id}-slider`, "position-relative"]);
     // - - - <div> * 4
-    const track = document.createElement("div");
-    track.classList.add(
+    const track = createElement("div", [
       `${OpeningHoursForm.id}-track`,
       "bg-secondary",
       "position-absolute",
       "rounded-pill"
-    );
-    const range = document.createElement("div");
-    range.classList.add(
+    ]);
+    const range = createElement("div", [
       `${OpeningHoursForm.id}-range`,
       "bg-primary",
       "position-absolute",
       "rounded-pill"
-    );
+    ]);
     const thumb_left = OpeningHoursForm.Thumb();
     thumb_left.classList.add("left");
     const thumb_right = OpeningHoursForm.Thumb();
@@ -120,9 +113,12 @@ export default class OpeningHoursForm extends HTMLElement implements Form {
     );
   }
 
-  static Input = (value: string) => {
-    const input = document.createElement("input");
-    input.classList.add(`${OpeningHoursForm.id}-input`, "position-absolute", "w-100", "opacity-0");
+  static Input = (value: string, id: string) => {
+    const input = createElement(
+      "input",
+      [`${OpeningHoursForm.id}-input`, "position-absolute", "w-100", "opacity-0"],
+      `${OpeningHoursForm.id}-${id}`
+    );
     input.type = "range";
     input.name = OpeningHoursForm.id;
     input.min = OpeningHoursForm.min.toString();
@@ -132,21 +128,17 @@ export default class OpeningHoursForm extends HTMLElement implements Form {
   };
 
   static Label = (id: string) => {
-    const label = document.createElement("label");
-    label.classList.add("fs-5");
+    const label = createElement("label", ["fs-5"]);
     label.htmlFor = id;
     return label;
   };
 
-  static Thumb = () => {
-    const thumb = document.createElement("div");
-    thumb.classList.add(
+  static Thumb = () =>
+    createElement("div", [
       `${OpeningHoursForm.id}-thumb`,
       "bg-primary",
       "position-absolute",
       "rounded-circle",
       "shadow-sm"
-    );
-    return thumb;
-  };
+    ]);
 }

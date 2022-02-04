@@ -1,7 +1,7 @@
 import type AsyncInit from "./AsyncInit";
 import type TopHeader from "./TopHeader";
 
-import { get, parseOpeningHours, tag, whenDefined } from "helpers";
+import { createElement, get, parseOpeningHours, selectCustomElement, whenDefined } from "helpers";
 
 export default class Restaurant extends HTMLElement implements AsyncInit {
   constructor() {
@@ -27,8 +27,7 @@ export default class Restaurant extends HTMLElement implements AsyncInit {
 
     this.classList.add("d-flex", "w-100", "mb-4");
     // <div>
-    const shadow_container = document.createElement("div");
-    shadow_container.classList.add(
+    const shadow_container = createElement("div", [
       "container",
       "mx-auto",
       "my-2",
@@ -37,7 +36,7 @@ export default class Restaurant extends HTMLElement implements AsyncInit {
       "px-4",
       "py-2",
       "bg-body"
-    );
+    ]);
     // </div>
     this.append(shadow_container);
 
@@ -50,12 +49,12 @@ export default class Restaurant extends HTMLElement implements AsyncInit {
     // shadow
     const shadow = shadow_container.attachShadow({ mode: "closed" });
     // <div>
-    const shadow_div = document.createElement("div");
+    const shadow_div = createElement("div");
     shadow_div.innerHTML = description;
     // - <section>
-    const info = document.createElement("section");
+    const info = createElement("section");
     // - - <h1>
-    const info_header = document.createElement("h1");
+    const info_header = createElement("h1");
     info_header.textContent = "Info";
     // - - </h1>
     info.append(info_header);
@@ -63,9 +62,9 @@ export default class Restaurant extends HTMLElement implements AsyncInit {
       const value = (<any>data)[key];
       if (!value) continue;
       // <p>
-      const p = document.createElement("p");
+      const p = createElement("p");
       // - <b>
-      const b = document.createElement("b");
+      const b = createElement("b");
       b.append(`${key}: `);
       // - </b>
       p.append(b, value);
@@ -78,7 +77,7 @@ export default class Restaurant extends HTMLElement implements AsyncInit {
     shadow.append(shadow_div);
 
     await whenDefined("TopHeader");
-    const top_header = <TopHeader>document.querySelector(tag("TopHeader"));
+    const top_header = <TopHeader>selectCustomElement("TopHeader");
     top_header.top_header.textContent = name;
   };
 }

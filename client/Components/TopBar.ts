@@ -1,11 +1,13 @@
 import type AsyncInit from "./AsyncInit";
 
-import { btn, center_content_classes, whenDefined } from "helpers";
+import { center_content_classes, createElement, whenDefined } from "helpers";
 
 import BsIcon from "./BsIcon";
 import LogSig from "./LogSig";
 
 export default class TopBar extends HTMLElement implements AsyncInit {
+  static prefix = "top-bar";
+
   constructor() {
     super();
     this.#init();
@@ -14,8 +16,7 @@ export default class TopBar extends HTMLElement implements AsyncInit {
   #init = async () => {
     this.classList.add("navbar", "navbar-expand-lg", "navbar-light", "bg-light", "p-0", "mb-4");
     // <div>
-    const nav_div = document.createElement("div");
-    nav_div.classList.add(
+    const nav_div = createElement("div", [
       "d-flex",
       "flex-lg-row",
       "flex-column",
@@ -24,13 +25,11 @@ export default class TopBar extends HTMLElement implements AsyncInit {
       "my-lg-0",
       "my-3",
       ...center_content_classes
-    );
+    ]);
     // - <div>
-    const no_collapse = document.createElement("div");
-    no_collapse.classList.add("d-flex", "w-25", ...center_content_classes);
+    const no_collapse = createElement("div", ["d-flex", "w-25", ...center_content_classes]);
     // - - <a>
-    const brand = document.createElement("a");
-    brand.classList.add(
+    const brand = createElement("a", [
       "navbar-brand",
       "text-center",
       "text-primary",
@@ -42,20 +41,17 @@ export default class TopBar extends HTMLElement implements AsyncInit {
       "mx-lg-0",
       "mx-5",
       "w-25"
-    );
+    ]);
     brand.href = "index.html";
     brand.textContent = "Hauterev";
     // - - </a>
     no_collapse.append(brand);
     // - - <button>
-    const toggler = document.createElement("button");
-    toggler.classList.add("navbar-toggler", "d-lg-none");
+    const toggler = createElement("button", ["navbar-toggler", "d-lg-none"]);
     toggler.type = "button";
     toggler.setAttribute("data-bs-toggle", "collapse");
-    toggler.setAttribute("data-bs-target", "#top-bar-collapse");
     // - - - <i>
-    const toggler_icon = document.createElement("i");
-    toggler_icon.classList.add("navbar-toggler-icon");
+    const toggler_icon = createElement("i", ["navbar-toggler-icon"]);
     // - - - </i>
     toggler.append(toggler_icon);
     // - - - </button>
@@ -63,18 +59,26 @@ export default class TopBar extends HTMLElement implements AsyncInit {
     // - </div>
     nav_div.append(no_collapse);
     // - <div>
-    const collapse = document.createElement("div");
-    collapse.classList.add("collapse", "navbar-collapse", "w-75");
-    collapse.id = "top-bar-collapse";
+    const collapse = createElement("div", [
+      "collapse",
+      "navbar-collapse",
+      "w-75",
+      `${TopBar.prefix}-collapse`
+    ]);
+    toggler.setAttribute("data-bs-target", collapse.id);
     // - - <form>
-    const searchbar = document.createElement("form");
-    searchbar.classList.add("container-fluid", "navbar-form", "mx-1", "my-lg-0", "my-2");
+    const searchbar = createElement("form", [
+      "container-fluid",
+      "navbar-form",
+      "mx-1",
+      "my-lg-0",
+      "my-2"
+    ]);
     // - - - <div>
-    const input_group = document.createElement("div");
-    input_group.classList.add("input-group");
+    const input_group = createElement("div", ["input-group"]);
     // - - - - <button>
-    const search_btn = btn();
-    search_btn.classList.add(
+    const search_btn = createElement("button", [
+      "btn",
       "btn-outline-secondary",
       "bg-white",
       "border",
@@ -85,7 +89,7 @@ export default class TopBar extends HTMLElement implements AsyncInit {
       "ps-1",
       "pe-0",
       "py-0"
-    );
+    ]);
     search_btn.type = "submit";
     await whenDefined("BsIcon");
     const search_icon = new BsIcon("search", "24px");
@@ -94,11 +98,13 @@ export default class TopBar extends HTMLElement implements AsyncInit {
     // - - - - </button>
     input_group.append(search_btn);
     // - - - - <input />
-    const search_input = document.createElement("input");
-    search_input.classList.add("form-control", "border", "border-start-0", "rounded-0", "fs-5");
+    const search_input = createElement(
+      "input",
+      ["form-control", "border", "border-start-0", "rounded-0", "fs-5"],
+      "search-input"
+    );
     search_input.type = "search";
     search_input.placeholder = "Search";
-    search_input.id = "search-input";
     input_group.append(search_input);
     // - - - </div>
     searchbar.append(input_group);
@@ -133,25 +139,27 @@ export default class TopBar extends HTMLElement implements AsyncInit {
   };
 
   static TopBarLink = (icon_name: string, href: string, name: string, id: string) => {
-    id = `top-bar-${id}`;
-
     // <a>
-    const link = document.createElement("a");
-    link.classList.add("d-flex", ...center_content_classes, "ms-lg-3", "mt-lg-0", "mt-1");
+    const link = createElement("a", [
+      "d-flex",
+      ...center_content_classes,
+      "ms-lg-3",
+      "mt-lg-0",
+      "mt-1"
+    ]);
     link.href = href;
     // - <button>
-    const b = btn();
+    const b = createElement("button", ["btn"]);
     // - - <img />
     const icon = new BsIcon(icon_name, "28px");
     b.append(icon);
-    b.id = id;
+    b.id = `${TopBar.prefix}-${id}`;
     // - </button>
     link.append(b);
     // - <label>
-    const label = document.createElement("label");
-    label.classList.add("d-lg-none", "fw-bold");
+    const label = createElement("label", ["d-lg-none", "fw-bold"]);
     label.textContent = name;
-    label.htmlFor = id;
+    label.htmlFor = b.id;
     // - </label>
     link.append(label);
     // </a>

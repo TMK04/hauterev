@@ -1,9 +1,11 @@
-import { post, urlEncode, whenDefined } from "helpers";
+import type AsyncInit from "./AsyncInit";
+
+import { createElement, post, urlEncode, whenDefined } from "helpers";
 
 import BsIcon from "./BsIcon";
 import GenderInput from "./GenderInput";
 
-export default class LogSig extends HTMLElement {
+export default class LogSig extends HTMLElement implements AsyncInit {
   static id = "logsig";
   static log = "Login";
   static sig = "Sign-up";
@@ -17,22 +19,16 @@ export default class LogSig extends HTMLElement {
     this.classList.add("d-flex");
 
     // <div>
-    const modal = document.createElement("div");
-    modal.classList.add("modal", "fade");
+    const modal = createElement("div", ["modal", "fade"], LogSig.id);
     modal.tabIndex = -1;
-    modal.id = LogSig.id;
     // - <div>
-    const modal_dialog = document.createElement("div");
-    modal_dialog.classList.add("modal-dialog", "modal-dialog-centered");
+    const modal_dialog = createElement("div", ["modal-dialog", "modal-dialog-centered"]);
     // - - <div>
-    const modal_content = document.createElement("div");
-    modal_content.classList.add("modal-content");
+    const modal_content = createElement("div", ["modal-content"]);
     // - - - <div>
-    const modal_header = document.createElement("div");
-    modal_header.classList.add("modal-header");
+    const modal_header = createElement("div", ["modal-header"]);
     // - - - - <nav>
-    const modal_nav = document.createElement("nav");
-    modal_nav.classList.add("nav", "nav-tabs");
+    const modal_nav = createElement("nav", ["nav", "nav-tabs"]);
     // - - - - </nav>
     modal_header.append(modal_nav);
     // - - - - <button>
@@ -43,8 +39,7 @@ export default class LogSig extends HTMLElement {
     // - - - </div>
     modal_content.append(modal_header);
     // - - - <div>
-    const tab_content = document.createElement("div");
-    tab_content.classList.add("tab-content");
+    const tab_content = createElement("div", ["tab-content"]);
     // - - - - <div>
     await whenDefined("BsIcon");
     const log_tab = LogSig.Tab("log");
@@ -125,8 +120,7 @@ export default class LogSig extends HTMLElement {
   };
 
   static NavLink = (name: string, id: string) => {
-    const nav_link = document.createElement("button");
-    nav_link.classList.add("nav-link");
+    const nav_link = createElement("button", ["nav-link"]);
     nav_link.setAttribute("data-bs-toggle", "tab");
     nav_link.setAttribute("data-bs-target", `#${id}`);
     nav_link.type = "button";
@@ -135,39 +129,22 @@ export default class LogSig extends HTMLElement {
   };
 
   static ModalClose = () => {
-    const modal_close = document.createElement("button");
+    const modal_close = createElement("button");
     modal_close.setAttribute("data-bs-dismiss", "modal");
     modal_close.type = "button";
     return modal_close;
   };
 
-  static Tab = (id: string) => {
-    const tab = document.createElement("form");
-    tab.classList.add("tab-pane", "fade");
-    tab.id = `${LogSig.id}-${id}`;
-    return tab;
-  };
+  static Tab = (id: string) => createElement("form", ["tab-pane", "fade"], `${LogSig.id}-${id}`);
 
-  static ModalBody = () => {
-    const modal_body = document.createElement("div");
-    modal_body.classList.add("modal-body", "container");
-    return modal_body;
-  };
+  static ModalBody = () => createElement("div", ["modal-body", "container"]);
 
-  static Row = () => {
-    const row = document.createElement("body");
-    row.classList.add("row", "gy-3");
-    return row;
-  };
+  static Row = () => createElement("body", ["row", "gy-3"]);
 
-  static Column = (half = false) => {
-    const col = document.createElement("div");
-    if (half) col.classList.add("col-md-6");
-    return col;
-  };
+  static Column = (half = false) => createElement("div", half ? ["col-md-6"] : []);
 
   static Label = (id: string, content: string, bi?: string) => {
-    const label = document.createElement("label");
+    const label = createElement("label");
     label.htmlFor = id;
     if (bi) {
       const icon = new BsIcon(bi, "16px");
@@ -179,10 +156,8 @@ export default class LogSig extends HTMLElement {
   };
 
   static Input = (name: string, type: string, prefix: string, required = false) => {
-    const input = document.createElement("input");
-    input.classList.add("form-control");
+    const input = createElement("input", ["form-control"], `${prefix}-${name}`);
     input.name = name;
-    input.id = `${prefix}-${name}`;
     input.type = type;
     input.required = required;
     return input;
@@ -204,14 +179,12 @@ export default class LogSig extends HTMLElement {
   };
 
   static ModalFooter = (submit_text: string) => {
-    const modal_footer = document.createElement("div");
-    modal_footer.classList.add("modal-footer");
+    const modal_footer = createElement("div", ["modal-footer"]);
     const modal_close = LogSig.ModalClose();
     modal_close.classList.add("btn", "btn-secondary");
     modal_close.textContent = "Close";
     modal_footer.append(modal_close);
-    const modal_submit = document.createElement("button");
-    modal_submit.classList.add("btn", "btn-primary");
+    const modal_submit = createElement("button", ["btn", "btn-primary"]);
     modal_submit.type = "submit";
     modal_submit.textContent = submit_text;
     modal_footer.append(modal_submit);

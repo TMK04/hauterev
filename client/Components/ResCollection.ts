@@ -1,6 +1,6 @@
 import type AsyncInit from "./AsyncInit";
 
-import { get } from "helpers";
+import { createElement, get } from "helpers";
 
 export default class ResCollection extends HTMLElement implements AsyncInit {
   static display = "d-flex";
@@ -33,25 +33,21 @@ export default class ResCollection extends HTMLElement implements AsyncInit {
       region
     } of restaurants) {
       // <div>
-      const card = document.createElement("div");
-      card.id = `${ResCollection.prefix}-${id}`;
-      card.classList.add("card", "shadow-sm");
+      const card = createElement("div", ["card", "shadow-sm"], `${ResCollection.prefix}-${id}`);
       card.setAttribute("data-avg-rating", avg_rating);
       card.setAttribute("data-opening-hours", opening_hours);
       card.setAttribute("data-region", region);
       // - <a>
-      const a = document.createElement("a");
+      const a = createElement("a");
       a.href = `/restaurant.html?id=${id}`;
       // - - <img />
-      const card_img = document.createElement("img");
-      card_img.classList.add("card-img-top");
+      const card_img = createElement("img", ["card-img-top"]);
       card_img.src = image_url;
       a.append(card_img);
       // - </a>
       card.append(a);
       // - <div>
-      const card_body = document.createElement("div");
-      card_body.classList.add("card-body");
+      const card_body = createElement("div", ["card-body"]);
       // - - <a>
       const card_title = <HTMLAnchorElement>a.cloneNode();
       card_title.classList.add("card-title", "h5");
@@ -59,8 +55,7 @@ export default class ResCollection extends HTMLElement implements AsyncInit {
       // - - </a>
       card_body.append(card_title);
       // - - <p>
-      const card_text = document.createElement("p");
-      card_text.classList.add("card-text");
+      const card_text = createElement("p", ["card-text"]);
       card_text.textContent = description;
       // - - </p>
       card_body.append(card_text);

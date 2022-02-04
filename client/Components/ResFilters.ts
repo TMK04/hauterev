@@ -2,7 +2,7 @@ import type AsyncInit from "./AsyncInit";
 import type Form from "./Form";
 import type ResCollection from "./ResCollection";
 
-import { center_content_classes, selectCustomElement, whenDefined } from "helpers";
+import { center_content_classes, createElement, selectCustomElement, whenDefined } from "helpers";
 
 import BsIcon from "./BsIcon";
 import OpeningHoursForm from "./OpeningHoursForm";
@@ -19,6 +19,7 @@ interface ActiveGroup {
 
 export default class ResFilters extends HTMLElement implements AsyncInit {
   static display = "d-block";
+  static prefix = "res-filters";
 
   #active: ActiveGroup | undefined;
   #min_rating = 0;
@@ -125,41 +126,43 @@ export default class ResFilters extends HTMLElement implements AsyncInit {
   }
 
   static Row = () => {
-    const row = document.createElement("div");
-    row.classList.add("row", "w-100", "mx-0");
+    const row = createElement("div", ["row", "w-100", "mx-0"]);
     return row;
   };
 
   static Toggler = (id: string, icon_name: string, name: string) => {
-    id = `filter-toggler-${id}`;
-
     // <div>
-    const toggler = document.createElement("button");
-    toggler.classList.add(
-      "col-md",
-      "btn",
-      "btn-light",
-      "border",
-      "border-secondary",
-      "rounded-0",
-      "d-flex",
-      "justify-content-between",
-      "align-items-center",
-      "px-3",
-      "py-2"
+    const toggler = createElement(
+      "button",
+      [
+        "col-md",
+        "btn",
+        "btn-light",
+        "border",
+        "border-secondary",
+        "rounded-0",
+        "d-flex",
+        "justify-content-between",
+        "align-items-center",
+        "px-3",
+        "py-2"
+      ],
+      `${ResFilters.prefix}-toggler-${id}`
     );
-    toggler.id = id;
     // - <div>
-    const start = document.createElement("div");
-    start.classList.add("d-flex", "w-100", "justify-content-md-start", ...center_content_classes);
+    const start = createElement("div", [
+      "d-flex",
+      "w-100",
+      "justify-content-md-start",
+      ...center_content_classes
+    ]);
     // - - <hr-icon>
     const icon = new BsIcon(icon_name, "24px");
     // - - </hr-icon>
     start.append(icon);
     // - - <label>
-    const label = document.createElement("label");
-    label.classList.add("ms-2");
-    label.htmlFor = id;
+    const label = createElement("label", ["ms-2"]);
+    label.htmlFor = toggler.id;
     label.textContent = name;
     // - - </label>
     start.append(label);
@@ -174,19 +177,12 @@ export default class ResFilters extends HTMLElement implements AsyncInit {
   };
 
   static Dropdown = (id: string, inner: HTMLElement) => {
-    id = `filter-dropdown-${id}`;
-
     // <div>
-    const dropdown = document.createElement("div");
-    dropdown.classList.add(
-      "collapse",
-      "p-3",
-      "border",
-      "border-dark",
-      "border-2",
-      "justify-content-center"
+    const dropdown = createElement(
+      "div",
+      ["collapse", "p-3", "border", "border-dark", "border-2", "justify-content-center"],
+      `${ResFilters.prefix}-dropdown-${id}`
     );
-    dropdown.id = id;
     dropdown.append(inner);
     // </div>
     return dropdown;
