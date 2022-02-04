@@ -4,6 +4,7 @@ import { get } from "helpers";
 
 export default class ResCollection extends HTMLElement implements AsyncInit {
   static display = "d-flex";
+  static prefix = "res";
 
   constructor() {
     super();
@@ -33,7 +34,7 @@ export default class ResCollection extends HTMLElement implements AsyncInit {
     } of restaurants) {
       // <div>
       const card = document.createElement("div");
-      card.id = id;
+      card.id = `${ResCollection.prefix}-${id}`;
       card.classList.add("card", "shadow-sm");
       card.setAttribute("data-avg-rating", avg_rating);
       card.setAttribute("data-opening-hours", opening_hours);

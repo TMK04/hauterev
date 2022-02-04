@@ -29,6 +29,8 @@
     <hr-res-filters></hr-res-filters>
     <hr-res-collection></hr-res-collection>
 
+    <hr-rev-collection></hr-rev-collection>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
@@ -37,13 +39,16 @@
     <script>
       const url = new URL(document.URL);
 
-      const search = url.searchParams.get("search");
+      const search_param = url.searchParams.get("search");
       const top_header = document.querySelector("hr-top-header");
-      if (search) top_header.innerHTML = `Search Results for "${search}"`;
+      if (search_param) top_header.innerHTML = `Search Results for "${search_param}"`;
       else top_header.classList.add("d-none");
 
+      const search = url.search;
       const res_collection = document.querySelector("hr-res-collection");
-      res_collection.setAttribute("path", url.search);
+      res_collection.setAttribute("path", search);
+      const rev_collection = document.querySelector("hr-rev-collection");
+      rev_collection.setAttribute("path", search);
     </script>
     <script src="bundle.js"></script>
   </body>

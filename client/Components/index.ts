@@ -9,6 +9,7 @@ import ResCollection from "./ResCollection";
 import ResFilters from "./ResFilters";
 import ResRevSwitch from "./ResRevSwitch";
 import Restaurant from "./Restaurant";
+import RevCollection from "./RevCollection";
 import SortForm from "./SortForm";
 import TopBar from "./TopBar";
 import TopHeader from "./TopHeader";
@@ -25,6 +26,7 @@ export {
   ResFilters,
   ResRevSwitch,
   Restaurant,
+  RevCollection,
   SortForm,
   TopBar,
   TopHeader

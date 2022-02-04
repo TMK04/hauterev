@@ -2,6 +2,7 @@
   --filter-height: 30px;
   --opening-hours-form-slider-height: 8px;
   --opening-hours-form-thumb-size: 20px;
+  --rating-color: #e6d113;
 }
 
 hr-top-header {
@@ -90,7 +91,7 @@ hr-top-header {
 }
 
 .rating-form-input:checked ~ .rating-form-label:not(.rating-form-input:checked + .zero) {
-  color: #e6d113;
+  color: var(--rating-color);
 }
 
 .collection {

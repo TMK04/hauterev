@@ -4,8 +4,11 @@ import { center_content_classes, selectCustomElement } from "helpers";
 
 import ResCollection from "./ResCollection";
 import ResFilters from "./ResFilters";
+import RevCollection from "./RevCollection";
 
 export default class ResRevSwitch extends HTMLElement implements AsyncInit {
+  static d_none = "d-none";
+
   constructor() {
     super();
     this.#init();
@@ -35,14 +38,19 @@ export default class ResRevSwitch extends HTMLElement implements AsyncInit {
 
     const res_filters = <ResFilters>selectCustomElement("ResFilters");
     const res_collection = <ResCollection>selectCustomElement("ResCollection");
+    const rev_collection = <RevCollection>selectCustomElement("RevCollection");
 
     const useRes = () => {
       res.classList.remove("fs-3", "text-secondary");
       res.classList.add("fs-2", "text-dark");
       rev.classList.remove("fs-2", "text-dark");
       rev.classList.add("fs-3", "text-secondary");
-      res_filters.classList.replace("d-none", ResFilters.display);
-      res_collection.classList.replace("d-none", ResCollection.display);
+      res_filters.classList.add(ResFilters.display);
+      res_filters.classList.remove(ResRevSwitch.d_none);
+      res_collection.classList.add(ResCollection.display);
+      res_collection.classList.remove(ResRevSwitch.d_none);
+      rev_collection.classList.add(ResRevSwitch.d_none);
+      rev_collection.classList.remove(RevCollection.display);
     };
     res.addEventListener("click", useRes);
     const useRev = () => {
@@ -50,8 +58,12 @@ export default class ResRevSwitch extends HTMLElement implements AsyncInit {
       rev.classList.add("fs-2", "text-dark");
       res.classList.remove("fs-2", "text-dark");
       res.classList.add("fs-3", "text-secondary");
-      res_filters.classList.replace(ResFilters.display, "d-none");
-      res_collection.classList.replace(ResCollection.display, "d-none");
+      rev_collection.classList.add(RevCollection.display);
+      rev_collection.classList.remove(ResRevSwitch.d_none);
+      res_filters.classList.add(ResRevSwitch.d_none);
+      res_filters.classList.remove(ResFilters.display);
+      res_collection.classList.add(ResRevSwitch.d_none);
+      res_collection.classList.remove(ResCollection.display);
     };
     rev.addEventListener("click", useRev);
 
