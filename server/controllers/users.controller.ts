@@ -10,7 +10,7 @@ import type {
 } from "types";
 
 import { NotFoundError, UnauthenticatedError } from "Errors";
-import { user_db } from "db";
+import { review_db, user_db } from "db";
 import { catchNext } from "helpers";
 import { validateAuthenticateBody, validatePatchUserBody, validatePostUserBody } from "validation";
 
@@ -40,12 +40,15 @@ export const retrieveUser: RequestHandler<UsernameParams, any, any, any, Authent
 ) =>
   catchNext(async () => {
     const { username } = params;
-    const user_profile_result = await (res.locals.authenticated
-      ? user_db.selectUserAsUser(username)
-      : user_db.selectUserByUsername(username));
-    const user_profile = user_profile_result[0];
-    if (!user_profile) throw new NotFoundError("User", username);
-    res.json(user_profile);
+    const user = (
+      await (res.locals.authenticated
+        ? user_db.selectUserAsUser(username)
+        : user_db.selectUserByUsername(username))
+    )[0];
+    if (!user) throw new NotFoundError("User", username);
+
+    user.reviews = await review_db.selectReviewsByUsername(username);
+    res.json(user);
   }, next);
 
 export const updateUser: RequestHandler<UsernameParams, any, PatchUserBody> = (

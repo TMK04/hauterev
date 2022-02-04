@@ -1,4 +1,5 @@
 import type { Name, RawDefault, Timestamp } from "./common.types";
+import type { ColumnsTuple } from "db/utils/types";
 
 /**
  * @type {VARCHAR(20)}
@@ -45,4 +46,6 @@ export interface User {
   created_timestamp: Timestamp;
 }
 
+export type SelectUser<T extends ColumnsTuple<User>> = (Pick<User, T[number]> &
+  Record<"reviews", SelectReviews>)[];
 export type UpdateUser = Partial<Omit<User, "created_timestamp">>;

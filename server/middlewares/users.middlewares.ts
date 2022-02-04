@@ -6,7 +6,7 @@ import type { AuthenticatedLocals, PasswordBody, UsernameParams } from "types";
 import { NotFoundError, UnauthenticatedError } from "Errors";
 import { user_db } from "db";
 import { catchNext } from "helpers";
-import { validatePasswordBody } from "validation/users.validation";
+import { nullInvalidPasswordBody } from "validation";
 
 /**
  * Check if provided password matches user password,
@@ -20,14 +20,14 @@ export const authenticate: RequestHandler<
   AuthenticatedLocals
 > = ({ body, params }, res, next) =>
   catchNext(async () => {
-    const { password } = validatePasswordBody(body);
+    const { password } = nullInvalidPasswordBody(body);
 
     const { username } = params;
     const password_hash_result = await user_db.selectPasswordHashByUsername(username);
     if (!password_hash_result[0]) throw new NotFoundError("User", username);
 
     const password_hash = password_hash_result[0].password_hash;
-    res.locals.authenticated = await compare(password, password_hash);
+    res.locals.authenticated = Boolean(password && (await compare(password, password_hash)));
     next();
   }, next);
 

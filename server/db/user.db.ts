@@ -1,5 +1,4 @@
-import type { UpdateUser, User, UserUsername } from "./types";
-import type { ColumnsTuple, Result } from "./utils/types";
+import type { SelectUser, UpdateUser, User, UserUsername } from "./types";
 
 import { db } from "connections";
 
@@ -25,22 +24,17 @@ export const selectPasswordHashByUsername = (
   username: UserUsername
 ): Promise<Pick<User, "password_hash">[]> => user(username).select("password_hash");
 
-const user_columns_bu: ColumnsTuple<User> = <const>[
-  "email",
-  "first_name",
-  "last_name",
-  "gender",
-  "created_timestamp"
-];
+const user_columns_bu = <const>["email", "first_name", "last_name", "gender", "created_timestamp"];
 
 export const selectUserByUsername = (
   username: UserUsername
-): Result<User, typeof user_columns_bu> => user(username).select(...user_columns_bu);
+): Promise<SelectUser<typeof user_columns_bu>> => user(username).select(...user_columns_bu);
 
-const user_columns_au: ColumnsTuple<User> = <const>["mobile_number", "address", ...user_columns_bu];
+const user_columns_au = <const>["mobile_number", "address", ...user_columns_bu];
 
-export const selectUserAsUser = (username: UserUsername): Result<User, typeof user_columns_au> =>
-  user(username).select(...user_columns_au);
+export const selectUserAsUser = (
+  username: UserUsername
+): Promise<SelectUser<typeof user_columns_au>> => user(username).select(...user_columns_au);
 
 // *--- Update ---* //
 

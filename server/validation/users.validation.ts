@@ -7,11 +7,16 @@ import { saltedHash } from "helpers";
 import { isDefined, isEmpty } from "./helpers/checks";
 import {
   rawDefaultInvalidGender,
+  stringNullInvalid,
   stringRawDefaultInvalid,
   stringValidate,
   validatePassword,
   validateUsername
 } from "./helpers/validates";
+
+export const nullInvalidPasswordBody = (body: Partial<PasswordBody>) => ({
+  password: stringNullInvalid(body, "password")
+});
 
 export const validatePasswordBody = (body: Partial<PasswordBody>) => ({
   password: stringValidate(body, "password")
