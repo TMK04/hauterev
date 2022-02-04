@@ -1,18 +1,18 @@
-import type Input from "./Input";
+import type Form from "./Form";
 
 import { center_content_classes } from "helpers";
 
-export default class RegionsInput extends HTMLElement implements Input {
-  static id = "regions-input";
-  readonly input: HTMLFormElement;
+export default class RegionsForm extends HTMLElement implements Form {
+  static id = "regions-form";
+  readonly form: HTMLFormElement;
 
   constructor(regions: string[] = [], oninput?: (regions: string[]) => any) {
     super();
 
     // <form>
-    this.input = document.createElement("form");
-    this.input.id = RegionsInput.id;
-    this.input.classList.add(
+    this.form = document.createElement("form");
+    this.form.id = RegionsForm.id;
+    this.form.classList.add(
       "d-flex",
       "gap-2",
       "flex-md-row",
@@ -24,7 +24,7 @@ export default class RegionsInput extends HTMLElement implements Input {
       const check = document.createElement("div");
       check.classList.add("form-check");
       // - <input />
-      const id = `${RegionsInput.id}-${region}`;
+      const id = `${RegionsForm.id}-${region}`;
       const checkbox = document.createElement("input");
       checkbox.classList.add("form-check-input");
       checkbox.setAttribute("value", region);
@@ -40,19 +40,19 @@ export default class RegionsInput extends HTMLElement implements Input {
       // - </label>
       check.append(label);
       // </div>
-      this.input.append(check);
+      this.form.append(check);
     }
     // </form>
-    this.append(this.input);
+    this.append(this.form);
 
-    this.input.addEventListener(
+    this.form.addEventListener(
       "input",
       () =>
         oninput &&
         oninput(
-          Array.from(
-            <NodeListOf<HTMLInputElement>>this.input.querySelectorAll("input:checked")
-          ).map(({ value }) => value)
+          Array.from(<NodeListOf<HTMLInputElement>>this.form.querySelectorAll("input:checked")).map(
+            ({ value }) => value
+          )
         )
     );
   }

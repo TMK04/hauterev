@@ -1,12 +1,12 @@
-import type Input from "./Input";
+import type Form from "./Form";
 
 import { center_content_classes, padHour } from "helpers";
 
-export default class OpeningHoursInput extends HTMLElement implements Input {
+export default class OpeningHoursForm extends HTMLElement implements Form {
   static min = 0;
   static max = 23;
-  static id = "opening-hours-input";
-  readonly input: HTMLFormElement;
+  static id = "opening-hours-form";
+  readonly form: HTMLFormElement;
 
   constructor(oninput?: (min: number, max: number) => any) {
     super();
@@ -16,46 +16,46 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
     const input_div = document.createElement("div");
     input_div.classList.add("position-relative", "mx-3", "w-75");
     // - <form>
-    this.input = document.createElement("form");
-    this.input.id = OpeningHoursInput.id;
+    this.form = document.createElement("form");
+    this.form.id = OpeningHoursForm.id;
     // - - <input /> * 2
-    const input_left = OpeningHoursInput.Input(OpeningHoursInput.min.toString());
-    input_left.id = `${OpeningHoursInput.id}-left`;
-    const input_right = OpeningHoursInput.Input(OpeningHoursInput.max.toString());
-    input_right.id = `${OpeningHoursInput.id}-right`;
-    this.input.append(input_left, input_right);
+    const input_left = OpeningHoursForm.Input(OpeningHoursForm.min.toString());
+    input_left.id = `${OpeningHoursForm.id}-left`;
+    const input_right = OpeningHoursForm.Input(OpeningHoursForm.max.toString());
+    input_right.id = `${OpeningHoursForm.id}-right`;
+    this.form.append(input_left, input_right);
 
-    const label_left = OpeningHoursInput.Label(input_left.id);
-    const label_right = OpeningHoursInput.Label(input_right.id);
+    const label_left = OpeningHoursForm.Label(input_left.id);
+    const label_right = OpeningHoursForm.Label(input_right.id);
 
     // - - <div>
     const slider = document.createElement("div");
-    slider.classList.add(`${OpeningHoursInput.id}-slider`, "position-relative");
+    slider.classList.add(`${OpeningHoursForm.id}-slider`, "position-relative");
     // - - - <div> * 4
     const track = document.createElement("div");
     track.classList.add(
-      `${OpeningHoursInput.id}-track`,
+      `${OpeningHoursForm.id}-track`,
       "bg-secondary",
       "position-absolute",
       "rounded-pill"
     );
     const range = document.createElement("div");
     range.classList.add(
-      `${OpeningHoursInput.id}-range`,
+      `${OpeningHoursForm.id}-range`,
       "bg-primary",
       "position-absolute",
       "rounded-pill"
     );
-    const thumb_left = OpeningHoursInput.Thumb();
+    const thumb_left = OpeningHoursForm.Thumb();
     thumb_left.classList.add("left");
-    const thumb_right = OpeningHoursInput.Thumb();
+    const thumb_right = OpeningHoursForm.Thumb();
     thumb_right.classList.add("right");
     // - - - <div> * 4
     slider.append(track, range, thumb_left, thumb_right);
     // - - </div>
-    this.input.append(slider);
+    this.form.append(slider);
     // - </form>
-    input_div.append(this.input);
+    input_div.append(this.form);
     // </div>
     this.append(label_left, input_div, label_right);
 
@@ -66,7 +66,7 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
       input_left.setAttribute("value", new_value.toString());
       label_left.textContent = padHour(new_value);
 
-      const percent = `${(value / OpeningHoursInput.max) * 100}%`;
+      const percent = `${(value / OpeningHoursForm.max) * 100}%`;
 
       thumb_left.style.left = percent;
       range.style.left = percent;
@@ -79,14 +79,14 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
       input_right.setAttribute("value", new_value.toString());
       label_right.textContent = padHour(new_value);
 
-      const percent = `${100 - (value / OpeningHoursInput.max) * 100}%`;
+      const percent = `${100 - (value / OpeningHoursForm.max) * 100}%`;
 
       thumb_right.style.right = percent;
       range.style.right = percent;
     };
     setRightValue();
 
-    this.input.addEventListener(
+    this.form.addEventListener(
       "input",
       () => oninput && oninput(input_left.valueAsNumber, input_right.valueAsNumber)
     );
@@ -122,11 +122,11 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
 
   static Input = (value: string) => {
     const input = document.createElement("input");
-    input.classList.add(`${OpeningHoursInput.id}-input`, "position-absolute", "w-100", "opacity-0");
+    input.classList.add(`${OpeningHoursForm.id}-input`, "position-absolute", "w-100", "opacity-0");
     input.type = "range";
-    input.name = OpeningHoursInput.id;
-    input.min = OpeningHoursInput.min.toString();
-    input.max = OpeningHoursInput.max.toString();
+    input.name = OpeningHoursForm.id;
+    input.min = OpeningHoursForm.min.toString();
+    input.max = OpeningHoursForm.max.toString();
     input.setAttribute("value", value);
     return input;
   };
@@ -141,7 +141,7 @@ export default class OpeningHoursInput extends HTMLElement implements Input {
   static Thumb = () => {
     const thumb = document.createElement("div");
     thumb.classList.add(
-      `${OpeningHoursInput.id}-thumb`,
+      `${OpeningHoursForm.id}-thumb`,
       "bg-primary",
       "position-absolute",
       "rounded-circle",

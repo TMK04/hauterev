@@ -2,14 +2,14 @@ import BsIcon from "./BsIcon";
 import CollectionHeader from "./CollectionHeader";
 import GenderInput from "./GenderInput";
 import LogSig from "./LogSig";
-import OpeningHoursInput from "./OpeningHoursInput";
-import RatingInput from "./RatingInput";
-import RegionsInput from "./RegionsInput";
+import OpeningHoursForm from "./OpeningHoursForm";
+import RatingForm from "./RatingForm";
+import RegionsForm from "./RegionsForm";
 import ResCollection from "./ResCollection";
 import ResFilters from "./ResFilters";
 import ResRevSwitch from "./ResRevSwitch";
 import Restaurant from "./Restaurant";
-import SortInput from "./SortInput";
+import SortForm from "./SortForm";
 import TopBar from "./TopBar";
 import TopHeader from "./TopHeader";
 
@@ -18,14 +18,14 @@ export {
   CollectionHeader,
   GenderInput,
   LogSig,
-  OpeningHoursInput,
-  RatingInput,
-  RegionsInput,
+  OpeningHoursForm,
+  RatingForm,
+  RegionsForm,
   ResCollection,
   ResFilters,
   ResRevSwitch,
   Restaurant,
-  SortInput,
+  SortForm,
   TopBar,
   TopHeader
 };

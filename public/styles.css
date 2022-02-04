@@ -1,7 +1,7 @@
 :root {
   --filter-height: 30px;
-  --opening-hours-input-slider-height: 8px;
-  --opening-hours-input-thumb-size: 20px;
+  --opening-hours-form-slider-height: 8px;
+  --opening-hours-form-thumb-size: 20px;
 }
 
 hr-top-header {
@@ -9,14 +9,14 @@ hr-top-header {
   margin-bottom: 64px;
 }
 
-.opening-hours-input-slider {
+.opening-hours-form-slider {
   z-index: 1;
-  height: var(--opening-hours-input-slider-height);
-  margin: calc((var(--filter-height) - var(--opening-hours-input-slider-height)) / 2)
-    var(--opening-hours-input-slider-height);
+  height: var(--opening-hours-form-slider-height);
+  margin: calc((var(--filter-height) - var(--opening-hours-form-slider-height)) / 2)
+    var(--opening-hours-form-slider-height);
 }
 
-.opening-hours-input-track {
+.opening-hours-form-track {
   z-index: 1;
   left: 0;
   right: 0;
@@ -24,7 +24,7 @@ hr-top-header {
   bottom: 0;
 }
 
-.opening-hours-input-range {
+.opening-hours-form-range {
   z-index: 2;
   left: 25%;
   right: 25%;
@@ -32,64 +32,64 @@ hr-top-header {
   bottom: 0;
 }
 
-.opening-hours-input-input {
+.opening-hours-form-input {
   z-index: 2;
-  height: var(--opening-hours-input-slider-height);
+  height: var(--opening-hours-form-slider-height);
   pointer-events: none;
   appearance: none;
   opacity: 0;
 }
 
-.opening-hours-input-input::-webkit-slider-thumb {
+.opening-hours-form-input::-webkit-slider-thumb {
   pointer-events: all;
-  width: var(--opening-hours-input-thumb-size);
-  height: var(--opening-hours-input-thumb-size);
+  width: var(--opening-hours-form-thumb-size);
+  height: var(--opening-hours-form-thumb-size);
   border-radius: 0;
   border: 0 none;
   background-color: red;
   appearance: none;
 }
 
-.opening-hours-input-thumb {
+.opening-hours-form-thumb {
   z-index: 3;
-  width: var(--opening-hours-input-thumb-size);
-  height: var(--opening-hours-input-thumb-size);
+  width: var(--opening-hours-form-thumb-size);
+  height: var(--opening-hours-form-thumb-size);
   transition: box-shadow 0.3s ease-in-out;
 }
 
-.opening-hours-input-thumb.left {
+.opening-hours-form-thumb.left {
   left: 25%;
   transform: translate(
-    calc(var(--opening-hours-input-thumb-size) / -2),
-    calc((var(--opening-hours-input-thumb-size) - var(--opening-hours-input-slider-height)) / -2)
+    calc(var(--opening-hours-form-thumb-size) / -2),
+    calc((var(--opening-hours-form-thumb-size) - var(--opening-hours-form-slider-height)) / -2)
   );
 }
 
-.opening-hours-input-thumb.right {
+.opening-hours-form-thumb.right {
   right: 25%;
   transform: translate(
-    calc(var(--opening-hours-input-thumb-size) / 2),
-    calc((var(--opening-hours-input-thumb-size) - var(--opening-hours-input-slider-height)) / -2)
+    calc(var(--opening-hours-form-thumb-size) / 2),
+    calc((var(--opening-hours-form-thumb-size) - var(--opening-hours-form-slider-height)) / -2)
   );
 }
 
-.rating-input-label::before {
+.rating-form-label::before {
   font-size: 24px;
   cursor: pointer;
 }
 
-.rating-input-label.half::before {
+.rating-form-label.half::before {
   position: absolute;
   width: 12px;
   overflow: hidden;
 }
 
-.rating-input-label:hover,
-.rating-input-label:hover ~ .rating-input-label {
+.rating-form-label:hover,
+.rating-form-label:hover ~ .rating-form-label {
   color: #dbceca;
 }
 
-.rating-input-input:checked ~ .rating-input-label:not(.rating-input-input:checked + .zero) {
+.rating-form-input:checked ~ .rating-form-label:not(.rating-form-input:checked + .zero) {
   color: #e6d113;
 }
 

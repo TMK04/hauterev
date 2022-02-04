@@ -1,14 +1,14 @@
 import type AsyncInit from "./AsyncInit";
-import type Input from "./Input";
+import type Form from "./Form";
 import type ResCollection from "./ResCollection";
 
 import { center_content_classes, selectCustomElement, whenDefined } from "helpers";
 
 import BsIcon from "./BsIcon";
-import OpeningHoursInput from "./OpeningHoursInput";
-import RatingInput from "./RatingInput";
-import RegionsInput from "./RegionsInput";
-import SortInput from "./SortInput";
+import OpeningHoursForm from "./OpeningHoursForm";
+import RatingForm from "./RatingForm";
+import RegionsForm from "./RegionsForm";
+import SortForm from "./SortForm";
 
 type TogglerType = HTMLButtonElement;
 type DropdownType = HTMLDivElement;
@@ -32,28 +32,28 @@ export default class ResFilters extends HTMLElement implements AsyncInit {
   }
 
   #init = async () => {
-    await whenDefined("RatingInput");
-    const min_rating = new RatingInput((min_rating) => {
+    await whenDefined("RatingForm");
+    const min_rating = new RatingForm((min_rating) => {
       this.#min_rating = min_rating;
       this.#filter();
     });
-    await whenDefined("OpeningHoursInput");
-    const opening_hours = new OpeningHoursInput((min, max) => {
+    await whenDefined("OpeningHoursForm");
+    const opening_hours = new OpeningHoursForm((min, max) => {
       this.#opening_hours = parseInt(
-        `${"0".repeat(min)}${"1".repeat(max - min + 1)}${"0".repeat(OpeningHoursInput.max - max)}`,
+        `${"0".repeat(min)}${"1".repeat(max - min + 1)}${"0".repeat(OpeningHoursForm.max - max)}`,
         2
       );
       this.#filter();
     });
-    await whenDefined("RegionsInput");
-    const regions = new RegionsInput(this.#regions, (regions) => {
+    await whenDefined("RegionsForm");
+    const regions = new RegionsForm(this.#regions, (regions) => {
       this.#regions = regions;
       this.#filter();
     });
-    await whenDefined("SortInput");
-    const sort = new SortInput([]);
+    await whenDefined("SortForm");
+    const sort = new SortForm([]);
 
-    const options: [string, string, string, Input][] = [
+    const options: [string, string, string, Form][] = [
       ["min-rating", "star-half", "Min. Rating", min_rating],
       ["opening-hours", "clock-history", "Opening Hours", opening_hours],
       ["regions", "geo-fill", "Regions", regions],

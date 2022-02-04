@@ -1,35 +1,35 @@
-import type Input from "./Input";
+import type Form from "./Form";
 
 import { center_content_classes } from "helpers";
 
-export default class SortInput extends HTMLElement implements Input {
-  #id = "sort-input";
-  readonly input: HTMLFormElement;
+export default class SortForm extends HTMLElement implements Form {
+  static id = "sort-form";
+  readonly form: HTMLFormElement;
 
   constructor(sorts: string[] = [], oninput?: (sort: string) => any) {
     super();
 
     // <form>
-    this.input = document.createElement("form");
-    this.input.id = this.#id;
-    this.input.classList.add(
+    this.form = document.createElement("form");
+    this.form.id = SortForm.id;
+    this.form.classList.add(
       "d-flex",
       "gap-2",
       "flex-md-row",
       "flex-column",
       ...center_content_classes
     );
-    this.input.append(this.#Check("Most Relevant"));
+    this.form.append(this.#Check("Most Relevant"));
     for (const sort of sorts) {
-      this.input.append(this.#Check(sort));
+      this.form.append(this.#Check(sort));
     }
-    (<HTMLInputElement>this.input.querySelector("input")).checked = true;
+    (<HTMLInputElement>this.form.querySelector("input")).checked = true;
     // </form>
-    this.append(this.input);
+    this.append(this.form);
 
-    this.input.addEventListener(
+    this.form.addEventListener(
       "input",
-      () => oninput && oninput((<RadioNodeList>this.input.elements.namedItem("sort")).value)
+      () => oninput && oninput((<RadioNodeList>this.form.elements.namedItem("sort")).value)
     );
   }
 
@@ -38,7 +38,7 @@ export default class SortInput extends HTMLElement implements Input {
     const check = document.createElement("div");
     check.classList.add("form-check");
     // - <input />
-    const id = `${this.#id}-${sort}`;
+    const id = `${SortForm.id}-${sort}`;
     const checkbox = document.createElement("input");
     checkbox.classList.add("form-check-input");
     checkbox.setAttribute("value", sort);
