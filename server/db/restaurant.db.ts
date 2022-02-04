@@ -9,6 +9,7 @@ import type {
 import { db } from "connections";
 
 import { review_db } from ".";
+import { whereMatchAgainst } from "./utils";
 
 // ----------- //
 // * Helpers * //
@@ -39,11 +40,7 @@ export const selectRestaurantsWithOptions = ({
   search
 }: SelectRestaurantsOptions): Promise<SelectRestaurants> => {
   let query = selectRestaurants();
-  if (search)
-    query = query.andWhereRaw(
-      "MATCH (name, description) AGAINST (? IN NATURAL LANGUAGE MODE)",
-      search
-    );
+  if (search) query = query.andWhereRaw(whereMatchAgainst(["name", "description"]), search);
   return query;
 };
 

@@ -1,5 +1,6 @@
 import type { ID, ImageURL, Name, RawDefault } from "./common.types";
 import type { SelectAvgRating, SelectReviews } from "./review.types";
+import type { Search } from "db/utils/types";
 
 /**
  * @type {TEXT}
@@ -26,7 +27,7 @@ export interface Restaurant {
 }
 
 export interface SelectRestaurantsOptions {
-  search: Restaurant["name" | "description"] | null | undefined;
+  search: Search<Restaurant["name" | "description"]>;
 }
 
 export type SelectRestaurants = (Restaurant & SelectAvgRating)[];

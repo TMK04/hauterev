@@ -1,6 +1,7 @@
 import type { ID, ImageURL, RawDefault, Timestamp } from "./common.types";
 import type { SelectHelpfulCount } from "./helpful-mark.types";
 import type { UserUsername } from "./user.types";
+import type { Search } from "db/utils/types";
 
 /**
  * @type {VARCHAR(30)}
@@ -34,6 +35,10 @@ export type InsertReview = Omit<Review, "id" | "edited_timestamp">;
 export type UpdateReview = Partial<
   Omit<InsertReview, "restaurant_id" | "username" | "posted_timestamp">
 >;
+
+export interface SelectReviewsOptions {
+  search: Search<Review["title" | "description"]>;
+}
 
 export type SelectAvgRating = Record<"avg_rating", ReviewRating>[];
 export type SelectReviews = (Review & SelectHelpfulCount)[];

@@ -4,6 +4,7 @@ import type {
   Review,
   SelectReviewID,
   SelectReviews,
+  SelectReviewsOptions,
   Timestamp,
   UpdateReview,
   UserUsername
@@ -12,6 +13,7 @@ import type {
 import { db } from "connections";
 
 import { helpful_mark_db } from ".";
+import { whereMatchAgainst } from "./utils";
 
 // ----------- //
 // * Helpers * //
@@ -45,6 +47,14 @@ export const selectAvgRating = () =>
     .avg({ avg_rating: "rating" })
     .groupBy("restaurant_id")
     .as("avg_rating");
+
+export const selectReviewsWithOptions = ({
+  search
+}: SelectReviewsOptions): Promise<SelectReviews> => {
+  let query = selectReviews();
+  if (search) query = query.andWhereRaw(whereMatchAgainst(["title", "description"]), search);
+  return query;
+};
 
 export const selectReviewsByRestaurantID = (restaurant_id: ID): Promise<SelectReviews> =>
   selectReviews().where({ "review.restaurant_id": restaurant_id });

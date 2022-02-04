@@ -1,9 +1,20 @@
 import type { RequestHandler } from "express";
-import type { IDParams } from "types";
+import type { GetReviewsQuery, IDParams } from "types";
 
 import { NotFoundError } from "Errors";
 import { review_db } from "db";
 import { catchNext } from "helpers";
+import { castGetReviewsQuery } from "validation";
+
+export const retrieveReviews: RequestHandler<any, any, any, GetReviewsQuery> = (
+  { query },
+  res,
+  next
+) =>
+  catchNext(
+    async () => res.json(await review_db.selectReviewsWithOptions(castGetReviewsQuery(query))),
+    next
+  );
 
 export const retrieveReview: RequestHandler<IDParams> = ({ params }, res, next) =>
   catchNext(async () => {

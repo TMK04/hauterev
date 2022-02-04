@@ -15,10 +15,6 @@ Content-Type: application/json
   "image_url": "https://marinakeppelbay.com/wp-content/uploads/2020/09/BK-banner-image.jpg"
 }
 
-### Get review by ID
-
-GET {{address}}/reviews/1
-
 ### Edit review by ID
 
 PATCH {{route}}/1

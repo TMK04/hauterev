@@ -1,0 +1,9 @@
+@route = {{address}}/reviews
+
+### Get reviews by search
+
+GET {{route}}?search=great
+
+### Get review by ID
+
+GET {{route}}/1
