@@ -3,6 +3,7 @@ import type AsyncInit from "./AsyncInit";
 import { btn, center_content_classes, whenDefined } from "helpers";
 
 import BsIcon from "./BsIcon";
+import LogSig from "./LogSig";
 
 export default class TopBar extends HTMLElement implements AsyncInit {
   constructor() {
@@ -102,10 +103,19 @@ export default class TopBar extends HTMLElement implements AsyncInit {
     // - - - </div>
     searchbar.append(input_group);
     // - - - </form>
-    collapse.append(
-      searchbar,
-      TopBar.TopBarLink("box-arrow-in-right", "/logsig.html", "Login / Sign-up", "logsig")
+    collapse.append(searchbar);
+    // - - - <a>
+    await whenDefined("LogSig");
+    const logsig = new LogSig();
+    const logsig_toggle = TopBar.TopBarLink(
+      "box-arrow-in-right",
+      `#${LogSig.id}`,
+      "Login / Sign-up",
+      LogSig.id
     );
+    logsig_toggle.setAttribute("data-bs-toggle", "modal");
+    // - - - </a>
+    collapse.append(logsig_toggle, logsig);
     // - - </div>
     nav_div.append(collapse);
     // - </div>

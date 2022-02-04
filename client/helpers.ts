@@ -6,6 +6,7 @@ export const whenDefined = (Class: string) => customElements.whenDefined(tag(Cla
 export const selectCustomElement = (Class: string) => document.querySelector(tag(Class));
 
 export const get = (input: RequestInfo) => fetch(input).then((res) => res.json());
+export const post = (input: RequestInfo, body: BodyInit) => fetch(input, { method: "POST", body });
 
 export const btn = () => {
   const btn = document.createElement("button");
@@ -36,4 +37,12 @@ export const parseOpeningHours = (opening_hours: number) => {
     start = end = end + 1;
   }
   return hours.join(", ");
+};
+
+export const urlEncode = (form: HTMLFormElement) => {
+  const url_encoded = new URLSearchParams();
+  for (const [key, value] of new FormData(form)) {
+    url_encoded.append(key, value.toString());
+  }
+  return url_encoded;
 };
