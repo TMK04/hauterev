@@ -56,6 +56,9 @@ export const selectReviewsWithOptions = ({
   return query;
 };
 
+export const selectMostHelpfulReviews = (): Promise<SelectReviews> =>
+  selectReviews().orderBy("helpful_marks.helpful_count", "desc").limit(3);
+
 export const selectReviewsByRestaurantID = (restaurant_id: ID): Promise<SelectReviews> =>
   selectReviews().where({ "review.restaurant_id": restaurant_id });
 

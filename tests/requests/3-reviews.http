@@ -4,6 +4,11 @@
 
 GET {{route}}?search=great
 
+### Get most helpful reviews
+
+GET {{route}}/most-helpful
+
 ### Get review by ID
 
 GET {{route}}/1
+

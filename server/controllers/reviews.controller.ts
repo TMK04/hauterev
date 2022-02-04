@@ -16,6 +16,9 @@ export const retrieveReviews: RequestHandler<any, any, any, GetReviewsQuery> = (
     next
   );
 
+export const retrieveMostHelpfulReviews: RequestHandler = (_, res, next) =>
+  catchNext(async () => res.json(await review_db.selectMostHelpfulReviews()), next);
+
 export const retrieveReview: RequestHandler<IDParams> = ({ params }, res, next) =>
   catchNext(async () => {
     const { id } = params;
