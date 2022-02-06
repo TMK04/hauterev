@@ -19,6 +19,12 @@ export const markAsHelpful: RequestHandler<UsernameParams, any, ReviewIDBody> = 
     res.sendStatus(201);
   }, next);
 
+export const retrieveHelpfulMarks: RequestHandler<UsernameParams> = ({ params }, res, next) =>
+  catchNext(
+    async () => res.json(await helpful_mark_db.selectHelpfulMarksByUsername(params.username)),
+    next
+  );
+
 export const unmarkAsHelpful: RequestHandler<UsernameParams, any, ReviewIDBody> = (
   { body, params },
   res,

@@ -16,8 +16,12 @@ export const whenDefined = (Class: string) => customElements.whenDefined(tag(Cla
 
 export const selectCustomElement = (Class: string) => document.querySelector(tag(Class));
 
-export const get = (input: RequestInfo) => fetch(input).then((res) => res.json());
-export const post = (input: RequestInfo, body: BodyInit) => fetch(input, { method: "POST", body });
+export const get = (input: RequestInfo, headers: HeadersInit = {}) =>
+  fetch(input, { headers }).then((res) => res.json());
+export const post = (input: RequestInfo, body: BodyInit, headers: HeadersInit = {}) =>
+  fetch(input, { method: "POST", body, headers });
+export const del = (input: RequestInfo, body: BodyInit, headers: HeadersInit = {}) =>
+  fetch(input, { method: "DELETE", body, headers });
 
 export const goHome = () => location.assign("/index.html");
 
@@ -55,3 +59,17 @@ export const urlEncode = (form: HTMLFormElement) => {
   }
   return url_encoded;
 };
+
+export const getCookie = (key: string) => {
+  const prefix = `${key}=`;
+  return document.cookie
+    .split(/[; ]/)
+    .find((cookie) => cookie.startsWith(prefix))
+    ?.substring(prefix.length);
+};
+
+export const getUsername = () => getCookie("username");
+
+export const authorizationHeader = () => ({
+  Authorization: `Bearer ${getCookie("access_token")}`
+});

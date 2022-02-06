@@ -110,12 +110,14 @@ export default class LogSig extends HTMLElement implements AsyncInit {
     // </div>
     this.append(modal);
 
-    log_tab.addEventListener("submit", () => post("/api/users/login", urlEncode(log_tab)));
+    log_tab.addEventListener("submit", async () => {
+      await post("/api/users/auth/login", urlEncode(log_tab));
+      setTimeout(location.reload, 2000);
+    });
 
     sig_tab.addEventListener("submit", async (ev) => {
-      await post("/api/users", urlEncode(sig_tab));
-
       ev.preventDefault();
+      await post("/api/users", urlEncode(sig_tab));
     });
   };
 

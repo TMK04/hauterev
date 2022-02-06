@@ -1,36 +1,15 @@
-import { compare } from "bcryptjs";
-
 import type { RequestHandler } from "express";
-import type {
-  AuthenticateBody,
-  AuthenticatedLocals,
-  PatchUserBody,
-  PostUserBody,
-  UsernameParams
-} from "types";
+import type { AuthenticatedLocals, PatchUserBody, PostUserBody, UsernameParams } from "types";
 
-import { NotFoundError, UnauthenticatedError } from "Errors";
+import { NotFoundError } from "Errors";
 import { review_db, user_db } from "db";
 import { catchNext } from "helpers";
-import { validateAuthenticateBody, validatePatchUserBody, validatePostUserBody } from "validation";
+import { validatePatchUserBody, validatePostUserBody } from "validation";
 
 export const createUser: RequestHandler<any, any, PostUserBody> = ({ body }, res, next) =>
   catchNext(async () => {
     await user_db.insertUser(await validatePostUserBody(body));
     res.sendStatus(201);
-  }, next);
-
-export const login: RequestHandler<any, any, AuthenticateBody> = ({ body }, res, next) =>
-  catchNext(async () => {
-    const { username, password } = validateAuthenticateBody(body);
-
-    const password_hash_result = await user_db.selectPasswordHashByUsername(username);
-    if (!password_hash_result[0]) throw new NotFoundError("User", username);
-
-    const password_hash = password_hash_result[0].password_hash;
-    if (await compare(password, password_hash)) return res.sendStatus(200);
-
-    throw new UnauthenticatedError();
   }, next);
 
 export const retrieveUser: RequestHandler<UsernameParams, any, any, any, AuthenticatedLocals> = (

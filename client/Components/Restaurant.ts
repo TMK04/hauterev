@@ -1,8 +1,19 @@
 import type AsyncInit from "./AsyncInit";
+import type CollectionHeader from "./CollectionHeader";
 import type TopHeader from "./TopHeader";
 
-import { createElement, get, goHome, parseOpeningHours, selectCustomElement } from "helpers";
+import {
+  createElement,
+  get,
+  getUsername,
+  goHome,
+  parseOpeningHours,
+  selectCustomElement,
+  whenDefined
+} from "helpers";
 
+import BsIcon from "./BsIcon";
+import PostReview from "./PostReview";
 import RevCollection from "./RevCollection";
 
 export default class Restaurant extends HTMLElement implements AsyncInit {
@@ -81,6 +92,28 @@ export default class Restaurant extends HTMLElement implements AsyncInit {
     // </div>
     shadow.append(shadow_div);
 
-    if (reviews) RevCollection.appendToBody(reviews);
+    if (reviews) {
+      const username = getUsername();
+      await RevCollection.appendToPage(reviews);
+      if (username) {
+        await whenDefined("PostReview");
+        const post_review = new PostReview(username, id);
+        const post_review_toggler = createElement("a", [
+          "d-flex",
+          "btn",
+          "btn-outline-success",
+          "border-0"
+        ]);
+        post_review_toggler.setAttribute("data-bs-toggle", "modal");
+        post_review_toggler.href = `#${PostReview.id}`;
+        await whenDefined("BsIcon");
+        const icon = new BsIcon("chat-left-quote", "24px");
+        icon.classList.add("py-0");
+        post_review_toggler.append(icon);
+        const reviews_header = <CollectionHeader>selectCustomElement("CollectionHeader");
+        reviews_header.classList.add("align-items-center");
+        reviews_header.append(post_review_toggler, post_review);
+      }
+    }
   };
 }

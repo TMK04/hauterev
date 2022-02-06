@@ -1,7 +1,9 @@
 {
   "rest-client.environmentVariables": {
     "local": {
-      "address": "http://LAPTOP-LGDG0D0M:4000/api"
+      "address": "http://LAPTOP-LGDG0D0M:4000/api",
+      "authorization": "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkJvYjEyMyIsImlhdCI6MTY0NDA4OTUyNywiZXhwIjoxNjQ0Njk0MzI3fQ.kcjZV5VO5CYIzQ0zX6x0S8FJQkXa_apkAXBiyv5smtg",
+      "json": "Content-Type: application/json"
     }
   }
 }

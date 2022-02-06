@@ -10,7 +10,7 @@ import { validateRestaurantIDBody } from "./ref.validation";
 export const validatePostReviewBody = (body: PostReviewBody) => ({
   ...validateRestaurantIDBody(body),
   description: stringValidate(body, "description"),
-  image_url: stringValidate(body, "password"),
+  image_url: stringValidate(body, "image_url"),
   title: stringValidate(body, "title"),
   rating: validateRating(body)
 });

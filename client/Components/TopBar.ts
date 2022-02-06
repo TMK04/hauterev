@@ -1,7 +1,8 @@
 import type AsyncInit from "./AsyncInit";
 
-import { center_content_classes, createElement, whenDefined } from "helpers";
+import { center_content_classes, createElement, getUsername, whenDefined } from "helpers";
 
+import Bookmarks from "./Bookmarks";
 import BsIcon from "./BsIcon";
 import LogSig from "./LogSig";
 
@@ -14,7 +15,15 @@ export default class TopBar extends HTMLElement implements AsyncInit {
   }
 
   #init = async () => {
-    this.classList.add("navbar", "navbar-expand-lg", "navbar-light", "bg-light", "p-0", "mb-4");
+    this.classList.add(
+      "navbar",
+      "navbar-expand-lg",
+      "navbar-light",
+      "bg-light",
+      "p-0",
+      "mb-4",
+      "border-bottom"
+    );
     // <div>
     const nav_div = createElement("div", [
       "d-flex",
@@ -59,13 +68,12 @@ export default class TopBar extends HTMLElement implements AsyncInit {
     // - </div>
     nav_div.append(no_collapse);
     // - <div>
-    const collapse = createElement("div", [
-      "collapse",
-      "navbar-collapse",
-      "w-75",
+    const collapse = createElement(
+      "div",
+      ["collapse", "navbar-collapse", "w-75"],
       `${TopBar.prefix}-collapse`
-    ]);
-    toggler.setAttribute("data-bs-target", collapse.id);
+    );
+    toggler.setAttribute("data-bs-target", `#${collapse.id}`);
     // - - <form>
     const searchbar = createElement("form", [
       "container-fluid",
@@ -110,18 +118,35 @@ export default class TopBar extends HTMLElement implements AsyncInit {
     searchbar.append(input_group);
     // - - - </form>
     collapse.append(searchbar);
-    // - - - <a>
-    await whenDefined("LogSig");
-    const logsig = new LogSig();
-    const logsig_toggle = TopBar.TopBarLink(
-      "box-arrow-in-right",
-      `#${LogSig.id}`,
-      "Login / Sign-up",
-      LogSig.id
-    );
-    logsig_toggle.setAttribute("data-bs-toggle", "modal");
-    // - - - </a>
-    collapse.append(logsig_toggle, logsig);
+    const username = getUsername();
+    if (username) {
+      // <a> * 2
+      const profile = TopBar.TopBarLink(
+        "person-circle",
+        `/user.html?username=${username}`,
+        "Profile",
+        "profile"
+      );
+      const bookmark = TopBar.TopBarLink("bookmark-fill", `#bookmarks`, "Bookmarks", "bookmarks");
+      // </a> * 2
+      collapse.append(profile, bookmark);
+      await whenDefined("Bookmarks");
+      const bookmarks = new Bookmarks(username);
+      (<HTMLDivElement>document.getElementById("wrapper")).append(bookmarks);
+    } else {
+      // <a>
+      await whenDefined("LogSig");
+      const logsig = new LogSig();
+      const logsig_toggle = TopBar.TopBarLink(
+        "box-arrow-in-right",
+        `#${LogSig.id}`,
+        "Login / Sign-up",
+        LogSig.id
+      );
+      logsig_toggle.setAttribute("data-bs-toggle", "modal");
+      // </a>
+      collapse.append(logsig_toggle, logsig);
+    }
     // - - </div>
     nav_div.append(collapse);
     // - </div>
@@ -130,11 +155,11 @@ export default class TopBar extends HTMLElement implements AsyncInit {
     this.append(nav_div);
 
     searchbar.addEventListener("submit", (ev) => {
+      ev.preventDefault();
       let url = "/search.html?";
       const search = search_input.value;
       if (search) url += `search=${search}`;
       location.assign(url);
-      ev.preventDefault();
     });
   };
 
@@ -160,6 +185,7 @@ export default class TopBar extends HTMLElement implements AsyncInit {
     const label = createElement("label", ["d-lg-none", "fw-bold"]);
     label.textContent = name;
     label.htmlFor = b.id;
+    label.setAttribute("role", "button");
     // - </label>
     link.append(label);
     // </a>

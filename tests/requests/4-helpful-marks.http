@@ -3,9 +3,14 @@
 ### Mark review as helpful by review ID
 
 POST {{route}}
-Content-Type: application/json
+{{authorization}}
+{{json}}
 
 {
-  "password": "Bob123Builder",
   "review_id": 1
 }
+
+### Get helpful marks by username
+
+GET {{route}}
+{{authorization}}

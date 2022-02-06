@@ -3,38 +3,34 @@
 ### Unmark review as helpful by review ID
 
 DELETE {{route}}/helpful-marks
-Content-Type: application/json
+{{authorization}}
+{{json}}
 
 {
-  "password": "Bob123Builder",
   "review_id": 1
 }
 
 ### Delete review by ID
 
 DELETE {{address}}/reviews/1
-Content-Type: application/json
+{{authorization}}
+{{json}}
 
 {
-  "password": "Bob123Builder",
   "username": "Bob123"
 }
 
 ### Unbookmark restaurant by restaurant ID
 
 DELETE {{route}}/bookmarks
-Content-Type: application/json
+{{authorization}}
+{{json}}
 
 {
-  "password": "Bob123Builder",
   "restaurant_id": 1
 }
 
 ### Delete user by username
 
 DELETE {{route}}
-Content-Type: application/json
-
-{
-  "password": "Bob123Builder"
-}
+{{authorization}}

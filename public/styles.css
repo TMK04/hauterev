@@ -10,6 +10,10 @@ hr-top-header {
   margin-bottom: 64px;
 }
 
+hr-bookmarks img {
+  object-fit: cover;
+}
+
 .opening-hours-form-slider {
   z-index: 1;
   height: var(--opening-hours-form-slider-height);
@@ -108,7 +112,7 @@ hr-top-header {
   object-fit: cover;
 }
 
-.collection .card-text {
+.collection .card-title {
   max-height: 60px;
   text-overflow: ellipsis;
 }

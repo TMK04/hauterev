@@ -26,6 +26,9 @@ export const selectHelpfulMarksHelpfulCount = () =>
     .groupBy("review_id")
     .as("helpful_marks");
 
+export const selectHelpfulMarksByUsername = (username: string) =>
+  helpfulMarkTable().select("review_id").where({ username });
+
 // *--- Delete ---* //
 
 export const deleteHelpfulMark = (helpful_mark: HelpfulMark) =>

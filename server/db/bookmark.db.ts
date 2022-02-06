@@ -1,6 +1,7 @@
 import type { Bookmark, ID, SelectBookmarks, UserUsername } from "./types";
 
 import { db } from "connections";
+import { restaurant_db } from "db";
 
 // ----------- //
 // * Helpers * //
@@ -19,7 +20,18 @@ export const insertBookmark = (bookmark: Bookmark) => bookmarkTable().insert(boo
 // *--- Select ---* //
 
 export const selectBookmarksByUsername = (username: UserUsername): Promise<SelectBookmarks> =>
-  bookmarkTable().select().where({ username });
+  bookmarkTable()
+    .select(
+      "bookmark.restaurant_id",
+      "restaurant_identifiers.name",
+      "restaurant_identifiers.image_url"
+    )
+    .where({ username })
+    .join(
+      restaurant_db.selectRestaurantIdentifiers(),
+      "bookmark.restaurant_id",
+      "restaurant_identifiers.id"
+    );
 
 // *--- Delete ---* //
 

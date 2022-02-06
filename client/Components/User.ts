@@ -1,7 +1,15 @@
 import type AsyncInit from "./AsyncInit";
 import type TopHeader from "./TopHeader";
 
-import { createElement, get, goHome, selectCustomElement, utcString, whenDefined } from "helpers";
+import {
+  authorizationHeader,
+  createElement,
+  get,
+  goHome,
+  selectCustomElement,
+  utcString,
+  whenDefined
+} from "helpers";
 
 import BsIcon from "./BsIcon";
 import RevCollection from "./RevCollection";
@@ -19,7 +27,7 @@ export default class User extends HTMLElement implements AsyncInit {
       top_header.top_header.innerHTML = `${username}'s Profile`;
     } else return goHome();
 
-    const user = await get(`/api/users/${username}`);
+    const user = await get(`/api/users/${username}`, authorizationHeader());
     if (!user) return goHome();
     const {
       email,
@@ -54,7 +62,7 @@ export default class User extends HTMLElement implements AsyncInit {
       if (content) row.append(User.Detail(content, title, bi));
     this.append(row);
 
-    if (reviews) RevCollection.appendToBody(reviews);
+    if (reviews) RevCollection.appendToPage(reviews);
   };
 
   static Detail = (content: string, title: string, bi?: string) => {

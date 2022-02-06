@@ -6,12 +6,13 @@ import { users_middlewares } from "middlewares";
 import user_bookmarks_router from "./user-bookmarks.router";
 import user_helpful_marks_router from "./user-helpful-marks.router";
 import user_reviews_router from "./user-reviews.router";
+import users_auth_router from "./users-auth.router";
 
 const users_router = Router();
 
-users_router.route("/").post(users_controller.createUser);
+users_router.use("/auth", users_auth_router);
 
-users_router.route("/login").post(users_controller.login);
+users_router.route("/").post(users_controller.createUser);
 
 users_router
   .use("/:username", users_middlewares.authenticate)

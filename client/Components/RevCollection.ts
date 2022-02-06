@@ -1,9 +1,17 @@
 import type AsyncInit from "./AsyncInit";
 
-import { createElement, get, utcString, whenDefined } from "helpers";
+import {
+  authorizationHeader,
+  createElement,
+  get,
+  getUsername,
+  utcString,
+  whenDefined
+} from "helpers";
 
 import BsIcon from "./BsIcon";
 import CollectionHeader from "./CollectionHeader";
+import UserCollectionToggle from "./UserCollectionToggle";
 
 export default class RevCollection extends HTMLElement implements AsyncInit {
   static display = "d-flex";
@@ -17,6 +25,10 @@ export default class RevCollection extends HTMLElement implements AsyncInit {
   #init = async (_reviews?: any) => {
     const path = this.getAttribute("path") || "";
     const reviews = _reviews || (await get(`/api/reviews${path}`));
+    const current_username = getUsername();
+    const helpful_marks = current_username
+      ? <any[]>await get(`/api/users/${current_username}/helpful-marks`, authorizationHeader())
+      : undefined;
 
     this.classList.add(
       "collection",
@@ -63,10 +75,10 @@ export default class RevCollection extends HTMLElement implements AsyncInit {
       // - </a>
       card.append(a);
       // - <div>
-      const card_body = createElement("div", ["card-body"]);
+      const card_body = createElement("div", ["card-body", "d-flex", "flex-column"]);
       // - - <a>
       const card_title = <HTMLAnchorElement>a.cloneNode();
-      card_title.classList.add("card-title", "h5", "overflow-hidden");
+      card_title.classList.add("card-title", "h5", "overflow-hidden", "text-center");
       card_title.textContent = title;
       // - - </a>
       card_body.append(card_title);
@@ -87,12 +99,33 @@ export default class RevCollection extends HTMLElement implements AsyncInit {
       card.appendChild(card_footer).appendChild(small);
       // </div>
       this.append(card);
+
+      if (current_username) {
+        // <div>
+        const buttons = createElement("div", ["card-text", "mt-auto", "ms-auto"]);
+        await whenDefined("UserCollectionToggle");
+        buttons.append(
+          new UserCollectionToggle(
+            "hand-thumbs-up",
+            username,
+            "helpful-marks",
+            new URLSearchParams({ review_id: id }),
+            "review_id",
+            <0 | 1>+!helpful_marks?.map(({ review_id }) => review_id).includes(id)
+          )
+        );
+        // </div>
+        card_body.append(buttons);
+      }
     }
   };
 
-  static appendToBody = async (reviews: any) => {
+  static appendToPage = async (reviews: any, extra = "") => {
     await whenDefined("CollectionHeader");
     await whenDefined("RevCollection");
-    document.body.append(new CollectionHeader("Reviews"), new RevCollection(reviews));
+    (<HTMLDivElement>document.getElementById("page")).append(
+      new CollectionHeader(`Reviews${extra}`),
+      new RevCollection(reviews)
+    );
   };
 }

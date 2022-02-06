@@ -3,11 +3,10 @@
 ### Create new review
 
 POST {{route}}
-Content-Type: application/json
+{{authorization}}
+{{json}}
 
 {
-  "password": "Bob123Builder",
-  "username": "Bob123",
   "restaurant_id": 1,
   "rating": 2.5,
   "title": "Night at Prive",
@@ -18,10 +17,10 @@ Content-Type: application/json
 ### Edit review by ID
 
 PATCH {{route}}/1
-Content-Type: application/json
+{{authorization}}
+{{json}}
 
 {
-  "password": "Bob123Builder",
   "username": "Bob123",
   "rating": 4.5
 }

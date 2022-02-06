@@ -36,6 +36,9 @@ const selectRestaurants = () =>
 
 // *--- Select ---* //
 
+export const selectRestaurantIdentifiers = () =>
+  restaurantTable().select("id", "name", "image_url").as("restaurant_identifiers");
+
 export const selectRestaurantsWithOptions = ({
   search
 }: SelectRestaurantsOptions): Promise<SelectRestaurants> => {

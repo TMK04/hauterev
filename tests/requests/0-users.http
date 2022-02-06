@@ -1,9 +1,10 @@
 @route = {{address}}/users
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkJvYjEyMyIsImlhdCI6MTY0NDA3MjY3Mn0.9KmDvEdMXbarcRA8HkRoKRZrOejxXhSkXflmgo3OO6o
 
 ### Create new user
 
 POST {{route}}
-Content-Type: application/json
+{{json}}
 
 {
   "username": "Bob123",
@@ -18,8 +19,8 @@ Content-Type: application/json
 
 ### Login
 
-POST {{route}}/login
-Content-Type: application/json
+POST {{route}}/auth/login
+{{json}}
 
 {
   "username": "Bob123",
@@ -33,18 +34,14 @@ GET {{route}}/Bob123
 ### Get user profile as user
 
 GET {{route}}/Bob123
-Content-Type: application/json
-
-{
-  "password": "Bob123Builder"
-}
+{{authorization}}
 
 ### Edit user profile as user
 
 PATCH {{route}}/Bob123
-Content-Type: application/json
+{{authorization}}
+{{json}}
 
 {
-  "password": "Bob123Builder",
   "new_password": "Bob123Builder"
 }
