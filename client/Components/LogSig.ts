@@ -55,17 +55,38 @@ export default class LogSig extends HTMLElement implements AsyncInit {
     // - - - - <div>
     const sig_tab = LogSig.Tab("sig");
     const sig_row = sig_tab.appendChild(LogSig.ModalBody()).appendChild(LogSig.Row());
-    const sig_username = LogSig.InputColumn("Username", "text", sig_tab.id, true, true, "person");
-    const sig_email = LogSig.InputColumn("Email", "email", sig_tab.id, true, true, "envelope");
-    const sig_password = LogSig.InputColumn("Password", "password", sig_tab.id, true, true, "lock");
-    const sig_confirm_password = LogSig.InputColumn(
-      "Confirm Password",
-      "password",
+    const sig_username = LogSig.InputColumn(
+      "Username",
+      "text",
       sig_tab.id,
       true,
       true,
+      "person-fill"
+    );
+    const sig_email = LogSig.InputColumn("Email", "email", sig_tab.id, true, true, "envelope-fill");
+    const sig_password = LogSig.Column(true);
+    const sig_password_input = LogSig.Input("password", "password", sig_tab.id, true);
+    const sig_password_label = LogSig.Label(sig_password_input.id, "Password", "lock-fill");
+    sig_password.append(sig_password_label, sig_password_input);
+    const sig_confirm_password = LogSig.Column(true);
+    const sig_confirm_password_input = LogSig.Input(
+      "confirm_password",
+      "password",
+      sig_tab.id,
+      true
+    );
+    const sig_confirm_password_label = LogSig.Label(
+      sig_confirm_password_input.id,
+      "Confirm Password",
       "lock-fill"
     );
+    // Adapted from https://stackoverflow.com/a/61873952
+    sig_confirm_password_input.addEventListener("change", () =>
+      sig_confirm_password_input.value === sig_password_input.value
+        ? sig_confirm_password_input.setCustomValidity("")
+        : sig_confirm_password_input.setCustomValidity("Passwords do not match")
+    );
+    sig_confirm_password.append(sig_confirm_password_label, sig_confirm_password_input);
     const sig_first_name = LogSig.InputColumn("First Name", "text", sig_tab.id, true);
     const sig_last_name = LogSig.InputColumn("Last Name", "text", sig_tab.id, true, true);
     await whenDefined("GenderInput");
@@ -110,14 +131,24 @@ export default class LogSig extends HTMLElement implements AsyncInit {
     // </div>
     this.append(modal);
 
-    log_tab.addEventListener("submit", async () => {
-      await post("/api/users/auth/login", urlEncode(log_tab));
-      setTimeout(location.reload, 2000);
+    log_tab.addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const res = await post("/api/users/auth/login", urlEncode(log_tab));
+      if (res.ok) location.reload();
     });
 
     sig_tab.addEventListener("submit", async (ev) => {
       ev.preventDefault();
-      await post("/api/users", urlEncode(sig_tab));
+      const res = await post("/api/users", urlEncode(sig_tab));
+      if (res.ok) {
+        log_link.classList.add("active");
+        log_tab.classList.add("active", "show");
+        const alert = createElement("div", ["alert", "alert-success", "mt-3", "mx-3", "mb-0"]);
+        alert.textContent = "Sign-up successful! Please Login below.";
+        log_tab.insertBefore(alert, log_tab.firstChild);
+        sig_link.classList.remove("active");
+        sig_tab.classList.remove("active", "show");
+      }
     });
   };
 
@@ -174,7 +205,7 @@ export default class LogSig extends HTMLElement implements AsyncInit {
     bi?: string
   ) => {
     const col = LogSig.Column(half);
-    const input = LogSig.Input(content.replace(/\s/g, "-").toLowerCase(), type, prefix, required);
+    const input = LogSig.Input(content.replace(/\s/g, "_").toLowerCase(), type, prefix, required);
     const label = LogSig.Label(input.id, content, bi);
     col.append(label, input);
     return col;
