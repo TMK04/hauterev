@@ -1,5 +1,8 @@
-import type AsyncInit from "./AsyncInit";
+import type AsyncInit from "../AsyncInit";
 
+import BsIcon from "../BsIcon";
+import CollectionHeader from "../Headers/CollectionHeader";
+import UserCollectionToggle from "../UserCollectionToggle";
 import {
   authorizationHeader,
   createElement,
@@ -8,10 +11,6 @@ import {
   utcString,
   whenDefined
 } from "helpers";
-
-import BsIcon from "./BsIcon";
-import CollectionHeader from "./CollectionHeader";
-import UserCollectionToggle from "./UserCollectionToggle";
 
 export default class RevCollection extends HTMLElement implements AsyncInit {
   static display = "d-flex";

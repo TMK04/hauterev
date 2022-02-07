@@ -1,14 +1,14 @@
 import type AsyncInit from "./AsyncInit";
-import type Form from "./Form";
-import type ResCollection from "./ResCollection";
+import type ResCollection from "./Collections/ResCollection";
+import type Form from "./Forms/Form";
 
 import { center_content_classes, createElement, selectCustomElement, whenDefined } from "helpers";
 
 import BsIcon from "./BsIcon";
-import OpeningHoursForm from "./OpeningHoursForm";
-import RatingForm from "./RatingForm";
-import RegionsForm from "./RegionsForm";
-import SortForm from "./SortForm";
+import OpeningHoursForm from "./Forms/OpeningHoursForm";
+import RatingForm from "./Forms/RatingForm";
+import RegionsForm from "./Forms/RegionsForm";
+import SortForm from "./Forms/SortForm";
 
 type TogglerType = HTMLButtonElement;
 type DropdownType = HTMLDivElement;

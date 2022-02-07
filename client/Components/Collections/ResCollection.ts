@@ -1,9 +1,8 @@
-import type AsyncInit from "./AsyncInit";
+import type AsyncInit from "../AsyncInit";
 
+import BsIcon from "../BsIcon";
+import UserCollectionToggle from "../UserCollectionToggle";
 import { authorizationHeader, createElement, get, getUsername, whenDefined } from "helpers";
-
-import BsIcon from "./BsIcon";
-import UserCollectionToggle from "./UserCollectionToggle";
 
 export default class ResCollection extends HTMLElement implements AsyncInit {
   static display = "d-flex";

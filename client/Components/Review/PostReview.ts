@@ -1,13 +1,11 @@
-import type AsyncInit from "./AsyncInit";
+import type AsyncInit from "../AsyncInit";
 
+import BsIcon from "../BsIcon";
+import RatingForm from "../Forms/RatingForm";
 import { authorizationHeader, createElement, post, urlEncode, whenDefined } from "helpers";
-
-import BsIcon from "./BsIcon";
-import RatingForm from "./RatingForm";
 
 export default class PostReview extends HTMLElement implements AsyncInit {
   static id = "post-review";
-  static log = "Post Review";
 
   constructor(username: string, restaurant_id: string) {
     super();

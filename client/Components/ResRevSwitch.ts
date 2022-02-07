@@ -2,9 +2,9 @@ import type AsyncInit from "./AsyncInit";
 
 import { center_content_classes, createElement, selectCustomElement } from "helpers";
 
-import ResCollection from "./ResCollection";
+import ResCollection from "./Collections/ResCollection";
+import RevCollection from "./Collections/RevCollection";
 import ResFilters from "./ResFilters";
-import RevCollection from "./RevCollection";
 
 export default class ResRevSwitch extends HTMLElement implements AsyncInit {
   static d_none = "d-none";

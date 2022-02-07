@@ -1,5 +1,5 @@
 import type AsyncInit from "./AsyncInit";
-import type TopHeader from "./TopHeader";
+import type TopHeader from "./Headers/TopHeader";
 
 import {
   authorizationHeader,
@@ -14,7 +14,7 @@ import {
 } from "helpers";
 
 import BsIcon from "./BsIcon";
-import RevCollection from "./RevCollection";
+import RevCollection from "./Collections/RevCollection";
 
 export default class User extends HTMLElement implements AsyncInit {
   constructor() {
