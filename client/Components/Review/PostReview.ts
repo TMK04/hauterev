@@ -49,7 +49,7 @@ export default class PostReview extends HTMLElement implements AsyncInit {
     const modal_rating_form = new RatingForm((value) =>
       modal_rating_input.setAttribute("value", value.toString())
     );
-    const modal_rating_label = PostReview.Label(modal_rating_form.id, "Rating", "star-half");
+    const modal_rating_label = PostReview.Label(modal_rating_form.form.id, "Rating", "star-half");
     modal_rating_label.classList.add("d-block", "text-center", "fs-6", "text-decoration-underline");
     modal_rating.append(modal_rating_input, modal_rating_label, modal_rating_form);
     modal_row.append(

@@ -2,12 +2,12 @@ import { createElement } from "helpers";
 
 export default class BsIcon extends HTMLElement {
   static display = "d-inline-flex";
-  constructor(_class: string, _size: string) {
+  constructor(bi: string, size: string) {
     super();
 
     this.classList.add(BsIcon.display);
-    const icon = createElement("i", [["bi", _class].join("-")]);
-    icon.style.fontSize = _size;
+    const icon = createElement("i", [`bi-${bi}`]);
+    icon.style.fontSize = size;
     this.replaceChildren(icon);
   }
 }

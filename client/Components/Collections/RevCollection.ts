@@ -2,6 +2,7 @@ import type AsyncInit from "../AsyncInit";
 
 import BsIcon from "../BsIcon";
 import CollectionHeader from "../Headers/CollectionHeader";
+import DeleteReview from "../Review/DeleteReview";
 import UserCollectionToggle from "../UserCollectionToggle";
 import {
   authorizationHeader,
@@ -24,9 +25,9 @@ export default class RevCollection extends HTMLElement implements AsyncInit {
   #init = async (_reviews?: any) => {
     const path = this.getAttribute("path") || "";
     const reviews = _reviews || (await get(`/api/reviews${path}`));
-    const current_username = getUsername();
-    const helpful_marks = current_username
-      ? <any[]>await get(`/api/users/${current_username}/helpful-marks`, authorizationHeader())
+    const username_cookie = getUsername();
+    const helpful_marks = username_cookie
+      ? <any[]>await get(`/api/users/${username_cookie}/helpful-marks`, authorizationHeader())
       : undefined;
 
     this.classList.add(
@@ -103,24 +104,50 @@ export default class RevCollection extends HTMLElement implements AsyncInit {
       // </div>
       this.append(card);
 
-      if (current_username) {
+      if (username_cookie) {
         // <div>
-        const buttons = createElement("div", ["card-text", "mt-auto", "ms-auto"]);
+        const buttons = createElement("div", [
+          "card-text",
+          "mt-auto",
+          "ms-auto",
+          "d-flex",
+          "gap-2"
+        ]);
         await whenDefined("UserCollectionToggle");
-        buttons.append(
-          new UserCollectionToggle(
-            "hand-thumbs-up",
-            username,
-            "helpful-marks",
-            new URLSearchParams({ review_id: id }),
-            "review_id",
-            <0 | 1>+!helpful_marks?.map(({ review_id }) => review_id).includes(id)
-          )
+        const helpful_mark_toggle = new UserCollectionToggle(
+          "hand-thumbs-up",
+          username,
+          "helpful-marks",
+          new URLSearchParams({ review_id: id }),
+          "review_id",
+          <0 | 1>+!helpful_marks?.map(({ review_id }) => review_id).includes(id)
         );
+        if (username_cookie === username) {
+          await whenDefined("DeleteReview");
+          const del = new DeleteReview(username_cookie, id);
+          const del_toggle = RevCollection.RevBtn("trash-fill");
+          del_toggle.classList.add("btn-danger", "btn-outline-light");
+          del_toggle.setAttribute("data-bs-toggle", "modal");
+          del_toggle.href = `#${DeleteReview.prefix}-${id}`;
+          document.body.append(del);
+
+          // const edit_toggle = RevCollection.RevBtn("pen-fill");
+          // edit_toggle.classList.add("btn-warning", "btn-outline-dark", "border-light");
+
+          buttons.append(del_toggle);
+        }
+        buttons.append(helpful_mark_toggle);
         // </div>
         card_body.append(buttons);
       }
     }
+  };
+
+  static RevBtn = (bi: string) => {
+    const btn = createElement("a", ["btn"]);
+    const icon = new BsIcon(bi, "16px");
+    btn.append(icon);
+    return btn;
   };
 
   static appendToPage = async (reviews: any, extra = "") => {

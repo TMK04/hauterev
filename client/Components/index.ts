@@ -13,6 +13,7 @@ import LogSig from "./LogSig";
 import ResFilters from "./ResFilters";
 import ResRevSwitch from "./ResRevSwitch";
 import Restaurant from "./Restaurant";
+import DeleteReview from "./Review/DeleteReview";
 import PostReview from "./Review/PostReview";
 import TopBar from "./TopBar";
 import User from "./User";
@@ -22,6 +23,7 @@ export {
   Bookmarks,
   BsIcon,
   CollectionHeader,
+  DeleteReview,
   GenderInput,
   LogSig,
   OpeningHoursForm,
