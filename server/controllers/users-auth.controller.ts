@@ -2,15 +2,15 @@ import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
 
 import type { CookieOptions, RequestHandler } from "express";
+import type { AuthenticateBody, UsernameParams } from "types";
 
 import { NotFoundError, UnauthenticatedError } from "Errors";
 import { jwt_config } from "configs";
 import { user_db } from "db";
 import { catchNext } from "helpers";
-import { AuthenticateBody } from "types";
 import { validateAuthenticateBody } from "validation";
 
-export const login: RequestHandler<any, any, AuthenticateBody> = ({ body }, res, next) =>
+export const login: RequestHandler<UsernameParams, any, AuthenticateBody> = ({ body }, res, next) =>
   catchNext(async () => {
     const { username, password } = validateAuthenticateBody(body);
 

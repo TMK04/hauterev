@@ -23,8 +23,8 @@ export const validatePasswordBody = (body: Partial<PasswordBody>) => ({
 });
 
 export const validateAuthenticateBody = (body: AuthenticateBody) => ({
-  ...validatePasswordBody(body),
-  username: stringValidate(body, "username")
+  username: stringValidate(body, "username"),
+  ...validatePasswordBody(body)
 });
 
 export const validatePostUserBody = async (body: PostUserBody): Promise<User> => ({

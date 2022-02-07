@@ -6,7 +6,7 @@ export type PasswordBody = UnknownRecord<"password">;
 
 export type AuthenticateBody = UsernameBody & PasswordBody;
 
-export type PostUserBody = AuthenticateBody &
+export type PostUserBody = UsernameBody &
   UnknownRecord<"email" | "last_name" | "first_name" | "mobile_number" | "address" | "gender">;
 
 export type UsernameParams = ParamsRecord<"username">;

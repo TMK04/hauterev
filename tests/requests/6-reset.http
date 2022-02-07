@@ -30,6 +30,11 @@ DELETE {{route}}/bookmarks
   "restaurant_id": 1
 }
 
+### Logout
+
+POST {{route}}/auth/logout
+{{authorization}}
+
 ### Delete user by username
 
 DELETE {{route}}
