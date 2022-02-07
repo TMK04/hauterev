@@ -49,7 +49,11 @@ export default class RevCollection extends HTMLElement implements AsyncInit {
       edited_timestamp
     } of reviews) {
       // <div>
-      const card = createElement("div", ["card", "shadow-sm"], `${RevCollection.prefix}-${id}`);
+      const card = createElement(
+        "div",
+        ["card", "shadow-sm", "md"],
+        `${RevCollection.prefix}-${id}`
+      );
       // - <div>
       const card_header = createElement("div", ["card-header", "text-center"]);
       const user_link = createElement("a");

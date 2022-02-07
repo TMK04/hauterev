@@ -51,7 +51,8 @@ export default class Restaurant extends HTMLElement implements AsyncInit {
       "rounded-1",
       "px-4",
       "py-2",
-      "bg-body"
+      "bg-body",
+      "lg"
     ]);
     // </div>
     this.append(shadow_container);

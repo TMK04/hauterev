@@ -40,7 +40,11 @@ export default class ResCollection extends HTMLElement implements AsyncInit {
       region
     } of restaurants) {
       // <div>
-      const card = createElement("div", ["card", "shadow-sm"], `${ResCollection.prefix}-${id}`);
+      const card = createElement(
+        "div",
+        ["card", "shadow-sm", "md"],
+        `${ResCollection.prefix}-${id}`
+      );
       card.setAttribute("data-avg-rating", avg_rating);
       card.setAttribute("data-opening-hours", opening_hours);
       card.setAttribute("data-region", region);

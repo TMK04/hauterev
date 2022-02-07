@@ -122,6 +122,14 @@ hr-bookmarks img {
   text-overflow: ellipsis;
 }
 
+.md {
+  min-width: 270px;
+}
+
+.lg {
+  min-width: 300px;
+}
+
 #search-input {
   height: 56px;
 }

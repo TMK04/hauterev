@@ -19,7 +19,7 @@ export default class LogSig extends HTMLElement implements AsyncInit {
     this.classList.add("d-flex");
 
     // <div>
-    const modal = createElement("div", ["modal", "fade"], LogSig.id);
+    const modal = createElement("div", ["modal", "fade", "md"], LogSig.id);
     modal.tabIndex = -1;
     // - <div>
     const modal_dialog = createElement("div", ["modal-dialog", "modal-dialog-centered"]);

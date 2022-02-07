@@ -24,7 +24,8 @@ export default class Bookmarks extends HTMLElement implements AsyncInit {
       "mb-5",
       "border",
       "box-shadow",
-      "shadow-lg"
+      "shadow-lg",
+      "lg"
     );
     // <a>
     const title = createElement("h4", [

@@ -47,7 +47,8 @@ export default class User extends HTMLElement implements AsyncInit {
       "py-4",
       "row-cols-1",
       "row-cols-md-2",
-      "row-cols-lg-3"
+      "row-cols-lg-3",
+      "lg"
     ]);
     await whenDefined("BsIcon");
     const details: [string, string, string?][] = [
